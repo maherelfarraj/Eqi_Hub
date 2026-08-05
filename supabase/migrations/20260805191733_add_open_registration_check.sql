@@ -1,15 +1,5 @@
 /*
 # Add open registration check function
-
-1. New Function
-  - `is_open_registration()` - Returns true when zero owners exist AND bootstrap
-    has not been completed. Callable by anon (pre-authentication check).
-    SECURITY DEFINER so it can read user_roles regardless of caller's RLS.
-
-2. Security
-  - Function is read-only, returns a single boolean
-  - Pinned search_path prevents injection
-  - Grants EXECUTE to anon and authenticated so the sign-up page can query it
 */
 
 CREATE OR REPLACE FUNCTION is_open_registration()

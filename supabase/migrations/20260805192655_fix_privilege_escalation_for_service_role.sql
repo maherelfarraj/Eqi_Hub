@@ -1,20 +1,5 @@
 /*
 # Fix privilege escalation trigger for service-role operations
-
-The `prevent_privilege_escalation` trigger was blocking inserts made via the
-service-role key (used by the bootstrap-owner edge function). When the service
-role operates, `auth.uid()` returns NULL, which made `get_user_role_rank(NULL)`
-return 99. Since the owner role has rank 1, the condition `1 < 99` raised an
-exception — even though the operation is a trusted server-side action.
-
-Fix: skip the privilege check when `auth.uid()` IS NULL (service-role context).
-This is safe because:
-- The service role key is only used in edge functions (server-side, never exposed
-  to clients).
-- RLS still blocks all direct client inserts into user_roles (the INSERT policy
-  requires owner/manager AND user_id != auth.uid()).
-- Regular authenticated users always have a non-null auth.uid(), so the check
-  still fires for them.
 */
 
 CREATE OR REPLACE FUNCTION prevent_privilege_escalation()

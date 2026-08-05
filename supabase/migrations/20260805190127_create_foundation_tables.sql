@@ -3,44 +3,23 @@
 
 1. New Tables
   - `branches` - Physical riding school locations
-    - `id` (uuid, PK), `name` (text), `address` (text), `phone` (text),
-      `timezone` (text), `is_active` (boolean), soft-delete + audit columns
   - `roles` - Fixed role definitions
-    - `id` (uuid, PK), `name` (text, unique), `description` (text)
   - `profiles` - Extended user profiles linked to auth.users
-    - `id` (uuid, PK, references auth.users), `full_name` (text), `phone` (text),
-      `avatar_url` (text), `preferred_language` (text), `branch_id` (uuid),
-      `is_active` (boolean), audit columns
   - `user_roles` - Role assignments (many-to-many users-roles-branches)
-    - `id` (uuid, PK), `user_id` (uuid), `role_id` (uuid), `branch_id` (uuid nullable)
   - `app_settings` - Key-value application settings per branch
-    - `id` (uuid, PK), `key` (text), `value` (jsonb), `branch_id` (uuid nullable)
   - `audit_logs` - Immutable audit trail
-    - `id` (uuid, PK), `actor_id` (uuid), `action` (text), `table_name` (text),
-      `record_id` (uuid), `before` (jsonb), `after` (jsonb), `created_at` (timestamptz)
   - `invitations` - Invitation-only membership
-    - `id` (uuid, PK), `email` (text), `role_id` (uuid), `branch_id` (uuid nullable),
-      `token` (text, unique), `invited_by` (uuid), `expires_at` (timestamptz),
-      `accepted_at` (timestamptz)
 
 2. Trigger Functions
   - `set_updated_at()` - Auto-maintains updated_at on UPDATE
   - `set_updated_by()` - Auto-sets updated_by from auth.uid()
 
 3. Seed Data
-  - 11 fixed roles: owner, school_manager, receptionist, instructor, stable_manager,
-    groom, veterinarian, accountant, adult_rider, parent_guardian, junior_rider
+  - 11 fixed roles
   - Default app_settings: timezone, currency, date_format, tax_rate
 
 4. Security
   - RLS enabled on ALL tables
-  - Policies added in a subsequent migration after helper functions are created
-
-5. Important Notes
-  - All business tables follow the standard column pattern: created_at, updated_at,
-    created_by, updated_by, deleted_at
-  - Soft delete pattern: deleted_at IS NULL means active
-  - audit_logs is insert-only by design
 */
 
 -- Trigger function: auto-update updated_at

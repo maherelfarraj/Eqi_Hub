@@ -1,15 +1,5 @@
 /*
 # Auto-create profile on user signup + invitation acceptance function
-
-1. Functions
-  - `handle_new_user()` - Trigger that creates a profile row when a user signs up
-  - `accept_invitation(token_input)` - Accepts an invitation, assigns the role,
-    marks invitation accepted. Validates: token exists, not expired, not already used.
-
-2. Important Notes
-  - Profile auto-creation ensures every auth.users row has a corresponding profile
-  - accept_invitation is SECURITY DEFINER so it can write to user_roles on behalf of
-    the newly registered user (who has no roles yet)
 */
 
 -- Auto-create profile on signup

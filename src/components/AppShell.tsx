@@ -138,7 +138,7 @@ export default function AppShell() {
                 className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-cream-100 transition-colors"
               >
                 <Languages className="w-4 h-4" />
-                <span>{i18n.language === 'ar' ? 'العربية' : 'EN'}</span>
+                <span>{i18n.language === 'ar' ? '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' : 'EN'}</span>
                 <ChevronDown className="w-3 h-3" />
               </button>
               {langMenuOpen && (

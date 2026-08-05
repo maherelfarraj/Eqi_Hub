@@ -1,30 +1,5 @@
 /*
 # Security Helper Functions and RLS Policies
-
-1. Helper Functions (SECURITY DEFINER with pinned search_path)
-  - `get_user_roles(uid)` - Returns all role names for a user
-  - `has_role(uid, role_name)` - Checks if a user has a specific role
-  - `is_staff(uid)` - Checks if a user has any staff role
-  - `same_branch(uid, branch_id)` - Checks if user belongs to a branch
-  - `get_user_role_rank(uid)` - Returns the lowest (most powerful) rank for a user
-
-2. Audit Trigger Functions
-  - `audit_user_roles_change()` - Logs inserts/deletes on user_roles
-  - `audit_invitations_change()` - Logs invitation events
-  - `audit_app_settings_change()` - Logs settings changes
-
-3. Privilege Escalation Prevention
-  - `prevent_privilege_escalation()` - Trigger that prevents assigning roles
-    more powerful than the actor's own role
-
-4. RLS Policies on all tables
-  - branches: staff can read, owner/manager can write
-  - roles: all authenticated can read
-  - profiles: own profile read/write, staff can read all active
-  - user_roles: owner/manager can manage, user can read own
-  - app_settings: staff can read, owner/manager can write
-  - audit_logs: owner/manager can read, insert only via triggers
-  - invitations: owner/manager can manage, user can read own pending
 */
 
 -- Helper: get all role names for a user
@@ -183,7 +158,7 @@ CREATE TRIGGER audit_app_settings
 
 -- ===== RLS POLICIES =====
 
--- BRANCHES: staff can read active branches, owner/manager can manage
+-- BRANCHES
 DROP POLICY IF EXISTS "staff_read_branches" ON branches;
 CREATE POLICY "staff_read_branches" ON branches FOR SELECT
   TO authenticated USING (is_staff(auth.uid()) AND deleted_at IS NULL);
@@ -204,12 +179,12 @@ DROP POLICY IF EXISTS "owner_delete_branches" ON branches;
 CREATE POLICY "owner_delete_branches" ON branches FOR DELETE
   TO authenticated USING (has_role(auth.uid(), 'owner'));
 
--- ROLES: all authenticated can read
+-- ROLES
 DROP POLICY IF EXISTS "authenticated_read_roles" ON roles;
 CREATE POLICY "authenticated_read_roles" ON roles FOR SELECT
   TO authenticated USING (true);
 
--- PROFILES: own profile + staff can read all active
+-- PROFILES
 DROP POLICY IF EXISTS "read_own_or_staff_profiles" ON profiles;
 CREATE POLICY "read_own_or_staff_profiles" ON profiles FOR SELECT
   TO authenticated USING (
@@ -230,7 +205,7 @@ DROP POLICY IF EXISTS "no_delete_profiles" ON profiles;
 CREATE POLICY "no_delete_profiles" ON profiles FOR DELETE
   TO authenticated USING (false);
 
--- USER_ROLES: owner/manager can manage, users can read their own
+-- USER_ROLES
 DROP POLICY IF EXISTS "read_own_or_manager_user_roles" ON user_roles;
 CREATE POLICY "read_own_or_manager_user_roles" ON user_roles FOR SELECT
   TO authenticated USING (
@@ -256,7 +231,7 @@ DROP POLICY IF EXISTS "no_update_user_roles" ON user_roles;
 CREATE POLICY "no_update_user_roles" ON user_roles FOR UPDATE
   TO authenticated USING (false) WITH CHECK (false);
 
--- APP_SETTINGS: staff can read, owner/manager can write
+-- APP_SETTINGS
 DROP POLICY IF EXISTS "staff_read_settings" ON app_settings;
 CREATE POLICY "staff_read_settings" ON app_settings FOR SELECT
   TO authenticated USING (is_staff(auth.uid()));
@@ -277,7 +252,7 @@ DROP POLICY IF EXISTS "no_delete_settings" ON app_settings;
 CREATE POLICY "no_delete_settings" ON app_settings FOR DELETE
   TO authenticated USING (false);
 
--- AUDIT_LOGS: owner/manager can read, no one can update/delete
+-- AUDIT_LOGS
 DROP POLICY IF EXISTS "manager_read_audit" ON audit_logs;
 CREATE POLICY "manager_read_audit" ON audit_logs FOR SELECT
   TO authenticated USING (
@@ -296,7 +271,7 @@ DROP POLICY IF EXISTS "no_delete_audit" ON audit_logs;
 CREATE POLICY "no_delete_audit" ON audit_logs FOR DELETE
   TO authenticated USING (false);
 
--- INVITATIONS: owner/manager can manage, user can read their own pending
+-- INVITATIONS
 DROP POLICY IF EXISTS "read_invitations" ON invitations;
 CREATE POLICY "read_invitations" ON invitations FOR SELECT
   TO authenticated USING (
