@@ -7,7 +7,7 @@ import type { Rider, GuardianRider, EmergencyContact, RiderMedical, RiderNote } 
 import { levelLabel, formatDate } from '@/types/rider';
 import {
   ArrowLeft, User, Phone, Heart, ShieldAlert, FileText, ClipboardList,
-  Calendar, Ruler, Weight, Target, Plus, Trash2, Lock,
+  Calendar, Ruler, Weight, Target, Plus, Trash2, Lock, Link2, CheckCircle2, AlertCircle,
 } from 'lucide-react';
 
 type Tab = 'profile' | 'guardians' | 'medical' | 'notes' | 'history';
@@ -37,6 +37,10 @@ export default function RiderDetailPage() {
   const [savingNote, setSavingNote] = useState(false);
   const [medicalDraft, setMedicalDraft] = useState<RiderMedical>({ conditions: '', allergies: '', accessibility_requirements: '', notes: '' });
   const [savingMedical, setSavingMedical] = useState(false);
+  const [linkingMemberId, setLinkingMemberId] = useState<string | null>(null);
+  const [linkEmail, setLinkEmail] = useState('');
+  const [linkError, setLinkError] = useState('');
+  const [linkSuccess, setLinkSuccess] = useState('');
 
   const fetchAll = useCallback(async () => {
     if (!id) return;
@@ -58,7 +62,7 @@ export default function RiderDetailPage() {
     setRider(r as unknown as Rider);
 
     const [{ data: g }, { data: ec }] = await Promise.all([
-      supabase.from('guardian_riders').select('*, guardian:guardian_member_id(full_name, member_number, email, phone)').eq('rider_id', id).is('deleted_at', null),
+      supabase.from('guardian_riders').select('*, guardian:guardian_member_id(full_name, member_number, email, phone, profile_id)').eq('rider_id', id).is('deleted_at', null),
       supabase.from('emergency_contacts').select('*').eq('rider_id', id).is('deleted_at', null).order('priority'),
     ]);
     setGuardians((g || []) as unknown as GuardianRider[]);
@@ -106,6 +110,36 @@ export default function RiderDetailPage() {
     const { error: err } = await supabase.from('rider_notes').delete().eq('id', noteId);
     if (err) setError(err.message);
     else fetchAll();
+  };
+
+  const handleLinkProfile = async (memberId: string) => {
+    setLinkError('');
+    setLinkSuccess('');
+    if (!linkEmail.trim()) {
+      setLinkError('Enter the user\'s email address');
+      return;
+    }
+    setLinkingMemberId(memberId);
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const { data: session } = await supabase.auth.getSession();
+      const res = await fetch(`${supabaseUrl}/functions/v1/link-member-profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.session?.access_token}` },
+        body: JSON.stringify({ member_id: memberId, email: linkEmail.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setLinkError(data.error || 'Failed to link profile');
+      } else {
+        setLinkSuccess('Profile linked successfully');
+        setLinkEmail('');
+        fetchAll();
+      }
+    } catch {
+      setLinkError('Network error');
+    }
+    setLinkingMemberId(null);
   };
 
   const handleSaveMedical = async () => {
@@ -188,7 +222,7 @@ export default function RiderDetailPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.key ? 'border-primary-500 text-primary-700' : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+            }`
           >
             {tab.icon}
             {tab.label}
@@ -285,13 +319,48 @@ export default function RiderDetailPage() {
             ) : (
               <div className="space-y-2">
                 {guardians.map((g) => (
-                  <div key={g.id} className="flex items-center justify-between p-3 rounded-lg bg-cream-50">
-                    <div>
-                      <p className="font-medium text-gray-900">{g.guardian?.full_name || 'Unknown'}</p>
-                      <p className="text-xs text-gray-500 capitalize">Relationship: {g.relationship.replace('_', ' ')}</p>
-                      {g.guardian?.email && <p className="text-xs text-gray-500">{g.guardian.email}</p>}
-                      {g.guardian?.phone && <p className="text-xs text-gray-500">{g.guardian.phone}</p>}
+                  <div key={g.id} className="p-3 rounded-lg bg-cream-50 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">{g.guardian?.full_name || 'Unknown'}</p>
+                        <p className="text-xs text-gray-500 capitalize">Relationship: {g.relationship.replace('_', ' ')}</p>
+                        {g.guardian?.email && <p className="text-xs text-gray-500">{g.guardian.email}</p>}
+                        {g.guardian?.phone && <p className="text-xs text-gray-500">{g.guardian.phone}</p>}
+                      </div>
+                      {g.guardian?.profile_id ? (
+                        <span className="flex items-center gap-1 text-xs text-success-600 font-medium">
+                          <CheckCircle2 className="w-4 h-4" /> Login linked
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                          <AlertCircle className="w-4 h-4" /> No login linked
+                        </span>
+                      )}
                     </div>
+                    {canWriteRider && !g.guardian?.profile_id && (
+                      <div className="flex gap-2 pt-2 border-t border-cream-200">
+                        <input
+                          type="email"
+                          value={linkingMemberId === g.guardian_member_id ? linkEmail : ''}
+                          onChange={(e) => { setLinkingMemberId(g.guardian_member_id); setLinkEmail(e.target.value); setLinkError(''); setLinkSuccess(''); }}
+                          placeholder="User email to link..."
+                          className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 text-xs outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <button
+                          onClick={() => handleLinkProfile(g.guardian_member_id)}
+                          disabled={linkingMemberId === g.guardian_member_id && !linkEmail.trim()}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-500 text-white text-xs font-medium hover:bg-primary-600 disabled:opacity-50 transition-colors whitespace-nowrap"
+                        >
+                          <Link2 className="w-3 h-3" /> Link
+                        </button>
+                      </div>
+                    )}
+                    {linkingMemberId === g.guardian_member_id && linkError && (
+                      <p className="text-xs text-error-600">{linkError}</p>
+                    )}
+                    {linkingMemberId === g.guardian_member_id && linkSuccess && (
+                      <p className="text-xs text-success-600">{linkSuccess}</p>
+                    )}
                   </div>
                 ))}
               </div>
