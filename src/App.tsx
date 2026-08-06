@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
+// Client-side routing only — all navigation uses useNavigate, no location.href or <a href>
 import { useTranslation } from 'react-i18next';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import AppShell from '@/components/AppShell';
