@@ -9,12 +9,15 @@ type AuthView = 'signIn' | 'signUp' | 'resetPassword';
 export default function AuthPage() {
   const { t } = useTranslation();
   const { signIn, signUp, resetPassword } = useAuth();
-  const [view, setView] = useState<AuthView>('signIn');
+
+  const urlToken = new URLSearchParams(window.location.search).get('token') || '';
+
+  const [view, setView] = useState<AuthView>(urlToken ? 'signUp' : 'signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
   const [fullName, setFullName] = useState('');
-  const [invToken, setInvToken] = useState('');
+  const [invToken, setInvToken] = useState(urlToken);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -47,17 +50,21 @@ export default function AuthPage() {
       setError(t('auth.passwordMismatch'));
       return;
     }
+    if (invToken.trim()) {
+      sessionStorage.setItem('invitation_token', invToken);
+    }
     setLoading(true);
     const { error: err } = await signUp(email, password, fullName);
     if (err) {
       setError(err);
-    } else {
-      setSuccess(t('auth.signUpSuccess'));
-      if (invToken.trim()) {
-        sessionStorage.setItem('invitation_token', invToken);
-      }
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    const { error: signInErr } = await signIn(email, password);
+    if (signInErr) {
+      setError(signInErr);
+      setLoading(false);
+    }
   };
 
   const handleReset = async (e: React.FormEvent) => {
