@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   roles: UserRole[];
-  loading: boolean;
+  ready: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<UserRole[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
   const fetchRoles = useCallback(async (userId: string) => {
     const { data } = await supabase
@@ -50,29 +50,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchRoles]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      if (s?.user) {
-        fetchRoles(s.user.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
+    let ignore = false;
+    let initialized = false;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      if (!initialized) return;
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
-        (async () => {
-          await fetchRoles(s.user.id);
-        })();
+        setReady(false);
+        fetchRoles(s.user.id).then(() => { if (!ignore) setReady(true); });
       } else {
         setRoles([]);
+        setReady(true);
       }
     });
 
-    return () => subscription.unsubscribe();
+    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
+      if (ignore) return;
+      setSession(s);
+      setUser(s?.user ?? null);
+      if (s?.user) {
+        await fetchRoles(s.user.id);
+      }
+      initialized = true;
+      if (!ignore) setReady(true);
+    });
+
+    return () => {
+      ignore = true;
+      subscription.unsubscribe();
+    };
   }, [fetchRoles]);
 
   const signIn = async (email: string, password: string) => {
@@ -107,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
   return (
-    <AuthContext.Provider value={{ user, session, roles, loading, signIn, signUp, signOut, resetPassword, hasRole, isStaff, refreshRoles }}>
+    <AuthContext.Provider value={{ user, session, roles, ready, signIn, signUp, signOut, resetPassword, hasRole, isStaff, refreshRoles }}>
       {children}
     </AuthContext.Provider>
   );

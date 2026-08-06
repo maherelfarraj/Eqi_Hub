@@ -33,7 +33,7 @@ function InvitationAcceptor() {
 }
 
 function AppRoutes() {
-  const { user, roles, loading } = useAuth();
+  const { user, roles, ready } = useAuth();
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function AppRoutes() {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  if (loading) {
+  if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream-50">
         <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
@@ -58,14 +58,14 @@ function AppRoutes() {
     );
   }
 
-  // If user has no roles, show bootstrap page
   if (roles.length === 0) {
     return (
       <>
         <InvitationAcceptor />
         <Routes>
           <Route path="/bootstrap" element={<BootstrapPage />} />
-          <Route path="*" element={<Navigate to="/bootstrap" replace />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="*" element={<Navigate to="/auth" replace />} />
         </Routes>
       </>
     );
@@ -83,7 +83,6 @@ function AppRoutes() {
           <Route path="/settings" element={isManager ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
           <Route path="/users" element={isManager ? <UsersPage /> : <Navigate to="/dashboard" replace />} />
           <Route path="/audit-log" element={isManager ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
-          {/* Placeholder routes for future phases */}
           <Route path="/schedule" element={<PlaceholderPage title="Schedule" />} />
           <Route path="/riders" element={<PlaceholderPage title="Riders" />} />
           <Route path="/horses" element={<PlaceholderPage title="Horses" />} />
