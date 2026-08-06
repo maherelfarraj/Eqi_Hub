@@ -14,6 +14,7 @@ interface AuthContextType {
   ready: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUpWithInvitation: (email: string, password: string, fullName: string, token: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
   hasRole: (roleName: string) => boolean;
@@ -97,6 +98,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   };
 
+  const signUpWithInvitation = async (email: string, password: string, fullName: string, token: string) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const res = await fetch(`${supabaseUrl}/functions/v1/accept-invitation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, full_name: fullName, token }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      return { error: data.error || 'Registration failed' };
+    }
+
+    if (data.session) {
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+      if (sessionError) {
+        return { error: sessionError.message ?? null };
+      }
+    }
+
+    return { error: null };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setRoles([]);
@@ -115,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
   return (
-    <AuthContext.Provider value={{ user, session, roles, ready, signIn, signUp, signOut, resetPassword, hasRole, isStaff, refreshRoles }}>
+    <AuthContext.Provider value={{ user, session, roles, ready, signIn, signUp, signUpWithInvitation, signOut, resetPassword, hasRole, isStaff, refreshRoles }}>
       {children}
     </AuthContext.Provider>
   );

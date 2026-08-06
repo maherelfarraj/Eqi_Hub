@@ -8,7 +8,7 @@ type AuthView = 'signIn' | 'signUp' | 'resetPassword';
 
 export default function AuthPage() {
   const { t } = useTranslation();
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { signIn, signUp, signUpWithInvitation, resetPassword } = useAuth();
 
   const urlToken = new URLSearchParams(window.location.search).get('token') || '';
 
@@ -50,19 +50,18 @@ export default function AuthPage() {
       setError(t('auth.passwordMismatch'));
       return;
     }
-    if (invToken.trim()) {
-      sessionStorage.setItem('invitation_token', invToken);
-    }
     setLoading(true);
-    const { error: err } = await signUp(email, password, fullName);
-    if (err) {
-      setError(err);
-      setLoading(false);
-      return;
+    let result;
+    if (invToken.trim()) {
+      result = await signUpWithInvitation(email, password, fullName, invToken.trim());
+    } else {
+      result = await signUp(email, password, fullName);
+      if (!result.error) {
+        result = await signIn(email, password);
+      }
     }
-    const { error: signInErr } = await signIn(email, password);
-    if (signInErr) {
-      setError(signInErr);
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
     }
   };

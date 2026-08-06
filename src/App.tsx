@@ -10,27 +10,6 @@ import SettingsPage from '@/pages/SettingsPage';
 import UsersPage from '@/pages/UsersPage';
 import AuditLogPage from '@/pages/AuditLogPage';
 import '@/i18n';
-import { supabase } from '@/lib/supabase';
-
-function InvitationAcceptor() {
-  const { user, refreshRoles } = useAuth();
-
-  useEffect(() => {
-    if (!user) return;
-    const token = sessionStorage.getItem('invitation_token');
-    if (!token) return;
-
-    (async () => {
-      const { error } = await supabase.rpc('accept_invitation', { token_input: token });
-      if (!error) {
-        sessionStorage.removeItem('invitation_token');
-        await refreshRoles();
-      }
-    })();
-  }, [user, refreshRoles]);
-
-  return null;
-}
 
 function AppRoutes() {
   const { user, roles, ready } = useAuth();
@@ -60,14 +39,11 @@ function AppRoutes() {
 
   if (roles.length === 0) {
     return (
-      <>
-        <InvitationAcceptor />
-        <Routes>
-          <Route path="/bootstrap" element={<BootstrapPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
-        </Routes>
-      </>
+      <Routes>
+        <Route path="/bootstrap" element={<BootstrapPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
+      </Routes>
     );
   }
 
@@ -75,26 +51,23 @@ function AppRoutes() {
   const isManager = hasRole('owner') || hasRole('school_manager');
 
   return (
-    <>
-      <InvitationAcceptor />
-      <Routes>
-        <Route element={<AppShell />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/settings" element={isManager ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/users" element={isManager ? <UsersPage /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/audit-log" element={isManager ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/schedule" element={<PlaceholderPage title="Schedule" />} />
-          <Route path="/riders" element={<PlaceholderPage title="Riders" />} />
-          <Route path="/horses" element={<PlaceholderPage title="Horses" />} />
-          <Route path="/stable" element={<PlaceholderPage title="Stable Operations" />} />
-          <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
-          <Route path="/staff" element={<PlaceholderPage title="Staff" />} />
-          <Route index element={<Navigate to="/dashboard" replace />} />
-        </Route>
-        <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/settings" element={isManager ? <SettingsPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/users" element={isManager ? <UsersPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/audit-log" element={isManager ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/schedule" element={<PlaceholderPage title="Schedule" />} />
+        <Route path="/riders" element={<PlaceholderPage title="Riders" />} />
+        <Route path="/horses" element={<PlaceholderPage title="Horses" />} />
+        <Route path="/stable" element={<PlaceholderPage title="Stable Operations" />} />
+        <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
+        <Route path="/staff" element={<PlaceholderPage title="Staff" />} />
+        <Route index element={<Navigate to="/dashboard" replace />} />
+      </Route>
+      <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 }
 
