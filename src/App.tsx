@@ -9,6 +9,10 @@ import DashboardPage from '@/pages/DashboardPage';
 import SettingsPage from '@/pages/SettingsPage';
 import UsersPage from '@/pages/UsersPage';
 import AuditLogPage from '@/pages/AuditLogPage';
+import RidersListPage from '@/pages/RidersListPage';
+import RiderDetailPage from '@/pages/RiderDetailPage';
+import RiderFormPage from '@/pages/RiderFormPage';
+import ParentPortalPage from '@/pages/ParentPortalPage';
 import '@/i18n';
 
 function AppRoutes() {
@@ -49,6 +53,8 @@ function AppRoutes() {
 
   const hasRole = (name: string) => roles.some((r) => r.role_name === name);
   const isManager = hasRole('owner') || hasRole('school_manager');
+  const isStaff = hasRole('owner') || hasRole('school_manager') || hasRole('receptionist') || hasRole('instructor');
+  const isParent = hasRole('parent_guardian');
 
   return (
     <Routes>
@@ -58,7 +64,10 @@ function AppRoutes() {
         <Route path="/users" element={isManager ? <UsersPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="/audit-log" element={isManager ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="/schedule" element={<PlaceholderPage title="Schedule" />} />
-        <Route path="/riders" element={<PlaceholderPage title="Riders" />} />
+        <Route path="/riders" element={isStaff ? <RidersListPage /> : isParent ? <ParentPortalPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/riders/new" element={isStaff ? <RiderFormPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/riders/:id" element={isStaff ? <RiderDetailPage /> : isParent ? <ParentPortalPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/riders/:id/edit" element={isStaff ? <RiderFormPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="/horses" element={<PlaceholderPage title="Horses" />} />
         <Route path="/stable" element={<PlaceholderPage title="Stable Operations" />} />
         <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
