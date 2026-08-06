@@ -38,7 +38,7 @@ export interface GuardianRider {
   guardian_member_id: string;
   rider_id: string;
   relationship: GuardianRelationship;
-  guardian?: Pick<Member, 'full_name' | 'member_number' | 'email' | 'phone'>;
+  guardian?: Pick<Member, 'full_name' | 'member_number' | 'email' | 'phone'> & { profile_id: string | null };
 }
 
 export interface EmergencyContact {
