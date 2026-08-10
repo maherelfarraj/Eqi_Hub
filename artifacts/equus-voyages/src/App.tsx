@@ -48,7 +48,7 @@ function AppRoutes() {
   if (!user) {
     return (
       <Routes>
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth/*" element={<AuthPage />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     );
@@ -71,6 +71,7 @@ function AppRoutes() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route index element={<Navigate to="/dashboard" replace />} />
       </Route>
+      <Route path="/auth/update-password" element={<AuthPage />} />
       <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
