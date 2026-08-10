@@ -1,16 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Vite exposes env vars via import.meta.env — they must start with VITE_
+const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    'Supabase env vars (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) are not set. ' +
-    'Authentication and data features will not work until they are configured.',
+if (!url || !anonKey) {
+  throw new Error(
+    "Missing Supabase env vars. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Replit Secrets."
   );
 }
 
-export const supabase = createClient(
-  supabaseUrl ?? 'https://placeholder.supabase.co',
-  supabaseAnonKey ?? 'placeholder',
-);
+export const supabase = createClient(url, anonKey);
