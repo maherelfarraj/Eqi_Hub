@@ -1,0 +1,98 @@
+{
+  "translation": {
+    "app": {
+      "name": "Pay & Ride",
+      "tagline": "Equestrian School Management"
+    },
+    "auth": {
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "signOut": "Sign Out",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "fullName": "Full Name",
+      "forgotPassword": "Forgot Password?",
+      "resetPassword": "Reset Password",
+      "sendResetLink": "Send Reset Link",
+      "backToSignIn": "Back to Sign In",
+      "noAccount": "Don't have an account?",
+      "hasAccount": "Already have an account?",
+      "invitationToken": "Invitation Token",
+      "invitationRequired": "An invitation token is required to create an account",
+      "passwordMismatch": "Passwords do not match",
+      "signUpSuccess": "Account created successfully! Please check your email.",
+      "resetEmailSent": "Password reset link sent to your email",
+      "invalidCredentials": "Invalid email or password",
+      "bootstrap": "Claim Owner Role",
+      "bootstrapDesc": "You are the first user. Claim the owner role to manage this system.",
+      "bootstrapSuccess": "You are now the system owner!",
+      "bootstrapFailed": "Bootstrap failed. An owner may already exist.",
+      "openRegistrationNotice": "No owner has been set up yet. Create your account to become the system owner."
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "schedule": "Schedule",
+      "riders": "Riders",
+      "horses": "Horses",
+      "stable": "Stable Ops",
+      "billing": "Billing",
+      "staff": "Staff",
+      "settings": "Settings",
+      "users": "Users & Invitations",
+      "auditLog": "Audit Log"
+    },
+    "settings": {
+      "title": "Settings",
+      "timezone": "Timezone",
+      "currency": "Currency",
+      "dateFormat": "Date Format",
+      "taxRate": "Tax Rate (%)",
+      "saved": "Settings saved successfully",
+      "saveFailed": "Failed to save settings"
+    },
+    "users": {
+      "title": "Users & Invitations",
+      "invite": "Invite User",
+      "email": "Email Address",
+      "role": "Role",
+      "branch": "Branch",
+      "send": "Send Invitation",
+      "pending": "Pending Invitations",
+      "active": "Active Users",
+      "inviteSent": "Invitation sent successfully",
+      "inviteFailed": "Failed to send invitation",
+      "expires": "Expires",
+      "accepted": "Accepted",
+      "status": "Status"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "actor": "Actor",
+      "action": "Action",
+      "table": "Table",
+      "record": "Record",
+      "timestamp": "Timestamp",
+      "details": "Details",
+      "noEntries": "No audit log entries found"
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "search": "Search",
+      "filter": "Filter",
+      "noResults": "No results found",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "language": "Language",
+      "english": "English",
+      "arabic": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"
+    }
+  }
+}

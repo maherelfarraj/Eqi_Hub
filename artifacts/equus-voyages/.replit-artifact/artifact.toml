@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Equus Voyages"
+description = "A horse riding travel booking and management platform. It allows riders and equestrian tour operators to browse destinations, manage bookings, handle rider profiles, and access a parent portal for junior riders. Built with multilingual support (English and Arabic) and Supabase for data persistence."
+version = "1.0.0"
+id = "artifacts/equus-voyages"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20245
+
+[services.development]
+run = "pnpm --filter @workspace/equus-voyages run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/equus-voyages", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/equus-voyages/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20245"
+BASE_PATH = "/"
