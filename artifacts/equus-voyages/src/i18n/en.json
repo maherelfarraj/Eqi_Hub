@@ -1,8 +1,8 @@
 {
   "translation": {
     "app": {
-      "name": "Pay & Ride",
-      "tagline": "Equestrian School Management"
+      "name": "EquiVista",
+      "tagline": "Equestrian Performance"
     },
     "auth": {
       "signIn": "Sign In",
@@ -32,15 +32,21 @@
     },
     "nav": {
       "dashboard": "Dashboard",
-      "schedule": "Schedule",
-      "riders": "Riders",
+      "progress": "Progress",
+      "videoAnalysis": "Video Analysis",
+      "lessons": "Lessons",
       "horses": "Horses",
-      "stable": "Stable Ops",
+      "membership": "Membership",
+      "payments": "Payments",
       "billing": "Billing",
-      "staff": "Staff",
-      "settings": "Settings",
-      "users": "Users & Invitations",
-      "auditLog": "Audit Log"
+      "settings": "Settings"
+    },
+    "foundation": {
+      "eyebrow": "EquiVista workspace",
+      "introduction": "Your premium riding performance workspace is ready for the next build phase.",
+      "readyTitle": "Foundation ready",
+      "readyDescription": "Secure navigation, responsive layout, bilingual support, and the EquiVista design system are in place.",
+      "secureWorkspace": "Secure authenticated workspace"
     },
     "settings": {
       "title": "Settings",
@@ -92,7 +98,10 @@
       "next": "Next",
       "language": "Language",
       "english": "English",
-      "arabic": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"
+      "arabic": "العربية",
+      "openNavigation": "Open navigation",
+      "closeNavigation": "Close navigation",
+      "secureAccount": "Secure account"
     }
   }
 }

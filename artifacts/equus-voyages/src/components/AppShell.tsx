@@ -1,113 +1,157 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, Calendar, Users, Heart, Shield, Wallet,
-  UserCog, Settings, ScrollText, LogOut, Menu, X, Globe,
-} from 'lucide-react';
+  CalendarDays,
+  ChartNoAxesCombined,
+  Globe2,
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  ReceiptText,
+  Settings,
+  Sparkles,
+  Video,
+  X,
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+
+const navigation = [
+  { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { path: "/progress", labelKey: "nav.progress", icon: ChartNoAxesCombined },
+  { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
+  { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
+  { path: "/horses", labelKey: "nav.horses", icon: Heart },
+  { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
+  { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
+  { path: "/settings", labelKey: "nav.settings", icon: Settings },
+] as const;
 
 export default function AppShell() {
-  const { t } = useTranslation();
-  const { user, roles, signOut } = useAuth();
+  const { t, i18n } = useTranslation();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { i18n } = useTranslation();
+  const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/auth');
+    navigate("/auth", { replace: true });
   };
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'ar' ? 'en' : 'ar';
-    i18n.changeLanguage(newLang);
+  const toggleLanguage = async () => {
+    await i18n.changeLanguage(isRtl ? "en" : "ar");
   };
 
-  const hasRole = (name: string) => roles.some((r) => r.role_name === name);
-  const isStaff = hasRole('owner') || hasRole('school_manager') || hasRole('receptionist') || hasRole('instructor') || hasRole('stable_manager') || hasRole('groom') || hasRole('veterinarian') || hasRole('accountant');
-
-  const navItems = [
-    { path: '/dashboard', label: t('nav.dashboard'), icon: <LayoutDashboard className="w-5 h-5" />, roles: ['owner', 'school_manager', 'receptionist', 'instructor', 'stable_manager', 'groom', 'veterinarian', 'accountant', 'adult_rider', 'parent_guardian', 'junior_rider'] },
-    { path: '/schedule', label: t('nav.schedule'), icon: <Calendar className="w-5 h-5" />, roles: ['owner', 'school_manager', 'receptionist', 'instructor', 'adult_rider', 'parent_guardian', 'junior_rider'] },
-    { path: '/riders', label: t('nav.riders'), icon: <Users className="w-5 h-5" />, roles: ['owner', 'school_manager', 'receptionist', 'instructor'] },
-    { path: '/riders', label: 'My Children', icon: <Users className="w-5 h-5" />, roles: ['parent_guardian'] },
-    { path: '/horses', label: t('nav.horses'), icon: <Heart className="w-5 h-5" />, roles: ['owner', 'school_manager', 'receptionist', 'instructor', 'stable_manager', 'groom', 'veterinarian'] },
-    { path: '/stable', label: t('nav.stable'), icon: <Shield className="w-5 h-5" />, roles: ['owner', 'school_manager', 'stable_manager', 'groom'] },
-    { path: '/billing', label: t('nav.billing'), icon: <Wallet className="w-5 h-5" />, roles: ['owner', 'school_manager', 'accountant', 'receptionist'] },
-    { path: '/staff', label: t('nav.staff'), icon: <UserCog className="w-5 h-5" />, roles: ['owner', 'school_manager'] },
-    { path: '/users', label: t('nav.users'), icon: <Users className="w-5 h-5" />, roles: ['owner', 'school_manager'] },
-    { path: '/settings', label: t('nav.settings'), icon: <Settings className="w-5 h-5" />, roles: ['owner', 'school_manager'] },
-    { path: '/audit-log', label: t('nav.auditLog'), icon: <ScrollText className="w-5 h-5" />, roles: ['owner', 'school_manager'] },
-  ];
-
-  const visibleNavItems = navItems.filter((item) => item.roles.some((r) => roles.some((ur) => ur.role_name === r)));
+  const closedDrawerClass = isRtl
+    ? "translate-x-full lg:translate-x-0"
+    : "-translate-x-full lg:translate-x-0";
 
   return (
-    <div className="min-h-screen bg-cream-50 flex">
-      {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-white border-e border-cream-200 flex flex-col z-50 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        <div className="flex items-center justify-between p-4 border-b border-cream-200">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center">
-              <span className="text-white text-sm font-bold">P&R</span>
+    <div className="flex min-h-screen bg-cream-50 text-espresso">
+      <aside
+        className={`fixed inset-y-0 start-0 z-50 flex h-screen w-72 flex-col border-e border-cream-200 bg-cream-100 transition-transform duration-200 ease-out lg:sticky ${sidebarOpen ? "translate-x-0" : closedDrawerClass}`}
+        aria-label={t("app.name")}
+      >
+        <div className="flex items-center justify-between border-b border-cream-200 px-5 py-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-primary-500 bg-white font-serif text-lg text-primary-600 shadow-sm">
+              E
             </div>
-            <span className="font-semibold text-gray-900">{t('app.name')}</span>
+            <div className="min-w-0">
+              <p className="truncate font-serif text-xl leading-none text-espresso">
+                {t("app.name")}
+              </p>
+              <p className="mt-1 truncate text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-primary-600">
+                {t("app.tagline")}
+              </p>
+            </div>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
-            <X className="w-5 h-5" />
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-white hover:text-espresso lg:hidden"
+            aria-label={t("common.closeNavigation")}
+          >
+            <X className="size-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {visibleNavItems.map((item) => (
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {navigation.map(({ path, labelKey, icon: Icon }) => (
             <NavLink
-              key={item.path + item.label}
-              to={item.path}
+              key={path}
+              to={path}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-cream-50 hover:text-gray-900'
+                `group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition-colors ${
+                  isActive
+                    ? "border border-cream-200 bg-white text-primary-700 shadow-sm"
+                    : "border border-transparent text-text-secondary hover:border-cream-200 hover:bg-white/70 hover:text-espresso"
                 }`
               }
             >
-              {item.icon}
-              {item.label}
+              <Icon className="size-5 shrink-0 text-primary-500" />
+              <span>{t(labelKey)}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-3 border-t border-cream-200 space-y-2">
-          <button onClick={toggleLanguage} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-cream-50 w-full">
-            <Globe className="w-4 h-4" />
-            {i18n.language === 'ar' ? 'English' : 'العربية'}
+        <div className="space-y-2 border-t border-cream-200 p-4">
+          <div className="rounded-xl border border-cream-200 bg-white/70 px-3.5 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-600">
+              {t("common.secureAccount")}
+            </p>
+            <p className="mt-1 truncate text-sm text-text-secondary">
+              {user?.email}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-white hover:text-espresso"
+          >
+            <Globe2 className="size-4 text-primary-500" />
+            {isRtl ? t("common.english") : t("common.arabic")}
           </button>
-          <button onClick={handleSignOut} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-error-600 hover:bg-error-50 w-full">
-            <LogOut className="w-4 h-4" />
-            {t('auth.signOut')}
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-error-500 transition-colors hover:bg-error-50"
+          >
+            <LogOut className="size-4" />
+            {t("auth.signOut")}
           </button>
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/20 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-espresso/20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-label={t("common.closeNavigation")}
+        />
       )}
 
-      {/* Main content */}
-      <div className="flex-1 min-w-0">
-        <header className="lg:hidden sticky top-0 bg-white border-b border-cream-200 px-4 py-3 flex items-center justify-between z-30">
-          <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
-            <Menu className="w-6 h-6" />
+      <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-cream-200 bg-cream-50 px-4 py-3 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="rounded-full border border-cream-200 bg-white p-2 text-espresso shadow-sm"
+            aria-label={t("common.openNavigation")}
+          >
+            <Menu className="size-5" />
           </button>
-          <span className="font-semibold text-gray-900">{t('app.name')}</span>
-          <div className="w-6" />
+          <span className="font-serif text-xl text-espresso">
+            {t("app.name")}
+          </span>
+          <span className="size-9" aria-hidden="true" />
         </header>
 
-        <main className="p-4 lg:p-6 max-w-7xl mx-auto">
-          <div className="mb-4 hidden lg:flex items-center justify-end">
-            <span className="text-sm text-gray-500">{user?.email}</span>
-          </div>
+        <main className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
