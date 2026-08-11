@@ -41,11 +41,17 @@ export class AnalysisWorker {
         const result = await this.analyze(job);
         await this.repository.complete(job.id, result);
         summary.analyzed += 1;
-        this.logger.info("Analysis completed", { analysisId: job.id, score: result.score });
+        this.logger.info(`[worker] analyzed ${job.id} score=${result.score}`, {
+          analysisId: job.id,
+          score: result.score,
+        });
       } catch (error) {
         summary.failed += 1;
         const message = error instanceof Error ? error.message : String(error);
-        this.logger.error("Analysis failed", { analysisId: job.id, error: message });
+        this.logger.error(`[worker] failed ${job.id}: ${message}`, {
+          analysisId: job.id,
+          error: message,
+        });
         try {
           await this.repository.fail(job.id);
         } catch (markFailedError) {

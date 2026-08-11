@@ -19,7 +19,11 @@ async function poll(): Promise<void> {
   polling = true;
   try {
     const summary = await worker.poll();
-    if (summary.discovered > 0) logger.info("Poll completed", { ...summary });
+    if (summary.discovered === 0) {
+      logger.info("[worker] heartbeat — queue empty");
+    } else {
+      logger.info("[worker] poll completed", { ...summary });
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error("Poll failed", { error: message });
@@ -39,10 +43,11 @@ const server = createServer((request, response) => {
 });
 
 server.listen(config.port, "0.0.0.0", () => {
-  logger.info("EquiVista analysis worker started", {
-    port: config.port,
-    pollIntervalMs: config.pollIntervalMs,
-  });
+  logger.info(`[worker] health endpoint on :${config.port}`);
+  logger.info(
+    `[worker] polling video_analyses every ${config.pollIntervalMs / 1_000}s`,
+    { pollIntervalMs: config.pollIntervalMs },
+  );
 });
 
 void poll();
