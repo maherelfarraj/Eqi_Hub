@@ -10,7 +10,7 @@
     "dev": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node --enable-source-maps dist/index.js",
-    "test": "node --import tsx --test src/worker.test.ts src/pipeline/pipeline.test.ts",
+    "test": "node --import tsx --test src/worker.test.ts src/pipeline/pipeline.test.ts src/pipeline/ffmpeg.test.ts src/pipeline/rubric.test.ts src/pipeline/llm.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
