@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 type AuthView =
@@ -519,6 +519,39 @@ export default function AuthPage() {
             {t("auth.privacyNote")}
           </div>
         </section>
+
+        <nav
+          className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-semibold text-primary-700"
+          aria-label={t("legal.navigationLabel")}
+        >
+          <Link
+            className="hover:text-primary-800 hover:underline"
+            to="/legal/terms"
+          >
+            {t("legal.nav.terms")}
+          </Link>
+          <Link
+            className="hover:text-primary-800 hover:underline"
+            to="/legal/privacy"
+          >
+            {t("legal.nav.privacy")}
+          </Link>
+          <Link
+            className="hover:text-primary-800 hover:underline"
+            to="/legal/refunds"
+          >
+            {t("legal.nav.refunds")}
+          </Link>
+          <Link
+            className="hover:text-primary-800 hover:underline"
+            to="/legal/contact"
+          >
+            {t("legal.nav.contact")}
+          </Link>
+        </nav>
+        <p className="mt-3 text-center text-[0.7rem] leading-5 text-text-secondary">
+          {t("legal.companyLine")}
+        </p>
       </div>
     </main>
   );

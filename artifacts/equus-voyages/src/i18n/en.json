@@ -237,6 +237,172 @@
       "description": "Your account remains secure. Try loading this screen again.",
       "retry": "Try again"
     },
+    "legal": {
+      "eyebrow": "EquiVista policies",
+      "lastUpdated": "Last updated: 11 August 2026",
+      "backToSignIn": "Back to secure sign in",
+      "navigationLabel": "Legal and support pages",
+      "contactDetails": "EquiVista contact details",
+      "address": "Amman, Jordan",
+      "companyLine": "EquiVista is operated by شركة النظم الذكية للطاقة المتجددة / ذات مسؤولية محدودة.",
+      "registrationLine": "Jordan registration no. 83168 · National establishment no. 200214377",
+      "nav": {
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "refunds": "Refunds",
+        "contact": "Contact"
+      },
+      "documents": {
+        "terms": {
+          "title": "Terms of Service",
+          "introduction": "These terms govern access to EquiVista’s equestrian training, membership, lesson-management, and rider video-analysis services.",
+          "sections": {
+            "operator": {
+              "title": "1. Service operator",
+              "body": "EquiVista is a product and trading name operated by شركة النظم الذكية للطاقة المتجددة / ذات مسؤولية محدودة, a Jordanian limited-liability company registered under number 83168 and national establishment number 200214377, with its registered headquarters in Amman, Jordan."
+            },
+            "services": {
+              "title": "2. EquiVista services",
+              "body": "EquiVista provides account-based tools for rider progress, horses, lessons, memberships, billing records, private video uploads, and AI-assisted riding analysis. Features may be introduced, updated, or withdrawn as the service develops. Material changes affecting a paid service will be communicated where reasonably possible."
+            },
+            "accounts": {
+              "title": "3. Accounts and authority",
+              "body": "You must provide accurate information, protect your sign-in credentials, and use only accounts and records you are authorized to access. Guardians, riders, trainers, and administrators must respect the permissions assigned to their roles. Notify us promptly if you suspect unauthorized access."
+            },
+            "memberships": {
+              "title": "4. Memberships and billing",
+              "body": "The price, currency, included lessons or analyses, billing period, and renewal terms are shown before purchase. EquiVista’s current launch plans are priced in Jordanian dinars. Recurring charges begin only after a supported payment method is authorized. You are responsible for reviewing the order summary before confirming payment."
+            },
+            "ai": {
+              "title": "5. AI-assisted riding feedback",
+              "body": "Video-analysis scores and coaching observations are generated from visible riding footage and are educational training aids. They are not veterinary, medical, safety, competition-judging, or professional-certification decisions. Riders and coaches remain responsible for safe training choices and should obtain qualified advice where needed."
+            },
+            "acceptableUse": {
+              "title": "6. Acceptable use and uploaded content",
+              "body": "Upload only content you own or are authorized to use and process. Do not upload unlawful, abusive, deceptive, infringing, or privacy-violating material. Where a video contains another person or a minor, you are responsible for obtaining the required consent from the rider or guardian."
+            },
+            "availability": {
+              "title": "7. Availability and changes",
+              "body": "We work to keep EquiVista available and secure, but maintenance, networks, third-party services, or events outside our control may interrupt access. We do not promise uninterrupted availability. We may make reasonable changes needed for security, compliance, reliability, or product improvement."
+            },
+            "termination": {
+              "title": "8. Suspension and termination",
+              "body": "You may stop using EquiVista at any time and may cancel an eligible membership through the available account controls or by contacting us. We may suspend or close access for fraud, security risk, unlawful use, material breach, or non-payment, subject to applicable law."
+            },
+            "liability": {
+              "title": "9. Responsibility and liability",
+              "body": "Equestrian activity involves inherent risk. EquiVista does not replace instruction, supervision, safety equipment, or professional judgment. To the fullest extent permitted by applicable law, liability is limited to direct, proven loss arising from the affected paid service; nothing in these terms excludes rights or liability that cannot legally be excluded."
+            },
+            "law": {
+              "title": "10. Governing law and contact",
+              "body": "These terms are governed by the laws of the Hashemite Kingdom of Jordan. Questions, complaints, or notices may be sent to admin@equivista.net or to the contact details published on this website."
+            }
+          }
+        },
+        "privacy": {
+          "title": "Privacy Notice",
+          "introduction": "This notice explains what EquiVista collects, why it is used, how riding videos and payments are handled, and how to contact us about your information.",
+          "sections": {
+            "controller": {
+              "title": "1. Who controls your information",
+              "body": "The data controller for EquiVista is شركة النظم الذكية للطاقة المتجددة / ذات مسؤولية محدودة, Jordan registration no. 83168, headquartered in Amman, Jordan. Privacy requests may be sent to admin@equivista.net."
+            },
+            "collected": {
+              "title": "2. Information we collect",
+              "body": "We may collect account and profile details; rider, guardian, trainer, horse, lesson, membership, and billing records; private videos and analysis results; support communications; and limited technical or usage information needed to secure and operate the service. Payment records may include provider references, payment status, card brand, expiry, and last four digits, but not raw card numbers or security codes."
+            },
+            "purposes": {
+              "title": "3. Why we use information",
+              "body": "We use information to authenticate users, provide role-based access, manage lessons and memberships, process and display riding analyses, communicate account or service updates, maintain security, prevent abuse, meet legal obligations, and improve EquiVista."
+            },
+            "video": {
+              "title": "4. Private videos and AI processing",
+              "body": "Uploaded riding videos are stored privately and played through time-limited signed links. Authorized processing workers may extract selected frames for riding analysis. When AI analysis is enabled, those frames and necessary session context may be sent to the configured AI service provider. Do not upload footage unless you have authority and any required rider or guardian consent."
+            },
+            "payments": {
+              "title": "5. Payments",
+              "body": "When live payments are enabled, HyperPay and its acquiring-bank partners process payment credentials through their secure payment flow. EquiVista is designed not to collect or store raw card numbers or CVC codes. We receive only the transaction, token, status, and limited card metadata needed for membership and support."
+            },
+            "sharing": {
+              "title": "6. Service providers and disclosures",
+              "body": "We use service providers for hosting, authentication, database and private storage, worker processing, transactional email, AI analysis, and payments. These currently may include Replit, Supabase, Railway, Resend, the configured AI provider, and HyperPay. We may also disclose information when required by law, to protect users and the service, or during a legitimate corporate transaction."
+            },
+            "retention": {
+              "title": "7. Retention and security",
+              "body": "Information is kept only as long as reasonably required for the service, account, legal, security, and financial-record purposes. We use access controls, row-level authorization, private storage, signed links, encrypted connections, and server-only credentials. No online service can guarantee absolute security."
+            },
+            "rights": {
+              "title": "8. Your choices and requests",
+              "body": "You may ask to access, correct, export, or delete eligible personal information, object to certain processing, or withdraw consent where consent is the legal basis. Some records may be retained where required for security, accounting, disputes, or law. Send requests from your registered email to admin@equivista.net."
+            },
+            "minors": {
+              "title": "9. Riders under legal age",
+              "body": "A rider under the applicable legal age must use EquiVista through or with authorization from a parent, guardian, or responsible academy. The authorizing adult is responsible for account creation, permissions, uploads, and consent for processing the minor’s information."
+            }
+          }
+        },
+        "refunds": {
+          "title": "Cancellation & Refund Policy",
+          "introduction": "This policy explains membership cancellation, eligible refund situations, lesson or analysis credits, and how to request review of a charge.",
+          "sections": {
+            "overview": {
+              "title": "1. Scope",
+              "body": "This policy applies to EquiVista memberships, lesson entitlements, and video-analysis entitlements purchased through the service. Any different terms shown for a specific academy, event, or one-time service will be displayed before confirmation."
+            },
+            "cancellation": {
+              "title": "2. Membership cancellation",
+              "body": "You may cancel a recurring membership before its next renewal through the available account controls or by contacting admin@equivista.net. Cancellation prevents future renewal charges. The confirmation shown at cancellation will state when access and unused entitlements end."
+            },
+            "eligible": {
+              "title": "3. Charges eligible for review",
+              "body": "We will review refund requests for duplicate charges, unauthorized charges reported promptly, payments taken after a confirmed cancellation, or a paid digital service that EquiVista could not deliver because of a verified technical failure. Refunds required by applicable Jordanian law remain available."
+            },
+            "notEligible": {
+              "title": "4. Normally non-refundable items",
+              "body": "Used lessons, completed analyses, consumed membership entitlements, missed sessions, and partially used billing periods are normally non-refundable unless required by law or caused by a verified EquiVista error. A change of mind after using the service does not by itself create a refund right."
+            },
+            "lessons": {
+              "title": "5. Lessons and service credits",
+              "body": "If EquiVista or the responsible academy cancels a confirmed lesson, the account may receive a rescheduled lesson or an equivalent credit. Customer-requested rescheduling, late cancellation, and no-show treatment may depend on the booking terms displayed for that lesson."
+            },
+            "request": {
+              "title": "6. How to request a refund",
+              "body": "Email admin@equivista.net from the account’s registered email within 14 calendar days of the charge. Include the account name, invoice or transaction reference, charge date and amount, and the reason for the request. Do not email full card numbers, passwords, or security codes."
+            },
+            "processing": {
+              "title": "7. Decision and payment timing",
+              "body": "We will acknowledge the request and review the account and provider records. Approved refunds are returned to the original payment method where possible. HyperPay, the acquiring bank, and the card issuer control final settlement timing, so the credit may take additional business days to appear."
+            }
+          }
+        },
+        "contact": {
+          "title": "Contact EquiVista",
+          "introduction": "Contact the EquiVista team about accounts, privacy, memberships, billing, technical support, or merchant and partnership enquiries.",
+          "sections": {
+            "support": {
+              "title": "Customer and account support",
+              "body": "For sign-in, profile, lessons, horses, memberships, video analysis, or general service questions, email admin@equivista.net from your registered address whenever possible."
+            },
+            "company": {
+              "title": "Registered company",
+              "body": "EquiVista is operated by شركة النظم الذكية للطاقة المتجددة / ذات مسؤولية محدودة.\nJordan registration no. 83168.\nNational establishment no. 200214377.\nRegistered headquarters: Amman, Jordan."
+            },
+            "payments": {
+              "title": "Payments and refunds",
+              "body": "For a billing question, include the invoice or transaction reference, date, amount, and a short description. Never send a full card number, CVC, account password, or payment-provider secret by email."
+            },
+            "privacy": {
+              "title": "Privacy requests",
+              "body": "To request access, correction, export, or deletion of eligible personal information, email admin@equivista.net from your registered account and state the request clearly. Identity verification may be required before information is released or changed."
+            },
+            "security": {
+              "title": "Security reports",
+              "body": "Report suspected unauthorized access, exposed credentials, fraudulent payments, or a security concern promptly to admin@equivista.net. Do not include secrets in the initial message; we will provide a safe follow-up channel if needed."
+            }
+          }
+        }
+      }
+    },
     "notFound": {
       "eyebrow": "404 · Lost trail",
       "title": "This page is not in the arena",

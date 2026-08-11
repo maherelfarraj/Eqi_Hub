@@ -18,6 +18,7 @@ const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const HorsesPage = lazy(() => import("@/pages/HorsesPage"));
 const LessonsPage = lazy(() => import("@/pages/LessonsPage"));
+const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const MembershipPage = lazy(() => import("@/pages/MembershipPage"));
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
@@ -85,6 +86,15 @@ function AppRoutes() {
   if (!user) {
     return (
       <Routes>
+        <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
+        <Route
+          path="/legal/:document"
+          element={
+            <SuspendedPage fullScreen>
+              <LegalPage />
+            </SuspendedPage>
+          }
+        />
         <Route
           path="/auth/*"
           element={
@@ -100,6 +110,15 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
+      <Route
+        path="/legal/:document"
+        element={
+          <SuspendedPage fullScreen>
+            <LegalPage />
+          </SuspendedPage>
+        }
+      />
       <Route element={<AppShell />}>
         <Route
           path="/dashboard"
