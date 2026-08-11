@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import type { AIFeedback, Metric, QueryState, TrainerComment, UploadVideoInput, VideoAnalysisDetail, VideoAnalysisListItem } from "./types";
+import type {
+  AIFeedback,
+  Metric,
+  QueryState,
+  TrainerComment,
+  UploadVideoInput,
+  VideoAnalysisDetail,
+  VideoAnalysisListItem,
+} from "./types";
 import { useQuery, requireUserId, cents } from "./_shared";
 
 export const mapAnalysis = (a: any): VideoAnalysisListItem => ({
@@ -13,6 +21,44 @@ export const mapAnalysis = (a: any): VideoAnalysisListItem => ({
   createdAt: a.created_at,
   thumbnailUrl: a.thumbnail_url,
 });
+
+function normalizeMetrics(value: unknown): Metric[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") return [];
+
+    const metric = entry as Partial<Metric>;
+    if (
+      typeof metric.category !== "string" ||
+      typeof metric.score !== "number" ||
+      !Number.isFinite(metric.score)
+    ) {
+      return [];
+    }
+
+    return [{ category: metric.category, score: metric.score }];
+  });
+}
+
+function normalizeFeedback(value: unknown): AIFeedback {
+  const raw =
+    value && typeof value === "object" ? (value as Partial<AIFeedback>) : {};
+
+  return {
+    strengths: Array.isArray(raw.strengths)
+      ? raw.strengths.filter(
+          (strength): strength is string => typeof strength === "string",
+        )
+      : [],
+    improvements: Array.isArray(raw.improvements)
+      ? raw.improvements.filter(
+          (improvement): improvement is string =>
+            typeof improvement === "string",
+        )
+      : [],
+  };
+}
 
 export function useVideoAnalyses(): QueryState<VideoAnalysisListItem[]> & {
   refetch: () => void;
@@ -55,11 +101,8 @@ export function useVideoAnalysis(
     return {
       ...mapAnalysis(a),
       videoUrl,
-      metrics: (a.metrics as Metric[]) ?? [],
-      aiFeedback: (a.ai_feedback as AIFeedback) ?? {
-        strengths: [],
-        improvements: [],
-      },
+      metrics: normalizeMetrics(a.metrics),
+      aiFeedback: normalizeFeedback(a.ai_feedback),
       trainerComment: (a.trainer_comment as TrainerComment) ?? null,
     };
   }, [id]);

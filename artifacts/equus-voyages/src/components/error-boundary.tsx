@@ -3,7 +3,9 @@ import {
   type ComponentType,
   type ErrorInfo,
   type ReactNode,
-} from 'react';
+} from "react";
+import { AlertTriangle, RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export interface ErrorFallbackProps {
   error: Error;
@@ -25,7 +27,7 @@ function toError(value: unknown): Error {
   if (value instanceof Error) {
     return value;
   }
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return new Error(value);
   }
   try {
@@ -36,28 +38,36 @@ function toError(value: unknown): Error {
 }
 
 function DefaultFallback({ error, resetError }: ErrorFallbackProps) {
+  const { t } = useTranslation();
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6">
-      <div className="max-w-lg w-full text-center">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Something went wrong
+    <div className="flex min-h-screen w-full items-center justify-center bg-cream-50 p-6">
+      <div className="w-full max-w-lg rounded-2xl border border-cream-200 bg-white p-8 text-center shadow-sm sm:p-10">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full border border-primary-300 bg-primary-50 text-primary-700">
+          <AlertTriangle className="size-6" aria-hidden="true" />
+        </div>
+        <p className="mt-5 text-xs font-bold uppercase tracking-[0.2em] text-primary-600">
+          {t("errorBoundary.eyebrow")}
+        </p>
+        <h1 className="mt-2 font-serif text-3xl text-espresso">
+          {t("errorBoundary.title")}
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
-          This part of the app hit an error. The rest of the app is still
-          running.
+        <p className="mt-3 text-sm leading-6 text-text-secondary">
+          {t("errorBoundary.description")}
         </p>
         {/* Dev only: messages can carry API responses and other internals. */}
         {import.meta.env.DEV ? (
-          <pre className="mt-4 overflow-x-auto rounded bg-gray-100 p-3 text-left text-xs text-gray-800">
+          <pre className="mt-5 overflow-x-auto rounded-xl bg-cream-100 p-4 text-start text-xs text-espresso">
             {error.message || String(error)}
           </pre>
         ) : null}
         <button
           type="button"
           onClick={resetError}
-          className="mt-4 rounded bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-700"
+          className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
         >
-          Try again
+          <RotateCcw className="size-4" aria-hidden="true" />
+          {t("errorBoundary.retry")}
         </button>
       </div>
     </div>
@@ -75,11 +85,13 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: unknown, info: ErrorInfo): void {
-    console.error(
-      'ErrorBoundary caught an error:',
-      toError(error),
-      info.componentStack,
-    );
+    if (import.meta.env.DEV) {
+      console.error(
+        "ErrorBoundary caught an error:",
+        toError(error),
+        info.componentStack,
+      );
+    }
   }
 
   componentDidUpdate(prevProps: ErrorBoundaryProps): void {

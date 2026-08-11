@@ -9,6 +9,7 @@
       "signUp": "إنشاء حساب",
       "createAccount": "إنشاء حساب",
       "signOut": "تسجيل الخروج",
+      "signingOut": "جارٍ تسجيل الخروج...",
       "email": "البريد الإلكتروني",
       "password": "كلمة المرور",
       "newPassword": "كلمة المرور الجديدة",
@@ -56,6 +57,7 @@
         "alreadyRegistered": "يوجد حساب مرتبط بهذا البريد الإلكتروني.",
         "rateLimited": "محاولات كثيرة جداً. انتظر قليلاً ثم حاول مجدداً.",
         "recoveryExpired": "رابط الاستعادة غير صالح أو منتهي الصلاحية. اطلب رابطاً جديداً.",
+        "signOutFailed": "تعذر تسجيل خروجك. يرجى المحاولة مجدداً.",
         "generic": "تعذر إكمال الطلب. يرجى المحاولة مرة أخرى."
       }
     },
@@ -159,7 +161,7 @@
       "titleLabel": "عنوان التحليل", "horseLabel": "الحصان", "noHorse": "لم يتم اختيار حصان", "disciplineLabel": "التخصص", "sessionDate": "تاريخ الجلسة",
       "discipline": { "flatwork": "العمل المسطح", "showJumping": "قفز الحواجز", "dressage": "الترويض" },
       "status": { "uploaded": "تم الرفع", "processing": "قيد المعالجة", "analyzed": "تم التحليل", "failed": "فشل" },
-      "processingStatus": "تقدم التحليل", "failedDescription": "فشلت المعالجة. ابدأ رفعاً جديداً للمحاولة دون تغيير السجل الأصلي.", "retryAsNewUpload": "الرفع كتحليل جديد",
+      "processingStatus": "تقدم التحليل", "processingTitle": "تحليلك قيد التنفيذ", "processingDescription": "يقوم عامل Railway بإعداد هذه الجولة. حدّث الصفحة قريباً لعرض التشغيل والمقاييس والملاحظات.", "failedDescription": "فشلت المعالجة. ابدأ رفعاً جديداً للمحاولة دون تغيير السجل الأصلي.", "retryAsNewUpload": "الرفع كتحليل جديد",
       "performanceMetrics": "مقاييس الأداء", "metricsChartLabel": "مخطط راداري لمقاييس التحليل", "noMetrics": "المقاييس التفصيلية غير متاحة بعد.",
       "strengths": "نقاط القوة", "improvements": "فرص التحسين", "noStrengths": "ستظهر نقاط القوة بعد التحليل.", "noImprovements": "ستظهر إرشادات التحسين بعد التحليل.",
       "trainerComment": "تعليق المدرب", "noTrainerComment": "لم تتم إضافة تعليق من المدرب.",
@@ -228,6 +230,18 @@
     },
     "status": {
       "pending": "معلق", "confirmed": "مؤكد", "completed": "مكتمل", "cancelled": "ملغى", "trialing": "تجريبي", "active": "نشط", "past_due": "متأخر", "uploaded": "تم الرفع", "processing": "قيد المعالجة", "analyzed": "تم التحليل", "failed": "فشل", "paid": "مدفوع", "open": "مفتوح", "overdue": "متأخر", "void": "ملغى", "resting": "راحة", "retired": "متقاعد"
+    },
+    "errorBoundary": {
+      "eyebrow": "استعادة EquiVista",
+      "title": "تعذر عرض هذه الصفحة",
+      "description": "يبقى حسابك آمناً. حاول تحميل هذه الشاشة مرة أخرى.",
+      "retry": "حاول مجدداً"
+    },
+    "notFound": {
+      "eyebrow": "404 · مسار غير موجود",
+      "title": "هذه الصفحة ليست في الميدان",
+      "description": "ربما تغيّر العنوان أو لم تعد الصفحة متاحة.",
+      "backToDashboard": "العودة إلى لوحة التحكم"
     },
     "foundation": {
       "eyebrow": "مساحة EquiVista",
