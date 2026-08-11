@@ -28,20 +28,20 @@ interface AuthContextType {
     password: string,
     fullName: string,
   ) => Promise<{ error: string | null }>;
-  signUpWithInvitation: (
-    email: string,
-    password: string,
-    fullName: string,
-    token: string,
-  ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
+  updatePassword: (password: string) => Promise<{ error: string | null }>;
   hasRole: (roleName: string) => boolean;
   isStaff: () => boolean;
   refreshRoles: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+function authRedirectUrl(path: string) {
+  const appBaseUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
+  return new URL(path, appBaseUrl).toString();
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -130,48 +130,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: authRedirectUrl("auth"),
+      },
     });
     return { error: error?.message ?? null };
-  };
-
-  const signUpWithInvitation = async (
-    email: string,
-    password: string,
-    fullName: string,
-    token: string,
-  ) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const response = await fetch(
-      `${supabaseUrl}/functions/v1/accept-invitation`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          full_name: fullName,
-          token,
-        }),
-      },
-    );
-    const data = await response.json();
-
-    if (!response.ok || data.error) {
-      return { error: data.error || "Registration failed" };
-    }
-
-    if (data.session) {
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-      });
-      if (sessionError) {
-        return { error: sessionError.message ?? null };
-      }
-    }
-
-    return { error: null };
   };
 
   const signOut = async () => {
@@ -180,7 +144,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: authRedirectUrl("auth/update-password"),
+    });
+    return { error: error?.message ?? null };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
     return { error: error?.message ?? null };
   };
 
@@ -201,9 +172,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ready,
         signIn,
         signUp,
-        signUpWithInvitation,
         signOut,
         resetPassword,
+        updatePassword,
         hasRole,
         isStaff,
         refreshRoles,
