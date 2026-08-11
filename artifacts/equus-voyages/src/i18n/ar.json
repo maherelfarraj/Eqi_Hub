@@ -70,6 +70,165 @@
       "billing": "الفواتير",
       "settings": "الإعدادات"
     },
+    "dashboard": {
+      "greeting": "مرحباً بعودتك، {{name}}",
+      "rider": "الفارس",
+      "description": "نظرة هادئة على دروسك القادمة وتقدمك ونشاط حسابك.",
+      "uploadVideo": "رفع فيديو",
+      "bookLesson": "حجز درس",
+      "viewInvoices": "عرض الفواتير",
+      "upcomingLessons": "الدروس القادمة",
+      "noneScheduled": "لا يوجد موعد بعد",
+      "membership": "العضوية",
+      "noPlan": "لا توجد خطة",
+      "explorePlans": "استكشف العضويات",
+      "horses": "الخيول",
+      "inStable": "في إسطبل EquiVista الخاص بك",
+      "outstanding": "الرصيد المستحق",
+      "invoiceCount": "{{count}} فاتورة مفتوحة",
+      "invoiceCount_zero": "لا توجد فواتير مفتوحة",
+      "invoiceCount_one": "فاتورة مفتوحة واحدة",
+      "invoiceCount_two": "فاتورتان مفتوحتان",
+      "invoiceCount_few": "{{count}} فواتير مفتوحة",
+      "invoiceCount_many": "{{count}} فاتورة مفتوحة",
+      "invoiceCount_other": "{{count}} فاتورة مفتوحة",
+      "onboardingEyebrow": "ابدأ من هنا",
+      "onboardingTitle": "جهّز مساحة الفروسية الخاصة بك",
+      "addHorse": "أضف حصانك الأول",
+      "choosePlan": "اختر عضوية",
+      "uploadFirstRide": "ارفع جولتك الأولى",
+      "progressTitle": "اتجاه الأداء",
+      "progressDescription": "درجات أحدث الجولات التي تم تحليلها.",
+      "noProgressTitle": "سيظهر اتجاهك هنا",
+      "noProgressDescription": "ارفع فيديو فروسية ودع EquiVista يحلله لبدء تتبع التقدم.",
+      "nextLessons": "الدروس التالية",
+      "recentAnalyses": "التحليلات الحديثة",
+      "noLessonsTitle": "لا توجد دروس قادمة",
+      "noLessonsDescription": "احجز وقتاً مع مدرب عندما تكون مستعداً للجلسة التالية.",
+      "noAnalysesTitle": "لا توجد تحليلات بعد",
+      "noAnalysesDescription": "ستظهر أحدث تحليلات الفروسية هنا بعد أول رفع.",
+      "noHorse": "لم يتم اختيار حصان",
+      "emptyTitle": "يتم تجهيز لوحة التحكم",
+      "emptyDescription": "أكمل ملفك وأضف نشاط الفروسية لعرض ملخصك الشخصي."
+    },
+    "progress": {
+      "eyebrow": "تطور الفروسية",
+      "title": "التقدّم",
+      "description": "تابع درجاتك ونقاط قوتك واستمراريتك عبر جلسات الفروسية المحللة.",
+      "period": "فترة التقدم",
+      "period30": "30 يوماً",
+      "period90": "90 يوماً",
+      "period365": "سنة واحدة",
+      "averageScore": "متوسط الدرجة",
+      "outOf100": "من 100",
+      "improvement": "التحسن",
+      "overPeriod": "من أول درجة إلى أحدثها",
+      "sessions": "الجلسات",
+      "analyzedRides": "الجولات المحللة في هذه الفترة",
+      "topDiscipline": "التخصص الأبرز",
+      "mostPracticed": "الأكثر تحليلاً",
+      "scoreTrend": "الدرجة عبر الزمن",
+      "scoreTrendDescription": "درجة التحليل لكل جلسة في الفترة المحددة.",
+      "categoryScores": "أداء الفئات",
+      "categoryDescription": "متوسط مقاييس الوضعية والفروسية حسب الفئة.",
+      "noScoresTitle": "لا توجد درجات في هذه الفترة",
+      "noScoresDescription": "اختر فترة أطول أو ارفع جولة جديدة لبناء سجل الدرجات.",
+      "noCategoriesTitle": "لا توجد مقاييس فئات بعد",
+      "noCategoriesDescription": "ستظهر المقاييس التفصيلية بعد إكمال العامل لتحليل الجولة.",
+      "performanceLadder": "سُلّم الأداء",
+      "tier": "المستوى {{level}}",
+      "ladderDerived": "هذا المستوى المرئي مشتق من متوسط درجة التحليل الحالية.",
+      "highestTier": "تم بلوغ أعلى مستوى",
+      "nextTier": "التقدم نحو المستوى التالي",
+      "sessionHistory": "سجل الجلسات",
+      "sessionDescription": "افتح أي جلسة لمراجعة تحليل الفيديو الكامل.",
+      "horse": "الحصان",
+      "discipline": "التخصص",
+      "score": "الدرجة",
+      "noSessionsTitle": "لا توجد جلسات بعد",
+      "noSessionsDescription": "ستظهر جلسات الفروسية المحللة هنا حسب التاريخ.",
+      "emptyTitle": "لا توجد بيانات تقدم بعد",
+      "emptyDescription": "سيبدأ ملخص أدائك بعد أول جولة محللة."
+    },
+    "analysis": {
+      "eyebrow": "ذكاء الفروسية", "pageTitle": "تحليل الفيديو", "pageDescription": "ارفع الجولات وتابع معالجة العامل وراجع ملاحظات الأداء المدعومة بالأدلة.",
+      "uploadVideo": "رفع فيديو", "uploadFirstVideo": "ارفع فيديوك الأول", "emptyTitle": "لا توجد فيديوهات فروسية بعد", "emptyDescription": "ارفع فيديو فروسية لبدء أول تحليل من EquiVista.",
+      "detailEyebrow": "تحليل الجولة", "backToAnalyses": "العودة إلى التحليلات", "tryAgain": "حاول مجدداً", "cancel": "إلغاء",
+      "uploadTitle": "رفع فيديو فروسية", "uploadDescription": "اختر فيديو واضحاً وأضف تفاصيل الجلسة التي يستخدمها عامل التحليل.", "startUpload": "بدء الرفع", "uploading": "جارٍ الرفع...", "uploadProgress": "تقدم الرفع",
+      "videoFile": "ملف الفيديو", "videoFileHint": "ملفات فيديو فقط مع رؤية واضحة للفارس والحصان.", "dropVideo": "أسقط فيديو هنا أو اختر ملفاً", "videoOnlyError": "اختر ملف فيديو صالحاً.", "videoRequired": "اختر فيديو قبل الرفع.", "uploadFailed": "تعذر رفع الفيديو.",
+      "titleLabel": "عنوان التحليل", "horseLabel": "الحصان", "noHorse": "لم يتم اختيار حصان", "disciplineLabel": "التخصص", "sessionDate": "تاريخ الجلسة",
+      "discipline": { "flatwork": "العمل المسطح", "showJumping": "قفز الحواجز", "dressage": "الترويض" },
+      "status": { "uploaded": "تم الرفع", "processing": "قيد المعالجة", "analyzed": "تم التحليل", "failed": "فشل" },
+      "processingStatus": "تقدم التحليل", "failedDescription": "فشلت المعالجة. ابدأ رفعاً جديداً للمحاولة دون تغيير السجل الأصلي.", "retryAsNewUpload": "الرفع كتحليل جديد",
+      "performanceMetrics": "مقاييس الأداء", "metricsChartLabel": "مخطط راداري لمقاييس التحليل", "noMetrics": "المقاييس التفصيلية غير متاحة بعد.",
+      "strengths": "نقاط القوة", "improvements": "فرص التحسين", "noStrengths": "ستظهر نقاط القوة بعد التحليل.", "noImprovements": "ستظهر إرشادات التحسين بعد التحليل.",
+      "trainerComment": "تعليق المدرب", "noTrainerComment": "لم تتم إضافة تعليق من المدرب.",
+      "videoPlayerLabel": "تشغيل {{title}}", "videoUnavailableTitle": "التشغيل الخاص غير متاح", "videoUnavailableDescription": "تعذر إنشاء رابط الفيديو الموقّع أو انتهت صلاحيته.",
+      "notFoundTitle": "التحليل غير موجود", "notFoundDescription": "هذا التحليل غير متاح أو لا تملك صلاحية عرضه."
+    },
+    "horses": {
+      "eyebrow": "إسطبلك", "pageTitle": "الخيول", "pageDescription": "احتفظ بهوية كل حصان وتدريبه وصحته ووثائقه وتحليلاته معاً.",
+      "addHorse": "إضافة حصان", "addFirstHorse": "أضف حصانك الأول", "addCardDescription": "أنشئ ملفاً لحصان آخر.", "emptyTitle": "لا توجد خيول بعد", "emptyDescription": "أضف حصانك الأول لربط الجولات والدروس وسجلات العناية.",
+      "detailEyebrow": "ملف الحصان", "backToHorses": "العودة إلى الخيول", "tryAgain": "حاول مجدداً", "notFoundTitle": "الحصان غير موجود", "notFoundDescription": "هذا الحصان غير متاح أو لا تملك صلاحية عرضه.",
+      "riddenBy": "يمتطيه", "noRiders": "لا يوجد فرسان مرتبطون", "ageYears": "عمره {{count}} سنة", "ageYears_zero": "أقل من سنة", "ageYears_one": "عمره سنة", "ageYears_two": "عمره سنتان", "ageYears_few": "عمره {{count}} سنوات", "ageYears_many": "عمره {{count}} سنة", "ageYears_other": "عمره {{count}} سنة", "heightValue": "{{value}} سم", "detailsPending": "لم تسجل التفاصيل",
+      "detailSections": "تفاصيل الحصان", "tabs": { "overview": "نظرة عامة", "training": "سجل التدريب", "health": "الصحة", "analyses": "تحليلات الفيديو", "documents": "الوثائق" },
+      "trainingEmptyTitle": "لا توجد ملاحظات تدريب", "trainingEmptyDescription": "ستظهر إدخالات سجل التدريب هنا عند تسجيلها.", "healthEmptyTitle": "لا توجد سجلات صحية", "healthEmptyDescription": "ستظهر سجلات البيطار والطبيب والأسنان واللقاحات هنا.",
+      "analysesEmptyTitle": "لا توجد تحليلات لهذا الحصان", "analysesEmptyDescription": "اربط هذا الحصان برفع فيديو لبناء سجل أدائه.", "documentsEmptyTitle": "لا توجد وثائق", "documentsEmptyDescription": "ستظهر وثائق الحصان هنا عند توفرها.",
+      "viewAnalysis": "عرض التحليل", "download": "تنزيل", "date": "التاريخ", "recordType": "نوع السجل", "summary": "الملخص",
+      "addTitle": "إضافة حصان", "addDescription": "أنشئ ملف حصان آمناً. يتم رفع الصور عبر أداة البيانات المحمية.", "name": "الاسم", "breed": "السلالة", "birthYear": "سنة الميلاد", "color": "اللون", "heightCm": "الارتفاع (سم)", "statusLabel": "الحالة", "status": { "active": "نشط", "resting": "راحة", "retired": "متقاعد" },
+      "photo": "الصورة", "choosePhoto": "اختر صورة", "photoHint": "JPG أو PNG أو WebP.", "saveHorse": "حفظ الحصان", "saving": "جارٍ الحفظ...", "cancel": "إلغاء"
+    },
+    "lessons": {
+      "eyebrow": "تقويم التدريب", "title": "الدروس", "description": "خطط لجلسات مركزة مع مدربيك واحتفظ بالملاحظات بجانب كل جولة.",
+      "bookLesson": "حجز درس", "bookingSuccess": "تم إرسال طلب الدرس.", "filterLabel": "عرض الدروس", "viewLabel": "التخطيط", "horseLabel": "الحصان: {{name}}", "minutes": "{{count}} دقيقة",
+      "feedbackTitle": "مراجعة الجلسة", "trainerFeedback": "ملاحظات المدرب", "homework": "الواجب", "viewAnalysis": "عرض التحليل", "previousWeek": "الأسبوع السابق", "nextWeek": "الأسبوع التالي", "thisWeek": "هذا الأسبوع", "noLessonsDay": "لا توجد دروس",
+      "bookingTitle": "طلب درس", "bookingDescription": "اختر المدرب والحصان والوقت. تبقى الطلبات معلقة حتى التأكيد.", "bookingProgress": "جارٍ إرسال الطلب...", "requestLesson": "طلب الدرس",
+      "trainer": "المدرب", "selectTrainer": "اختر مدرباً", "noTrainers": "لا يوجد مدربون متاحون", "horse": "الحصان", "noHorseSelected": "لم يتم اختيار حصان", "lessonType": "نوع الدرس", "duration": "المدة", "dateTime": "التاريخ والوقت", "notes": "ملاحظات", "notesPlaceholder": "شارك أهدافك أو سياق هذا الدرس",
+      "tabs": { "upcoming": "القادمة", "past": "السابقة", "requests": "الطلبات" },
+      "views": { "list": "قائمة", "week": "أسبوع" },
+      "empty": {
+        "upcomingTitle": "لا توجد دروس قادمة", "upcomingDescription": "احجز درساً لبدء دورة التدريب التالية.",
+        "pastTitle": "لا توجد دروس سابقة", "pastDescription": "ستظهر الدروس المكتملة والملغاة هنا.",
+        "requestsTitle": "لا توجد طلبات معلقة", "requestsDescription": "ستنتظر طلبات الدروس الجديدة هنا تأكيد المدرب."
+      },
+      "types": { "Flatwork": "العمل المسطح", "Jumping": "القفز", "Dressage": "الترويض", "Groundwork": "العمل الأرضي" }
+    },
+    "membership": {
+      "eyebrow": "وصول EquiVista", "title": "العضوية", "description": "اختر حصة الدروس والتحليلات التي تناسب طموحاتك في الفروسية.",
+      "pastDueTitle": "دفعة عضويتك تحتاج إلى انتباه", "pastDueDescription": "حدّث وسيلة الدفع للحفاظ على توفر الدروس والتحليلات.", "updatePayment": "تحديث الدفع",
+      "currentPlan": "الخطة الحالية", "renewsOn": "تتجدد في {{date}}", "renewalUnavailable": "تاريخ التجديد غير متاح", "cancelMembership": "إلغاء العضوية",
+      "lessonsUsage": "الدروس: {{used}} من {{total}}", "analysesUsage": "التحليلات: {{used}} من {{total}}",
+      "noPlanTitle": "اختر إيقاع فروسيتك", "noPlanDescription": "ابدأ عضوية لفتح الدروس وتحليلات الفيديو المتكررة.",
+      "plansEyebrow": "الخطط", "plansTitle": "خطة لكل مرحلة", "emptyPlansTitle": "لا توجد خطط متاحة", "emptyPlansDescription": "ستظهر خطط العضوية هنا عند توفرها.",
+      "mostPopular": "الأكثر شيوعاً", "lessonsPerMonth": "{{count}} دروس شهرياً", "analysesPerMonth": "{{count}} تحليلات شهرياً", "currentPlanButton": "الخطة الحالية",
+      "upgradeTo": "الترقية إلى {{plan}}", "choosePlan": "اختيار {{plan}}", "upgradeSuccess": "تمت ترقية عضويتك.", "cancelSuccess": "تم إلغاء عضويتك.",
+      "confirmUpgradeTitle": "تأكيد ترقية العضوية", "confirmUpgradeDescription": "هل تريد نقل عضويتك الحالية إلى {{plan}}؟", "confirmCancelTitle": "إلغاء العضوية؟", "confirmCancelDescription": "ستتوقف خطتك ولن تتجدد الحصص المستقبلية.",
+      "confirmUpgrade": "تأكيد الترقية", "confirmCancel": "إلغاء العضوية", "upgradeConsequence": "تصبح الخطة المحددة نشطة فوراً.", "cancelConsequence": "يوقف هذا الإجراء العضوية النشطة الحالية.",
+      "intervals": { "month": "شهر", "year": "سنة" }
+    },
+    "payments": {
+      "eyebrow": "فوترة آمنة", "title": "وسائل الدفع", "description": "راجع وسائل الدفع المرمزة المرتبطة بحساب EquiVista.", "savedMethods": "الوسائل المحفوظة", "addMethod": "إضافة وسيلة دفع",
+      "emptyTitle": "لا توجد وسائل دفع محفوظة", "emptyDescription": "يجب ربط مزود دفع آمن قبل إضافة بطاقة.", "card": "بطاقة", "cardEnding": "تنتهي بـ {{last4}}", "expires": "تنتهي {{month}}/{{year}}", "default": "افتراضية", "setDefault": "تعيين افتراضية", "remove": "إزالة",
+      "providerUnavailableTitle": "مزود البطاقات الآمن غير متصل", "providerUnavailableDescription": "لن تجمع EquiVista أرقام البطاقات الخام أو تخزنها. اربط مزود ترميز متوافقاً مع PCI قبل إضافة بطاقة.", "providerUnavailable": "المزود غير متاح", "confirmationSafety": "لم يتم جمع أو إرسال أي تفاصيل بطاقة.",
+      "checkoutTitle": "الدفع", "checkoutDescription": "راجع خطتك واختر وسيلة دفع محفوظة ومرمزة.", "backToMembership": "العودة إلى العضوية", "invalidPlanTitle": "الخطة غير متاحة", "invalidPlanDescription": "اختر خطة عضوية قبل فتح الدفع.",
+      "choosePaymentMethod": "اختر وسيلة دفع", "selectMethod": "اختيار {{card}}", "promoCode": "رمز ترويجي", "promoPlaceholder": "أدخل الرمز", "applyPromo": "تطبيق", "promoApplied": "تم تطبيق الرمز", "discount": "الخصم",
+      "orderSummary": "ملخص الطلب", "billingCycle": "دورة الفوترة", "subtotal": "المجموع الفرعي", "total": "الإجمالي", "subscribeAndPay": "الاشتراك والدفع", "checkoutUnavailable": "الدفع الفعلي غير متاح حتى ربط مزود الدفع الآمن.", "checkoutEmptyDescription": "أضف وسيلة دفع مرمزة عبر المزود الآمن مستقبلاً للمتابعة.", "secureBoundaryTitle": "حد دفع محمي", "secureBoundaryDescription": "لا تستدعي هذه الشاشة نموذج الدفع الحالي الخاص بقاعدة البيانات لأنه لا يستطيع تحصيل دفعة حقيقية.",
+      "interval": { "month": "شهري", "year": "سنوي" }
+    },
+    "billing": {
+      "eyebrow": "سجلات الحساب", "title": "الفواتير", "description": "راجع الأرصدة والفواتير المدفوعة وتواريخ الاستحقاق والسجلات القابلة للتنزيل.",
+      "outstanding": "المستحق", "openInvoiceCount": "{{count}} مفتوحة أو متأخرة", "paidThisMonth": "المدفوع هذا الشهر", "accountCurrent": "الحساب محدث", "nextPayment": "الدفعة التالية", "noPaymentDue": "لا توجد دفعة مستحقة",
+      "overdueTitle": "هناك فاتورة متأخرة", "overdueDescription": "راجع الفاتورة المتأخرة وحدّث تفاصيل الدفع في أقرب وقت.", "payNow": "مراجعة المدفوعات",
+      "invoiceHistory": "سجل الفواتير", "invoiceHistoryDescription": "كل فاتورة مرئية لحسابك الآمن.", "filterLabel": "حالة الفاتورة", "filters": { "all": "الكل", "paid": "مدفوعة", "open": "مفتوحة", "overdue": "متأخرة", "void": "ملغاة" },
+      "number": "الفاتورة", "date": "تاريخ الإصدار", "descriptionColumn": "الوصف", "amount": "المبلغ", "status": "الحالة", "download": "تنزيل", "noPdf": "لا يوجد PDF",
+      "emptyTitle": "لا توجد فواتير بعد", "emptyDescription": "ستظهر فواتير العضوية والدفع هنا.", "filteredEmptyTitle": "لا توجد فواتير مطابقة", "filteredEmptyDescription": "اختر مرشح حالة آخر لعرض سجلات أكثر.", "clearFilter": "مسح المرشح",
+      "invoiceDetails": "تفاصيل الفاتورة", "invoiceDetailsDescription": "البنود ومعلومات الدفع لهذه الفاتورة.", "detailUnavailableTitle": "الفاتورة غير متاحة", "detailUnavailableDescription": "تعذر تحميل تفاصيل الفاتورة.", "noLineItems": "لا توجد بنود مسجلة.",
+      "item": "البند", "quantity": "الكمية", "unitPrice": "سعر الوحدة", "lineTotal": "الإجمالي", "subtotal": "المجموع الفرعي", "tax": "الضريبة", "total": "الإجمالي", "paidWith": "تم الدفع بواسطة", "paymentMethodUnavailable": "وسيلة الدفع غير متاحة", "downloadInvoice": "تنزيل PDF", "membershipInvoice": "فاتورة عضوية",
+      "downloadPdf": "تنزيل PDF", "statuses": { "paid": "مدفوعة", "open": "مفتوحة", "overdue": "متأخرة", "void": "ملغاة" }
+    },
+    "status": {
+      "pending": "معلق", "confirmed": "مؤكد", "completed": "مكتمل", "cancelled": "ملغى", "trialing": "تجريبي", "active": "نشط", "past_due": "متأخر", "uploaded": "تم الرفع", "processing": "قيد المعالجة", "analyzed": "تم التحليل", "failed": "فشل", "paid": "مدفوع", "open": "مفتوح", "overdue": "متأخر", "void": "ملغى", "resting": "راحة", "retired": "متقاعد"
+    },
     "foundation": {
       "eyebrow": "مساحة EquiVista",
       "introduction": "مساحة أداء الفروسية المميزة جاهزة لمرحلة البناء التالية.",
@@ -78,13 +237,53 @@
       "secureWorkspace": "مساحة عمل آمنة للمستخدمين المسجلين"
     },
     "settings": {
+      "eyebrow": "المساحة الشخصية",
       "title": "الإعدادات",
-      "timezone": "المنطقة الزمنية",
-      "currency": "العملة",
-      "dateFormat": "تنسيق التاريخ",
-      "taxRate": "نسبة الضريبة (%)",
-      "saved": "تم حفظ الإعدادات بنجاح",
-      "saveFailed": "تعذر حفظ الإعدادات"
+      "description": "أدر ملفك وتفضيلات الفروسية والإشعارات والأمان واللغة.",
+      "profile": "الملف الشخصي",
+      "yourProfile": "ملفك الشخصي",
+      "changeAvatar": "تغيير صورة الملف",
+      "memberSince": "عضو منذ {{date}}",
+      "phone": "الهاتف",
+      "profileSaved": "تم حفظ تغييرات الملف.",
+      "riding": "الفروسية",
+      "ridingProfile": "ملف الفروسية",
+      "discipline": "التخصص الأساسي",
+      "skillLevel": "مستوى المهارة",
+      "goals": "أهداف الفروسية",
+      "ridingSaved": "تم حفظ تفضيلات الفروسية.",
+      "notifications": "الإشعارات",
+      "notificationPreferences": "تفضيلات الإشعارات",
+      "channel": "قناة الإشعار",
+      "channels": { "email": "البريد", "push": "التنبيهات", "both": "كلاهما" },
+      "notificationLabels": {
+        "lessonReminders": "تذكيرات الدروس",
+        "analysisReady": "جاهزية التحليل",
+        "paymentReceipts": "إيصالات الدفع",
+        "marketing": "أخبار EquiVista"
+      },
+      "notificationDescriptions": {
+        "lessonReminders": "تذكيرات قبل الدروس المؤكدة.",
+        "analysisReady": "تنبيه عند انتهاء العامل من تحليل جولتك.",
+        "paymentReceipts": "الإيصالات وتحديثات الفوترة المهمة.",
+        "marketing": "أخبار دورية عن المنتج وأداء الفروسية."
+      },
+      "notificationsSaved": "تم حفظ تفضيلات الإشعارات.",
+      "noNotificationPrefs": "تفضيلات الإشعارات غير متاحة بعد.",
+      "security": "الأمان",
+      "accountSecurity": "أمان الحساب",
+      "changePassword": "تغيير كلمة المرور",
+      "changePasswordDescription": "اختر كلمة مرور جديدة لحسابك.",
+      "passwordDialogDescription": "استخدم ثمانية أحرف على الأقل وحافظ على سرية كلمة المرور.",
+      "updatePassword": "تحديث كلمة المرور",
+      "passwordSaved": "تم تحديث كلمة المرور بأمان.",
+      "signOutCurrent": "تسجيل خروج هذه الجلسة",
+      "signOutCurrentDescription": "ينهي جلسة هذا المتصفح. إنهاء جميع الجلسات غير متاح في هذه الشاشة.",
+      "language": "اللغة",
+      "languageSaved": "تم حفظ تفضيل اللغة.",
+      "roles": { "rider": "فارس", "trainer": "مدرب", "owner": "مالك", "admin": "مسؤول" },
+      "disciplines": { "flatwork": "العمل المسطح", "showJumping": "قفز الحواجز", "dressage": "الترويض" },
+      "skills": { "beginner": "مبتدئ", "intermediate": "متوسط", "advanced": "متقدم", "professional": "محترف" }
     },
     "audit": {
       "title": "سجل التدقيق",
@@ -116,6 +315,18 @@
       "openNavigation": "فتح قائمة التنقل",
       "closeNavigation": "إغلاق قائمة التنقل",
       "secureAccount": "حساب آمن"
+      ,"tryAgain": "حاول مجدداً"
+      ,"viewAll": "عرض الكل"
+      ,"notAvailable": "غير متاح"
+      ,"requestFailed": "تعذر إكمال هذا الطلب."
+      ,"saving": "جارٍ الحفظ..."
+      ,"saveChanges": "حفظ التغييرات"
+      ,"selectOption": "اختر خياراً"
+      ,"date": "التاريخ"
+      ,"status": "الحالة"
+      ,"working": "جارٍ التنفيذ..."
+      ,"retry": "إعادة المحاولة"
+      ,"close": "إغلاق"
     }
   }
 }
