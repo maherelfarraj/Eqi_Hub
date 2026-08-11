@@ -1,3 +1,107 @@
 {
-  "translation": {}
+  "translation": {
+    "app": {
+      "name": "EquiVista",
+      "tagline": "أداء الفروسية"
+    },
+    "auth": {
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حساب",
+      "signOut": "تسجيل الخروج",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "fullName": "الاسم الكامل",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "resetPassword": "إعادة تعيين كلمة المرور",
+      "sendResetLink": "إرسال رابط الاستعادة",
+      "backToSignIn": "العودة إلى تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "invitationToken": "رمز الدعوة",
+      "invitationRequired": "رمز الدعوة مطلوب لإنشاء حساب",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين",
+      "signUpSuccess": "تم إنشاء الحساب بنجاح. يرجى مراجعة بريدك الإلكتروني.",
+      "resetEmailSent": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "bootstrap": "تفعيل دور المالك",
+      "bootstrapDesc": "أنت المستخدم الأول. فعّل دور المالك لإدارة النظام.",
+      "bootstrapSuccess": "أصبحت الآن مالك النظام.",
+      "bootstrapFailed": "تعذر تفعيل دور المالك. قد يكون هناك مالك بالفعل.",
+      "openRegistrationNotice": "لم يتم إعداد مالك بعد. أنشئ حسابك لتصبح مالك النظام."
+    },
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "progress": "التقدّم",
+      "videoAnalysis": "تحليل الفيديو",
+      "lessons": "الدروس",
+      "horses": "الخيول",
+      "membership": "العضوية",
+      "payments": "المدفوعات",
+      "billing": "الفواتير",
+      "settings": "الإعدادات"
+    },
+    "foundation": {
+      "eyebrow": "مساحة EquiVista",
+      "introduction": "مساحة أداء الفروسية المميزة جاهزة لمرحلة البناء التالية.",
+      "readyTitle": "الأساس جاهز",
+      "readyDescription": "تم تجهيز التنقل الآمن والتصميم المتجاوب ودعم اللغتين ونظام تصميم EquiVista.",
+      "secureWorkspace": "مساحة عمل آمنة للمستخدمين المسجلين"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "timezone": "المنطقة الزمنية",
+      "currency": "العملة",
+      "dateFormat": "تنسيق التاريخ",
+      "taxRate": "نسبة الضريبة (%)",
+      "saved": "تم حفظ الإعدادات بنجاح",
+      "saveFailed": "تعذر حفظ الإعدادات"
+    },
+    "users": {
+      "title": "المستخدمون والدعوات",
+      "invite": "دعوة مستخدم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "branch": "الفرع",
+      "send": "إرسال الدعوة",
+      "pending": "الدعوات المعلقة",
+      "active": "المستخدمون النشطون",
+      "inviteSent": "تم إرسال الدعوة بنجاح",
+      "inviteFailed": "تعذر إرسال الدعوة",
+      "expires": "تنتهي",
+      "accepted": "مقبولة",
+      "status": "الحالة"
+    },
+    "audit": {
+      "title": "سجل التدقيق",
+      "actor": "المنفذ",
+      "action": "الإجراء",
+      "table": "الجدول",
+      "record": "السجل",
+      "timestamp": "الوقت",
+      "details": "التفاصيل",
+      "noEntries": "لا توجد سجلات تدقيق"
+    },
+    "common": {
+      "loading": "جارٍ التحميل...",
+      "error": "حدث خطأ",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "create": "إنشاء",
+      "search": "بحث",
+      "filter": "تصفية",
+      "noResults": "لا توجد نتائج",
+      "confirm": "تأكيد",
+      "back": "رجوع",
+      "next": "التالي",
+      "language": "اللغة",
+      "english": "English",
+      "arabic": "العربية",
+      "openNavigation": "فتح قائمة التنقل",
+      "closeNavigation": "إغلاق قائمة التنقل",
+      "secureAccount": "حساب آمن"
+    }
+  }
 }
