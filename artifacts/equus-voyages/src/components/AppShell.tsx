@@ -4,6 +4,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   ChartNoAxesCombined,
+  CreditCard,
   Globe2,
   Heart,
   LayoutDashboard,
@@ -24,6 +25,7 @@ const navigation = [
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
+  { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
   { path: "/settings", labelKey: "nav.settings", icon: Settings },
 ] as const;

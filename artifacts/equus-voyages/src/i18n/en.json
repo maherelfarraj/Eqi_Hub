@@ -70,6 +70,165 @@
       "billing": "Billing",
       "settings": "Settings"
     },
+    "dashboard": {
+      "greeting": "Welcome back, {{name}}",
+      "rider": "Rider",
+      "description": "A calm view of your next lessons, riding progress, and account activity.",
+      "uploadVideo": "Upload video",
+      "bookLesson": "Book lesson",
+      "viewInvoices": "View invoices",
+      "upcomingLessons": "Upcoming lessons",
+      "noneScheduled": "Nothing scheduled yet",
+      "membership": "Membership",
+      "noPlan": "No plan",
+      "explorePlans": "Explore memberships",
+      "horses": "Horses",
+      "inStable": "In your EquiVista stable",
+      "outstanding": "Outstanding balance",
+      "invoiceCount": "{{count}} open invoices",
+      "invoiceCount_zero": "No open invoices",
+      "invoiceCount_one": "{{count}} open invoice",
+      "invoiceCount_two": "{{count}} open invoices",
+      "invoiceCount_few": "{{count}} open invoices",
+      "invoiceCount_many": "{{count}} open invoices",
+      "invoiceCount_other": "{{count}} open invoices",
+      "onboardingEyebrow": "Start here",
+      "onboardingTitle": "Set up your riding workspace",
+      "addHorse": "Add your first horse",
+      "choosePlan": "Choose a membership",
+      "uploadFirstRide": "Upload your first ride",
+      "progressTitle": "Performance trend",
+      "progressDescription": "Scores from your latest analyzed rides.",
+      "noProgressTitle": "Your trend will appear here",
+      "noProgressDescription": "Upload a riding video and let EquiVista analyze it to begin tracking progress.",
+      "nextLessons": "Next lessons",
+      "recentAnalyses": "Recent analyses",
+      "noLessonsTitle": "No upcoming lessons",
+      "noLessonsDescription": "Book time with a trainer when you are ready for your next focused session.",
+      "noAnalysesTitle": "No analyses yet",
+      "noAnalysesDescription": "Your latest AI riding analyses will appear here after your first upload.",
+      "noHorse": "No horse selected",
+      "emptyTitle": "Your dashboard is getting ready",
+      "emptyDescription": "Complete your profile and begin adding riding activity to see your personal overview."
+    },
+    "progress": {
+      "eyebrow": "Riding development",
+      "title": "Progress",
+      "description": "Follow your scores, strengths, and consistency across analyzed riding sessions.",
+      "period": "Progress period",
+      "period30": "30 days",
+      "period90": "90 days",
+      "period365": "1 year",
+      "averageScore": "Average score",
+      "outOf100": "Out of 100",
+      "improvement": "Improvement",
+      "overPeriod": "From first to latest score",
+      "sessions": "Sessions",
+      "analyzedRides": "Analyzed rides in this period",
+      "topDiscipline": "Top discipline",
+      "mostPracticed": "Most frequently analyzed",
+      "scoreTrend": "Score over time",
+      "scoreTrendDescription": "Your analysis score for every session in the selected period.",
+      "categoryScores": "Category performance",
+      "categoryDescription": "Average pose and riding metrics grouped by category.",
+      "noScoresTitle": "No scores in this period",
+      "noScoresDescription": "Choose a longer period or upload a new ride to build your score history.",
+      "noCategoriesTitle": "No category metrics yet",
+      "noCategoriesDescription": "Detailed metrics will appear after the analysis worker completes a ride.",
+      "performanceLadder": "Performance ladder",
+      "tier": "Tier {{level}}",
+      "ladderDerived": "This visual tier is derived from your current average analysis score.",
+      "highestTier": "Highest tier reached",
+      "nextTier": "Progress to next tier",
+      "sessionHistory": "Session history",
+      "sessionDescription": "Open any session to review its complete video analysis.",
+      "horse": "Horse",
+      "discipline": "Discipline",
+      "score": "Score",
+      "noSessionsTitle": "No sessions yet",
+      "noSessionsDescription": "Analyzed riding sessions will appear here in date order.",
+      "emptyTitle": "No progress data yet",
+      "emptyDescription": "Your performance overview will begin after your first analyzed ride."
+    },
+    "analysis": {
+      "eyebrow": "AI riding intelligence", "pageTitle": "Video analysis", "pageDescription": "Upload rides, follow worker processing, and review evidence-backed performance feedback.",
+      "uploadVideo": "Upload video", "uploadFirstVideo": "Upload your first video", "emptyTitle": "No riding videos yet", "emptyDescription": "Upload a riding video to begin your first EquiVista analysis.",
+      "detailEyebrow": "Ride analysis", "backToAnalyses": "Back to analyses", "tryAgain": "Try again", "cancel": "Cancel",
+      "uploadTitle": "Upload a riding video", "uploadDescription": "Choose a clear video and add the session details used by the analysis worker.", "startUpload": "Start upload", "uploading": "Uploading...", "uploadProgress": "Upload progress",
+      "videoFile": "Video file", "videoFileHint": "Video files only. Use a clear view of rider and horse.", "dropVideo": "Drop a video here or choose a file", "videoOnlyError": "Choose a valid video file.", "videoRequired": "Choose a video before uploading.", "uploadFailed": "The video could not be uploaded.",
+      "titleLabel": "Analysis title", "horseLabel": "Horse", "noHorse": "No horse selected", "disciplineLabel": "Discipline", "sessionDate": "Session date",
+      "discipline": { "flatwork": "Flatwork", "showJumping": "Show jumping", "dressage": "Dressage" },
+      "status": { "uploaded": "Uploaded", "processing": "Processing", "analyzed": "Analyzed", "failed": "Failed" },
+      "processingStatus": "Analysis progress", "failedDescription": "Processing failed. Start a new upload to try again without altering the original record.", "retryAsNewUpload": "Upload as a new analysis",
+      "performanceMetrics": "Performance metrics", "metricsChartLabel": "Analysis metrics radar chart", "noMetrics": "Detailed metrics are not available yet.",
+      "strengths": "Strengths", "improvements": "Improvements", "noStrengths": "Strengths will appear after analysis.", "noImprovements": "Improvement guidance will appear after analysis.",
+      "trainerComment": "Trainer comment", "noTrainerComment": "No trainer comment has been added.",
+      "videoPlayerLabel": "Playback for {{title}}", "videoUnavailableTitle": "Private playback unavailable", "videoUnavailableDescription": "The signed video link could not be created or has expired.",
+      "notFoundTitle": "Analysis not found", "notFoundDescription": "This analysis is unavailable or you do not have permission to view it."
+    },
+    "horses": {
+      "eyebrow": "Your stable", "pageTitle": "Horses", "pageDescription": "Keep each horse’s identity, training history, health, documents, and analyses together.",
+      "addHorse": "Add horse", "addFirstHorse": "Add your first horse", "addCardDescription": "Create a profile for another horse.", "emptyTitle": "No horses yet", "emptyDescription": "Add your first horse to connect rides, lessons, and care records.",
+      "detailEyebrow": "Horse profile", "backToHorses": "Back to horses", "tryAgain": "Try again", "notFoundTitle": "Horse not found", "notFoundDescription": "This horse is unavailable or you do not have permission to view it.",
+      "riddenBy": "Ridden by", "noRiders": "No linked riders", "ageYears": "{{count}} years old", "ageYears_zero": "Under one year old", "ageYears_one": "{{count}} year old", "ageYears_two": "{{count}} years old", "ageYears_few": "{{count}} years old", "ageYears_many": "{{count}} years old", "ageYears_other": "{{count}} years old", "heightValue": "{{value}} cm", "detailsPending": "Details not recorded",
+      "detailSections": "Horse details", "tabs": { "overview": "Overview", "training": "Training log", "health": "Health", "analyses": "Video analyses", "documents": "Documents" },
+      "trainingEmptyTitle": "No training notes", "trainingEmptyDescription": "Training log entries will appear here when recorded.", "healthEmptyTitle": "No health records", "healthEmptyDescription": "Farrier, veterinary, dental, and vaccine records will appear here.",
+      "analysesEmptyTitle": "No analyses for this horse", "analysesEmptyDescription": "Connect this horse to a video upload to build its performance record.", "documentsEmptyTitle": "No documents", "documentsEmptyDescription": "Horse documents will appear here when available.",
+      "viewAnalysis": "View analysis", "download": "Download", "date": "Date", "recordType": "Record type", "summary": "Summary",
+      "addTitle": "Add a horse", "addDescription": "Create a secure horse profile. Photos are uploaded through the protected data hook.", "name": "Name", "breed": "Breed", "birthYear": "Birth year", "color": "Color", "heightCm": "Height (cm)", "statusLabel": "Status", "status": { "active": "Active", "resting": "Resting", "retired": "Retired" },
+      "photo": "Photo", "choosePhoto": "Choose photo", "photoHint": "JPG, PNG, or WebP.", "saveHorse": "Save horse", "saving": "Saving...", "cancel": "Cancel"
+    },
+    "lessons": {
+      "eyebrow": "Training calendar", "title": "Lessons", "description": "Plan focused sessions with your trainers and keep feedback close to every ride.",
+      "bookLesson": "Book lesson", "bookingSuccess": "Your lesson request was sent.", "filterLabel": "Lesson view", "viewLabel": "Layout", "horseLabel": "Horse: {{name}}", "minutes": "{{count}} min",
+      "feedbackTitle": "Session review", "trainerFeedback": "Trainer feedback", "homework": "Homework", "viewAnalysis": "View analysis", "previousWeek": "Previous week", "nextWeek": "Next week", "thisWeek": "This week", "noLessonsDay": "No lessons",
+      "bookingTitle": "Request a lesson", "bookingDescription": "Choose a trainer, horse, and time. New requests remain pending until confirmed.", "bookingProgress": "Sending request...", "requestLesson": "Request lesson",
+      "trainer": "Trainer", "selectTrainer": "Select a trainer", "noTrainers": "No trainers available", "horse": "Horse", "noHorseSelected": "No horse selected", "lessonType": "Lesson type", "duration": "Duration", "dateTime": "Date and time", "notes": "Notes", "notesPlaceholder": "Share goals or context for this lesson",
+      "tabs": { "upcoming": "Upcoming", "past": "Past", "requests": "Requests" },
+      "views": { "list": "List", "week": "Week" },
+      "empty": {
+        "upcomingTitle": "No upcoming lessons", "upcomingDescription": "Book a lesson to begin your next training cycle.",
+        "pastTitle": "No past lessons", "pastDescription": "Completed and cancelled lessons will appear here.",
+        "requestsTitle": "No pending requests", "requestsDescription": "New lesson requests will wait here for trainer confirmation."
+      },
+      "types": { "Flatwork": "Flatwork", "Jumping": "Jumping", "Dressage": "Dressage", "Groundwork": "Groundwork" }
+    },
+    "membership": {
+      "eyebrow": "EquiVista access", "title": "Membership", "description": "Choose the lesson and analysis allowance that matches your riding ambitions.",
+      "pastDueTitle": "Your membership payment needs attention", "pastDueDescription": "Update your payment method to keep lessons and analyses available.", "updatePayment": "Update payment",
+      "currentPlan": "Current plan", "renewsOn": "Renews {{date}}", "renewalUnavailable": "Renewal date unavailable", "cancelMembership": "Cancel membership",
+      "lessonsUsage": "Lessons: {{used}} of {{total}}", "analysesUsage": "Analyses: {{used}} of {{total}}",
+      "noPlanTitle": "Choose your riding rhythm", "noPlanDescription": "Start a membership to unlock recurring lessons and video analyses.",
+      "plansEyebrow": "Plans", "plansTitle": "A plan for every stage", "emptyPlansTitle": "No plans available", "emptyPlansDescription": "Membership plans will appear here when available.",
+      "mostPopular": "Most popular", "lessonsPerMonth": "{{count}} lessons / month", "analysesPerMonth": "{{count}} analyses / month", "currentPlanButton": "Current plan",
+      "upgradeTo": "Upgrade to {{plan}}", "choosePlan": "Choose {{plan}}", "upgradeSuccess": "Your membership was upgraded.", "cancelSuccess": "Your membership was cancelled.",
+      "confirmUpgradeTitle": "Confirm membership upgrade", "confirmUpgradeDescription": "Move your current membership to {{plan}}?", "confirmCancelTitle": "Cancel membership?", "confirmCancelDescription": "Your plan will stop and future allowances will no longer renew.",
+      "confirmUpgrade": "Confirm upgrade", "confirmCancel": "Cancel membership", "upgradeConsequence": "The selected plan becomes active immediately.", "cancelConsequence": "This action stops the current active membership.",
+      "intervals": { "month": "month", "year": "year" }
+    },
+    "payments": {
+      "eyebrow": "Secure billing", "title": "Payment methods", "description": "Review tokenized payment methods connected to your EquiVista account.", "savedMethods": "Saved methods", "addMethod": "Add payment method",
+      "emptyTitle": "No saved payment methods", "emptyDescription": "A secure payment provider must be connected before a card can be added.", "card": "Card", "cardEnding": "Ending in {{last4}}", "expires": "Expires {{month}}/{{year}}", "default": "Default", "setDefault": "Set default", "remove": "Remove",
+      "providerUnavailableTitle": "Secure card provider not connected", "providerUnavailableDescription": "EquiVista will never collect or store raw card numbers. Connect a PCI-compliant tokenization provider before adding a card.", "providerUnavailable": "Provider unavailable", "confirmationSafety": "No card details were collected or transmitted.",
+      "checkoutTitle": "Checkout", "checkoutDescription": "Review your plan and choose a tokenized saved payment method.", "backToMembership": "Back to membership", "invalidPlanTitle": "Plan unavailable", "invalidPlanDescription": "Choose a membership plan before opening checkout.",
+      "choosePaymentMethod": "Choose payment method", "selectMethod": "Select {{card}}", "promoCode": "Promo code", "promoPlaceholder": "Enter code", "applyPromo": "Apply", "promoApplied": "Promo code applied", "discount": "Discount",
+      "orderSummary": "Order summary", "billingCycle": "Billing cycle", "subtotal": "Subtotal", "total": "Total", "subscribeAndPay": "Subscribe and pay", "checkoutUnavailable": "Live charging is unavailable until the secure payment provider is connected.", "checkoutEmptyDescription": "Add a tokenized payment method through the future secure provider to continue.", "secureBoundaryTitle": "Protected payment boundary", "secureBoundaryDescription": "This screen does not call the current database-only checkout stub because it cannot charge a real payment provider.",
+      "interval": { "month": "Monthly", "year": "Yearly" }
+    },
+    "billing": {
+      "eyebrow": "Account records", "title": "Billing", "description": "Review balances, paid invoices, due dates, and downloadable records.",
+      "outstanding": "Outstanding", "openInvoiceCount": "{{count}} open or overdue", "paidThisMonth": "Paid this month", "accountCurrent": "Account current", "nextPayment": "Next payment", "noPaymentDue": "No payment due",
+      "overdueTitle": "An invoice is overdue", "overdueDescription": "Review the overdue invoice and update payment details as soon as possible.", "payNow": "Review payments",
+      "invoiceHistory": "Invoice history", "invoiceHistoryDescription": "Every invoice visible to your secure account.", "filterLabel": "Invoice status", "filters": { "all": "All", "paid": "Paid", "open": "Open", "overdue": "Overdue", "void": "Void" },
+      "number": "Invoice", "date": "Issue date", "descriptionColumn": "Description", "amount": "Amount", "status": "Status", "download": "Download", "noPdf": "No PDF",
+      "emptyTitle": "No invoices yet", "emptyDescription": "Membership and payment invoices will appear here.", "filteredEmptyTitle": "No matching invoices", "filteredEmptyDescription": "Choose another status filter to view more records.", "clearFilter": "Clear filter",
+      "invoiceDetails": "Invoice details", "invoiceDetailsDescription": "Line items and payment information for this invoice.", "detailUnavailableTitle": "Invoice unavailable", "detailUnavailableDescription": "The invoice detail could not be loaded.", "noLineItems": "No line items recorded.",
+      "item": "Item", "quantity": "Qty", "unitPrice": "Unit price", "lineTotal": "Total", "subtotal": "Subtotal", "tax": "Tax", "total": "Total", "paidWith": "Paid with", "paymentMethodUnavailable": "Payment method unavailable", "downloadInvoice": "Download PDF", "membershipInvoice": "Membership invoice",
+      "downloadPdf": "Download PDF", "statuses": { "paid": "Paid", "open": "Open", "overdue": "Overdue", "void": "Void" }
+    },
+    "status": {
+      "pending": "Pending", "confirmed": "Confirmed", "completed": "Completed", "cancelled": "Cancelled", "trialing": "Trial", "active": "Active", "past_due": "Past due", "uploaded": "Uploaded", "processing": "Processing", "analyzed": "Analyzed", "failed": "Failed", "paid": "Paid", "open": "Open", "overdue": "Overdue", "void": "Void", "resting": "Resting", "retired": "Retired"
+    },
     "foundation": {
       "eyebrow": "EquiVista workspace",
       "introduction": "Your premium riding performance workspace is ready for the next build phase.",
@@ -78,13 +237,53 @@
       "secureWorkspace": "Secure authenticated workspace"
     },
     "settings": {
+      "eyebrow": "Personal workspace",
       "title": "Settings",
-      "timezone": "Timezone",
-      "currency": "Currency",
-      "dateFormat": "Date Format",
-      "taxRate": "Tax Rate (%)",
-      "saved": "Settings saved successfully",
-      "saveFailed": "Failed to save settings"
+      "description": "Manage your profile, riding preferences, notifications, security, and language.",
+      "profile": "Profile",
+      "yourProfile": "Your profile",
+      "changeAvatar": "Change profile photo",
+      "memberSince": "Member since {{date}}",
+      "phone": "Phone",
+      "profileSaved": "Profile changes saved.",
+      "riding": "Riding",
+      "ridingProfile": "Riding profile",
+      "discipline": "Primary discipline",
+      "skillLevel": "Skill level",
+      "goals": "Riding goals",
+      "ridingSaved": "Riding preferences saved.",
+      "notifications": "Notifications",
+      "notificationPreferences": "Notification preferences",
+      "channel": "Notification channel",
+      "channels": { "email": "Email", "push": "Push", "both": "Both" },
+      "notificationLabels": {
+        "lessonReminders": "Lesson reminders",
+        "analysisReady": "Analysis ready",
+        "paymentReceipts": "Payment receipts",
+        "marketing": "EquiVista news"
+      },
+      "notificationDescriptions": {
+        "lessonReminders": "Reminders before confirmed lessons.",
+        "analysisReady": "An alert when the worker finishes your ride analysis.",
+        "paymentReceipts": "Receipts and important billing updates.",
+        "marketing": "Occasional product and riding-performance news."
+      },
+      "notificationsSaved": "Notification preferences saved.",
+      "noNotificationPrefs": "Notification preferences are not available yet.",
+      "security": "Security",
+      "accountSecurity": "Account security",
+      "changePassword": "Change password",
+      "changePasswordDescription": "Choose a new password for your account.",
+      "passwordDialogDescription": "Use at least eight characters and keep this password private.",
+      "updatePassword": "Update password",
+      "passwordSaved": "Password updated securely.",
+      "signOutCurrent": "Sign out of this session",
+      "signOutCurrentDescription": "Ends this browser session. Global session revocation is not available in this screen.",
+      "language": "Language",
+      "languageSaved": "Language preference saved.",
+      "roles": { "rider": "Rider", "trainer": "Trainer", "owner": "Owner", "admin": "Administrator" },
+      "disciplines": { "flatwork": "Flatwork", "showJumping": "Show jumping", "dressage": "Dressage" },
+      "skills": { "beginner": "Beginner", "intermediate": "Intermediate", "advanced": "Advanced", "professional": "Professional" }
     },
     "audit": {
       "title": "Audit Log",
@@ -116,6 +315,18 @@
       "openNavigation": "Open navigation",
       "closeNavigation": "Close navigation",
       "secureAccount": "Secure account"
+      ,"tryAgain": "Try again"
+      ,"viewAll": "View all"
+      ,"notAvailable": "Not available"
+      ,"requestFailed": "We could not complete that request."
+      ,"saving": "Saving..."
+      ,"saveChanges": "Save changes"
+      ,"selectOption": "Select an option"
+      ,"date": "Date"
+      ,"status": "Status"
+      ,"working": "Working..."
+      ,"retry": "Retry"
+      ,"close": "Close"
     }
   }
 }
