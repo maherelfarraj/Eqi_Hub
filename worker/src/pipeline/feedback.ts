@@ -1,4 +1,5 @@
 import type { AnalysisJob, AnalysisMetric, AnalysisResult, PoseSample } from "../types.js";
+import type { RubricOutput } from "./rubric.js";
 
 function hash(value: string): number {
   let result = 0;
@@ -34,7 +35,6 @@ export async function generateFeedback(
     throw new Error("Pose pipeline returned no samples");
   }
 
-  // TODO(mp-3): replace deterministic scores and copy with model inference.
   const seed = hash(`${job.id}:${job.title}:${job.discipline}:${poses.length}`);
   const metrics: AnalysisMetric[] = [
     { category: "Position", score: boundedScore(seed, 0) },
@@ -60,6 +60,28 @@ export async function generateFeedback(
     aiFeedback: {
       strengths: [strengthCopy[strongest.category]],
       improvements: [improvementCopy[weakest.category]],
+    },
+  };
+}
+
+/** Maps validated rubric output to the existing DB and frontend hook contract. */
+export function mapRubricToResult(rubric: RubricOutput): AnalysisResult {
+  const metrics: AnalysisMetric[] = rubric.metrics.map((metric) => ({
+    category: metric.category,
+    score: Math.round(metric.score),
+  }));
+  if (metrics.length === 0) {
+    throw new Error("Validated rubric returned no metrics");
+  }
+  const score = Math.round(
+    metrics.reduce((total, metric) => total + metric.score, 0) / metrics.length,
+  );
+  return {
+    score,
+    metrics,
+    aiFeedback: {
+      strengths: rubric.strengths.slice(0, 3),
+      improvements: rubric.improvements.slice(0, 3),
     },
   };
 }

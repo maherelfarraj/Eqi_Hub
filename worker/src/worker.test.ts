@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { AnalysisWorker } from "./worker.js";
+import { PipelineValidationError } from "./pipeline/storage.js";
 import type {
   AnalysisJob,
   AnalysisResult,
@@ -65,6 +66,19 @@ test("poll marks the analysis failed when the pipeline throws", async () => {
   const repository = new FakeRepository();
   const worker = new AnalysisWorker(repository, silentLogger, async () => {
     throw new Error("pipeline error");
+  });
+
+  const summary = await worker.poll();
+
+  assert.deepEqual(summary, { discovered: 1, claimed: 1, analyzed: 0, failed: 1 });
+  assert.equal(repository.completed, null);
+  assert.equal(repository.failed, true);
+});
+
+test("non-riding content is failed without completing metrics", async () => {
+  const repository = new FakeRepository();
+  const worker = new AnalysisWorker(repository, silentLogger, async () => {
+    throw new PipelineValidationError("not_riding_content");
   });
 
   const summary = await worker.poll();
