@@ -9,6 +9,7 @@
       "signUp": "Create Account",
       "createAccount": "Create Account",
       "signOut": "Sign Out",
+      "signingOut": "Signing out...",
       "email": "Email",
       "password": "Password",
       "newPassword": "New Password",
@@ -56,6 +57,7 @@
         "alreadyRegistered": "An account already exists for this email.",
         "rateLimited": "Too many attempts. Please wait and try again.",
         "recoveryExpired": "This recovery link is invalid or expired. Request a new one.",
+        "signOutFailed": "We could not sign you out. Please try again.",
         "generic": "We could not complete that request. Please try again."
       }
     },
@@ -159,7 +161,7 @@
       "titleLabel": "Analysis title", "horseLabel": "Horse", "noHorse": "No horse selected", "disciplineLabel": "Discipline", "sessionDate": "Session date",
       "discipline": { "flatwork": "Flatwork", "showJumping": "Show jumping", "dressage": "Dressage" },
       "status": { "uploaded": "Uploaded", "processing": "Processing", "analyzed": "Analyzed", "failed": "Failed" },
-      "processingStatus": "Analysis progress", "failedDescription": "Processing failed. Start a new upload to try again without altering the original record.", "retryAsNewUpload": "Upload as a new analysis",
+      "processingStatus": "Analysis progress", "processingTitle": "Your analysis is in progress", "processingDescription": "The Railway worker is preparing this ride. Refresh shortly to view playback, metrics, and feedback.", "failedDescription": "Processing failed. Start a new upload to try again without altering the original record.", "retryAsNewUpload": "Upload as a new analysis",
       "performanceMetrics": "Performance metrics", "metricsChartLabel": "Analysis metrics radar chart", "noMetrics": "Detailed metrics are not available yet.",
       "strengths": "Strengths", "improvements": "Improvements", "noStrengths": "Strengths will appear after analysis.", "noImprovements": "Improvement guidance will appear after analysis.",
       "trainerComment": "Trainer comment", "noTrainerComment": "No trainer comment has been added.",
@@ -228,6 +230,18 @@
     },
     "status": {
       "pending": "Pending", "confirmed": "Confirmed", "completed": "Completed", "cancelled": "Cancelled", "trialing": "Trial", "active": "Active", "past_due": "Past due", "uploaded": "Uploaded", "processing": "Processing", "analyzed": "Analyzed", "failed": "Failed", "paid": "Paid", "open": "Open", "overdue": "Overdue", "void": "Void", "resting": "Resting", "retired": "Retired"
+    },
+    "errorBoundary": {
+      "eyebrow": "EquiVista recovery",
+      "title": "Something interrupted this view",
+      "description": "Your account remains secure. Try loading this screen again.",
+      "retry": "Try again"
+    },
+    "notFound": {
+      "eyebrow": "404 · Lost trail",
+      "title": "This page is not in the arena",
+      "description": "The address may have changed, or the page is no longer available.",
+      "backToDashboard": "Back to dashboard"
     },
     "foundation": {
       "eyebrow": "EquiVista workspace",

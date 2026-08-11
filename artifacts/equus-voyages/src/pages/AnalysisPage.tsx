@@ -9,6 +9,7 @@ import {
   CloudUpload,
   FileVideo,
   Gauge,
+  LoaderCircle,
   MessageSquareText,
   PlayCircle,
   RotateCcw,
@@ -186,19 +187,63 @@ function AnalysisDetail({ id, onNewUpload }: { id: string; onNewUpload: () => vo
     );
   }
 
+  const detailHeader = (
+    <PageHeader
+      eyebrow={t("analysis.detailEyebrow")}
+      title={data.title}
+      description={`${data.horseName ?? t("analysis.noHorse")} · ${formatDate(data.createdAt, locale)}`}
+      actions={
+        <OutlineButton type="button" onClick={() => navigate("/analysis")}>
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
+          {t("analysis.backToAnalyses")}
+        </OutlineButton>
+      }
+    />
+  );
+
+  if (data.status !== "analyzed") {
+    const failed = data.status === "failed";
+
+    return (
+      <div>
+        {detailHeader}
+        <SurfaceCard className="mx-auto max-w-3xl p-6 sm:p-8">
+          <AnalysisStepper status={data.status} />
+          <div
+            className={`mt-8 rounded-2xl border px-6 py-10 text-center ${
+              failed
+                ? "border-error-500/25 bg-error-50"
+                : "border-primary-300 bg-primary-50"
+            }`}
+            role={failed ? "alert" : "status"}
+            aria-live="polite"
+          >
+            {failed ? (
+              <RotateCcw className="mx-auto size-10 text-error-500" aria-hidden="true" />
+            ) : (
+              <LoaderCircle className="mx-auto size-10 animate-spin text-primary-600" aria-hidden="true" />
+            )}
+            <h2 className="mt-4 text-2xl text-espresso">
+              {failed ? t("analysis.status.failed") : t("analysis.processingTitle")}
+            </h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-text-secondary">
+              {failed ? t("analysis.failedDescription") : t("analysis.processingDescription")}
+            </p>
+            {failed ? (
+              <PrimaryButton type="button" className="mt-6" onClick={onNewUpload}>
+                <RotateCcw className="size-4" aria-hidden="true" />
+                {t("analysis.retryAsNewUpload")}
+              </PrimaryButton>
+            ) : null}
+          </div>
+        </SurfaceCard>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <PageHeader
-        eyebrow={t("analysis.detailEyebrow")}
-        title={data.title}
-        description={`${data.horseName ?? t("analysis.noHorse")} · ${formatDate(data.createdAt, locale)}`}
-        actions={
-          <OutlineButton type="button" onClick={() => navigate("/analysis")}>
-            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
-            {t("analysis.backToAnalyses")}
-          </OutlineButton>
-        }
-      />
+      {detailHeader}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(18rem,0.8fr)]">
         <div className="space-y-6">
@@ -226,12 +271,6 @@ function AnalysisDetail({ id, onNewUpload }: { id: string; onNewUpload: () => vo
             </div>
             <div className="border-t border-cream-200 p-5">
               <AnalysisStepper status={data.status} />
-              {data.status === "failed" ? (
-                <PrimaryButton type="button" className="mt-5" onClick={onNewUpload}>
-                  <RotateCcw className="size-4" aria-hidden="true" />
-                  {t("analysis.retryAsNewUpload")}
-                </PrimaryButton>
-              ) : null}
             </div>
           </SurfaceCard>
 

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   ChartNoAxesCombined,
@@ -33,13 +33,25 @@ const navigation = [
 export default function AppShell() {
   const { t, i18n } = useTranslation();
   const { user, signOut } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState(false);
   const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/auth", { replace: true });
+    setSigningOut(true);
+    setSignOutError(false);
+    try {
+      await signOut();
+      setSidebarOpen(false);
+      navigate("/auth", { replace: true });
+    } catch {
+      setSignOutError(true);
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   const toggleLanguage = async () => {
@@ -50,9 +62,25 @@ export default function AppShell() {
     ? "translate-x-full lg:translate-x-0"
     : "-translate-x-full lg:translate-x-0";
 
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSidebarOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [sidebarOpen]);
+
   return (
     <div className="flex min-h-screen bg-cream-50 text-espresso">
       <aside
+        id="app-navigation"
         className={`fixed inset-y-0 start-0 z-50 flex h-screen w-72 flex-col border-e border-cream-200 bg-cream-100 transition-transform duration-200 ease-out lg:sticky ${sidebarOpen ? "translate-x-0" : closedDrawerClass}`}
         aria-label={t("app.name")}
       >
@@ -94,7 +122,10 @@ export default function AppShell() {
                 }`
               }
             >
-              <Icon className="size-5 shrink-0 text-primary-500" />
+              <Icon
+                className="size-5 shrink-0 text-primary-500"
+                aria-hidden="true"
+              />
               <span>{t(labelKey)}</span>
             </NavLink>
           ))}
@@ -120,11 +151,17 @@ export default function AppShell() {
           <button
             type="button"
             onClick={handleSignOut}
+            disabled={signingOut}
             className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-error-500 transition-colors hover:bg-error-50"
           >
-            <LogOut className="size-4" />
-            {t("auth.signOut")}
+            <LogOut className="size-4" aria-hidden="true" />
+            {signingOut ? t("auth.signingOut") : t("auth.signOut")}
           </button>
+          {signOutError ? (
+            <p className="px-3.5 text-xs text-error-700" role="alert">
+              {t("auth.errors.signOutFailed")}
+            </p>
+          ) : null}
         </div>
       </aside>
 
@@ -142,6 +179,8 @@ export default function AppShell() {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
+            aria-controls="app-navigation"
+            aria-expanded={sidebarOpen}
             className="rounded-full border border-cream-200 bg-white p-2 text-espresso shadow-sm"
             aria-label={t("common.openNavigation")}
           >
