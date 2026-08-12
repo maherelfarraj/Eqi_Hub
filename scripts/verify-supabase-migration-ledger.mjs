@@ -24,18 +24,40 @@ const activeMigrationFiles = (await readdir(activeMigrationsRoot))
   .filter((file) => file.endsWith(".sql"))
   .sort();
 
-if (
-  activeMigrationFiles.length !== 1 ||
-  activeMigrationFiles[0] !== canonicalBaselineName
-) {
+if (activeMigrationFiles[0] !== canonicalBaselineName) {
   throw new Error(
-    `Active replay path must contain only ${canonicalBaselineName}; found: ${activeMigrationFiles.join(", ") || "(none)"}`,
+    `Active replay path must begin with ${canonicalBaselineName}; found: ${activeMigrationFiles.join(", ") || "(none)"}`,
   );
 }
 
-if (!migrationNamePattern.test(canonicalBaselineName)) {
+const invalidActiveMigrationNames = activeMigrationFiles.filter(
+  (file) => !migrationNamePattern.test(file),
+);
+if (invalidActiveMigrationNames.length > 0) {
   throw new Error(
-    `Invalid canonical migration filename: ${canonicalBaselineName}`,
+    `Invalid active migration filename(s): ${invalidActiveMigrationNames.join(", ")}`,
+  );
+}
+
+const activeMigrationVersions = activeMigrationFiles.map((file) =>
+  file.slice(0, 14),
+);
+const duplicateActiveMigrationVersions = activeMigrationVersions.filter(
+  (version, index) => activeMigrationVersions.indexOf(version) !== index,
+);
+if (duplicateActiveMigrationVersions.length > 0) {
+  throw new Error(
+    `Duplicate active migration version(s): ${[...new Set(duplicateActiveMigrationVersions)].join(", ")}`,
+  );
+}
+
+const canonicalBaselineVersion = canonicalBaselineName.slice(0, 14);
+const invalidForwardMigrationVersions = activeMigrationFiles
+  .slice(1)
+  .filter((file) => file.slice(0, 14) <= canonicalBaselineVersion);
+if (invalidForwardMigrationVersions.length > 0) {
+  throw new Error(
+    `Forward migration version(s) must follow the canonical baseline: ${invalidForwardMigrationVersions.join(", ")}`,
   );
 }
 
@@ -229,6 +251,7 @@ if (inventory.counts.vault_secrets !== 0) {
 console.log(
   [
     `Verified active canonical baseline ${canonicalBaselineName}`,
+    `Verified ${activeMigrationFiles.length - 1} ordered forward migration(s)`,
     `Verified ${historyFiles.length} live-equivalent forensic migrations (terminal-newline normalization only)`,
     `Verified live inventory counts and replay guards for ${Object.keys(staticCounts).length} schema categories`,
   ].join("\n"),
