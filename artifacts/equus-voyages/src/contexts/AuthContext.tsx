@@ -14,6 +14,11 @@ interface UserRole {
   branch_id: string | null;
 }
 
+interface OrganizationMembershipRoleRow {
+  organization_id: string;
+  organization_member_roles: Array<{ role: string }> | null;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -50,18 +55,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   const fetchRoles = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .maybeSingle();
+    const [profileResult, platformResult, organizationResult] =
+      await Promise.all([
+        supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", userId)
+          .maybeSingle(),
+        supabase
+          .from("platform_role_assignments")
+          .select("role")
+          .eq("user_id", userId),
+        supabase
+          .from("organization_memberships")
+          .select("organization_id, organization_member_roles(role)")
+          .eq("user_id", userId)
+          .eq("status", "active"),
+      ]);
 
-    if (error || !data?.role) {
-      setRoles([]);
-      return;
+    const nextRoles: UserRole[] = [];
+
+    // Keep the canonical v1 role during the additive tenancy transition.
+    if (!profileResult.error && profileResult.data?.role) {
+      nextRoles.push({
+        role_name: profileResult.data.role,
+        branch_id: null,
+      });
     }
 
-    setRoles([{ role_name: data.role, branch_id: null }]);
+    if (!platformResult.error) {
+      for (const assignment of platformResult.data ?? []) {
+        if (assignment.role) {
+          nextRoles.push({
+            role_name: assignment.role,
+            branch_id: null,
+          });
+        }
+      }
+    }
+
+    if (!organizationResult.error) {
+      const memberships = (organizationResult.data ?? []) as unknown as
+        OrganizationMembershipRoleRow[];
+
+      for (const membership of memberships) {
+        for (const memberRole of membership.organization_member_roles ?? []) {
+          if (memberRole.role) {
+            nextRoles.push({
+              role_name: memberRole.role,
+              branch_id: membership.organization_id,
+            });
+          }
+        }
+      }
+    }
+
+    const uniqueRoles = Array.from(
+      new Map(
+        nextRoles.map((role) => [
+          `${role.role_name}:${role.branch_id ?? "global"}`,
+          role,
+        ]),
+      ).values(),
+    );
+
+    setRoles(uniqueRoles);
   }, []);
 
   const refreshRoles = useCallback(async () => {
@@ -164,7 +222,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isStaff = () =>
     roles.some((role) =>
-      ["trainer", "owner", "admin"].includes(role.role_name),
+      [
+        "trainer",
+        "owner",
+        "admin",
+        "platform_admin",
+        "academy_admin",
+        "coach",
+        "horse_owner",
+        "stable_manager",
+        "accountant",
+        "competition_manager",
+      ].includes(role.role_name),
     );
 
   return (

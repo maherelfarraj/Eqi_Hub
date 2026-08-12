@@ -7,6 +7,18 @@ begin;
 create schema if not exists private;
 grant usage on schema private to authenticated;
 
+-- Clear legacy migration artifacts that collide with the canonical forward
+-- Phase 0B.1 names. This file is disposable-branch-only and never production.
+drop table if exists public.notification_outbox cascade;
+drop table if exists public.audit_events cascade;
+drop table if exists public.horse_access_assignments cascade;
+drop table if exists public.coach_rider_assignments cascade;
+drop table if exists public.guardian_riders cascade;
+drop table if exists public.organization_member_roles cascade;
+drop table if exists public.organization_memberships cascade;
+drop table if exists public.platform_role_assignments cascade;
+drop table if exists public.organizations cascade;
+
 drop table if exists public.invoice_lines cascade;
 drop table if exists public.invoices cascade;
 drop table if exists public.payment_methods cascade;
@@ -142,6 +154,9 @@ create table public.lessons (
   created_at timestamptz not null default now()
 );
 
+alter table public.profiles enable row level security;
+alter table public.notification_prefs enable row level security;
+alter table public.membership_plans enable row level security;
 alter table public.memberships enable row level security;
 alter table public.payment_methods enable row level security;
 alter table public.invoices enable row level security;
