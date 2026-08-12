@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   PAYMENT_SERVICE_PENDING,
   paymentServicePendingError,
 } from "@/lib/commercial-actions";
 import type { CheckoutInfo, NewPaymentMethodInput, PaymentMethod, QueryState } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import { useQuery, requireUserId, cents, scopeByOrganization } from "./_shared";
 
 export function usePaymentMethods(): QueryState<PaymentMethod[]> & {
   refetch: () => void;
@@ -62,15 +63,16 @@ export function useCheckout(
   applyPromo: (code: string) => Promise<boolean>;
   pay: (paymentMethodId: string) => Promise<string | null>; // returns membership id
 } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
   const [promo, setPromo] = useState<CheckoutInfo["appliedPromo"]>(null);
 
   const query = useQuery<CheckoutInfo | null>(async () => {
     if (!planId) return null;
-    const { data: p, error } = await supabase
-      .from("membership_plans")
-      .select("*")
-      .eq("id", planId)
-      .single();
+    const { data: p, error } = await scopeByOrganization(
+      supabase.from("membership_plans").select("*").eq("id", planId),
+      organizationId,
+    ).single();
     if (error) throw error;
     return {
       plan: {
@@ -82,7 +84,7 @@ export function useCheckout(
       },
       appliedPromo: promo,
     };
-  }, [planId, promo]);
+  }, [planId, promo, organizationId]);
 
   const applyPromo = useCallback(async (code: string) => {
     void code;

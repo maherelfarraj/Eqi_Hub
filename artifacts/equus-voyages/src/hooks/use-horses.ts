@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import type { DocumentItem, Horse, HorseDetail, QueryState, UpsertHorseInput } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import {
+  useQuery,
+  requireUserId,
+  requireOrganizationId,
+  scopeByOrganization,
+} from "./_shared";
 import { mapAnalysis } from "./use-analysis";
 
 const mapHorse = (h: any): Horse => ({
@@ -19,30 +25,40 @@ const mapHorse = (h: any): Horse => ({
 });
 
 export function useHorses(): QueryState<Horse[]> & { refetch: () => void } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<Horse[]>(async () => {
     await requireUserId();
     // RLS limits to owned + linked horses automatically
-    const { data, error } = await supabase
-      .from("horses")
-      .select("*, horse_riders(rider:profiles(full_name))")
-      .order("name");
+    const { data, error } = await scopeByOrganization(
+      supabase
+        .from("horses")
+        .select("*, horse_riders(rider:profiles(full_name))"),
+      organizationId,
+    ).order("name");
     if (error) throw error;
     return (data ?? []).map(mapHorse);
-  });
+  }, [organizationId]);
 }
 
 export function useHorse(
   id: string | undefined,
 ): QueryState<HorseDetail | null> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<HorseDetail | null>(async () => {
     if (!id) return null;
     const [horseRes, logRes, healthRes, docsRes, analysesRes] =
       await Promise.all([
-        supabase
-          .from("horses")
-          .select("*, horse_riders(rider:profiles(full_name))")
-          .eq("id", id)
-          .single(),
+        scopeByOrganization(
+          supabase
+            .from("horses")
+            .select("*, horse_riders(rider:profiles(full_name))")
+            .eq("id", id),
+          organizationId,
+        ).single(),
         supabase
           .from("training_log")
           .select("id, log_date, note, author:author_id(full_name)")
@@ -54,13 +70,15 @@ export function useHorse(
           .eq("horse_id", id)
           .order("rec_date", { ascending: false }),
         supabase.from("documents").select("id, name, url").eq("horse_id", id),
-        supabase
-          .from("video_analyses")
-          .select(
-            "id, title, discipline, status, score, thumbnail_url, created_at",
-          )
-          .eq("horse_id", id)
-          .order("created_at", { ascending: false }),
+        scopeByOrganization(
+          supabase
+            .from("video_analyses")
+            .select(
+              "id, title, discipline, status, score, thumbnail_url, created_at",
+            )
+            .eq("horse_id", id),
+          organizationId,
+        ).order("created_at", { ascending: false }),
       ]);
     if (horseRes.error) throw horseRes.error;
 
@@ -85,10 +103,12 @@ export function useHorse(
         horseName: h.name,
       })),
     };
-  }, [id]);
+  }, [id, organizationId]);
 }
 
 export function useUpsertHorse() {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,6 +117,7 @@ export function useUpsertHorse() {
     setError(null);
     try {
       const uid = await requireUserId();
+      const tenantId = requireOrganizationId(organizationId);
       let photoUrl: string | undefined;
 
       if (input.photo) {
@@ -111,6 +132,7 @@ export function useUpsertHorse() {
       }
 
       const row: any = {
+        organization_id: tenantId,
         owner_id: uid,
         name: input.name,
         breed: input.breed ?? null,
@@ -122,7 +144,10 @@ export function useUpsertHorse() {
       if (photoUrl) row.photo_url = photoUrl;
 
       const q = input.id
-        ? supabase.from("horses").update(row).eq("id", input.id)
+        ? scopeByOrganization(
+            supabase.from("horses").update(row).eq("id", input.id),
+            tenantId,
+          )
         : supabase.from("horses").insert(row);
       const { error: err } = await q;
       if (err) throw err;
@@ -133,7 +158,7 @@ export function useUpsertHorse() {
     } finally {
       setSaving(false);
     }
-  }, []);
+  }, [organizationId]);
 
   return { upsert, saving, error };
 }

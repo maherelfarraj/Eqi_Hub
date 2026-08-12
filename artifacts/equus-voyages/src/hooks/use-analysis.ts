@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import type {
   AIFeedback,
   Metric,
@@ -9,7 +10,12 @@ import type {
   VideoAnalysisDetail,
   VideoAnalysisListItem,
 } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import {
+  useQuery,
+  requireUserId,
+  requireOrganizationId,
+  scopeByOrganization,
+} from "./_shared";
 
 export const mapAnalysis = (a: any): VideoAnalysisListItem => ({
   id: a.id,
@@ -63,30 +69,40 @@ function normalizeFeedback(value: unknown): AIFeedback {
 export function useVideoAnalyses(): QueryState<VideoAnalysisListItem[]> & {
   refetch: () => void;
 } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<VideoAnalysisListItem[]>(async () => {
     const uid = await requireUserId();
-    const { data, error } = await supabase
-      .from("video_analyses")
-      .select(
-        "id, title, discipline, status, score, thumbnail_url, created_at, horse:horse_id(name)",
-      )
-      .eq("rider_id", uid)
-      .order("created_at", { ascending: false });
+    const { data, error } = await scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select(
+          "id, title, discipline, status, score, thumbnail_url, created_at, horse:horse_id(name)",
+        )
+        .eq("rider_id", uid),
+      organizationId,
+    ).order("created_at", { ascending: false });
     if (error) throw error;
     return (data ?? []).map(mapAnalysis);
-  });
+  }, [organizationId]);
 }
 
 export function useVideoAnalysis(
   id: string | undefined,
 ): QueryState<VideoAnalysisDetail | null> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<VideoAnalysisDetail | null>(async () => {
     if (!id) return null;
-    const { data: a, error } = await supabase
-      .from("video_analyses")
-      .select("*, horse:horse_id(name)")
-      .eq("id", id)
-      .single();
+    const { data: a, error } = await scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select("*, horse:horse_id(name)")
+        .eq("id", id),
+      organizationId,
+    ).single();
     if (error) throw error;
 
     // Signed URL for the private 'videos' bucket (valid 1 hour)
@@ -105,10 +121,12 @@ export function useVideoAnalysis(
       aiFeedback: normalizeFeedback(a.ai_feedback),
       trainerComment: (a.trainer_comment as TrainerComment) ?? null,
     };
-  }, [id]);
+  }, [id, organizationId]);
 }
 
 export function useUploadVideo() {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -119,6 +137,7 @@ export function useUploadVideo() {
     setError(null);
     try {
       const uid = await requireUserId();
+      const tenantId = requireOrganizationId(organizationId);
       const ext = input.file.name.split(".").pop() ?? "mp4";
       const path = `${uid}/${crypto.randomUUID()}.${ext}`;
 
@@ -132,6 +151,7 @@ export function useUploadVideo() {
       const { data, error: insErr } = await supabase
         .from("video_analyses")
         .insert({
+          organization_id: tenantId,
           rider_id: uid,
           horse_id: input.horseId,
           title: input.title,
@@ -154,7 +174,7 @@ export function useUploadVideo() {
     } finally {
       setUploading(false);
     }
-  }, []);
+  }, [organizationId]);
 
   return { upload, uploading, progress, error };
 }
