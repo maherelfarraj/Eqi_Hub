@@ -21,6 +21,7 @@ const LessonsPage = lazy(() => import("@/pages/LessonsPage"));
 const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const MembershipPage = lazy(() => import("@/pages/MembershipPage"));
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
+const OrganizationPage = lazy(() => import("@/pages/OrganizationPage"));
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
@@ -213,6 +214,14 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <SettingsPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/organization"
+          element={
+            <SuspendedPage>
+              <OrganizationPage />
             </SuspendedPage>
           }
         />

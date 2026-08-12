@@ -9,13 +9,37 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
-interface UserRole {
+export interface UserRole {
   role_name: string;
   branch_id: string | null;
 }
 
+export interface OrganizationSummary {
+  id: string;
+  name: string;
+  slug: string;
+  organizationType: string;
+  roles: string[];
+}
+
 interface OrganizationMembershipRoleRow {
   organization_id: string;
+  organizations:
+    | {
+        id: string;
+        name: string;
+        slug: string;
+        organization_type: string;
+        active: boolean;
+      }
+    | Array<{
+        id: string;
+        name: string;
+        slug: string;
+        organization_type: string;
+        active: boolean;
+      }>
+    | null;
   organization_member_roles: Array<{ role: string }> | null;
 }
 
@@ -23,6 +47,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   roles: UserRole[];
+  organizations: OrganizationSummary[];
+  activeOrganization: OrganizationSummary | null;
   ready: boolean;
   signIn: (
     email: string,
@@ -38,6 +64,7 @@ interface AuthContextType {
   updatePassword: (password: string) => Promise<{ error: string | null }>;
   hasRole: (roleName: string) => boolean;
   isStaff: () => boolean;
+  setActiveOrganization: (organizationId: string) => void;
   refreshRoles: () => Promise<void>;
 }
 
@@ -52,23 +79,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<UserRole[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationSummary[]>([]);
+  const [activeOrganizationId, setActiveOrganizationId] = useState<
+    string | null
+  >(null);
   const [ready, setReady] = useState(false);
 
   const fetchRoles = useCallback(async (userId: string) => {
     const [profileResult, platformResult, organizationResult] =
       await Promise.all([
-        supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", userId)
-          .maybeSingle(),
+        supabase.from("profiles").select("role").eq("id", userId).maybeSingle(),
         supabase
           .from("platform_role_assignments")
           .select("role")
           .eq("user_id", userId),
         supabase
           .from("organization_memberships")
-          .select("organization_id, organization_member_roles(role)")
+          .select(
+            "organization_id, organizations(id, name, slug, organization_type, active), organization_member_roles(role)",
+          )
           .eq("user_id", userId)
           .eq("status", "active"),
       ]);
@@ -94,18 +123,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    if (!organizationResult.error) {
-      const memberships = (organizationResult.data ?? []) as unknown as
-        OrganizationMembershipRoleRow[];
+    const memberships = !organizationResult.error
+      ? ((organizationResult.data ??
+          []) as unknown as OrganizationMembershipRoleRow[])
+      : [];
 
-      for (const membership of memberships) {
-        for (const memberRole of membership.organization_member_roles ?? []) {
-          if (memberRole.role) {
-            nextRoles.push({
-              role_name: memberRole.role,
-              branch_id: membership.organization_id,
-            });
-          }
+    for (const membership of memberships) {
+      for (const memberRole of membership.organization_member_roles ?? []) {
+        if (memberRole.role) {
+          nextRoles.push({
+            role_name: memberRole.role,
+            branch_id: membership.organization_id,
+          });
         }
       }
     }
@@ -120,6 +149,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     setRoles(uniqueRoles);
+
+    const membershipOrganizations = memberships.flatMap((membership) => {
+      const relation = Array.isArray(membership.organizations)
+        ? membership.organizations[0]
+        : membership.organizations;
+      if (!relation?.active) return [];
+
+      return [
+        {
+          id: relation.id,
+          name: relation.name,
+          slug: relation.slug,
+          organizationType: relation.organization_type,
+          roles: (membership.organization_member_roles ?? []).map(
+            (memberRole) => memberRole.role,
+          ),
+        } satisfies OrganizationSummary,
+      ];
+    });
+
+    let nextOrganizations = membershipOrganizations;
+    const platformAdmin = uniqueRoles.some(
+      (role) => role.role_name === "platform_admin" && role.branch_id === null,
+    );
+
+    if (platformAdmin) {
+      const { data: allOrganizations, error: organizationError } =
+        await supabase
+          .from("organizations")
+          .select("id, name, slug, organization_type, active")
+          .eq("active", true)
+          .order("name");
+
+      if (!organizationError) {
+        const membershipById = new Map(
+          membershipOrganizations.map((organization) => [
+            organization.id,
+            organization,
+          ]),
+        );
+        nextOrganizations = (allOrganizations ?? []).map((organization) => ({
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          organizationType: organization.organization_type,
+          roles: membershipById.get(organization.id)?.roles ?? [],
+        }));
+      }
+    }
+
+    setOrganizations(nextOrganizations);
+    setActiveOrganizationId((current) => {
+      const storageKey = `equivista.active-organization.${userId}`;
+      const stored = window.localStorage.getItem(storageKey);
+      const candidate = stored ?? current;
+      const nextId = nextOrganizations.some(
+        (organization) => organization.id === candidate,
+      )
+        ? candidate
+        : (nextOrganizations[0]?.id ?? null);
+
+      if (nextId) window.localStorage.setItem(storageKey, nextId);
+      else window.localStorage.removeItem(storageKey);
+      return nextId;
+    });
   }, []);
 
   const refreshRoles = useCallback(async () => {
@@ -127,6 +221,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetchRoles(user.id);
     } else {
       setRoles([]);
+      setOrganizations([]);
+      setActiveOrganizationId(null);
     }
   }, [fetchRoles, user]);
 
@@ -149,6 +245,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
       } else {
         setRoles([]);
+        setOrganizations([]);
+        setActiveOrganizationId(null);
         setReady(true);
       }
     });
@@ -164,6 +262,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetchRoles(initialSession.user.id);
       } else {
         setRoles([]);
+        setOrganizations([]);
+        setActiveOrganizationId(null);
       }
 
       initialized = true;
@@ -203,6 +303,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setUser(null);
     setRoles([]);
+    setOrganizations([]);
+    setActiveOrganizationId(null);
   };
 
   const resetPassword = async (email: string) => {
@@ -236,12 +338,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ].includes(role.role_name),
     );
 
+  const activeOrganization =
+    organizations.find(
+      (organization) => organization.id === activeOrganizationId,
+    ) ?? null;
+
+  const setActiveOrganization = (organizationId: string) => {
+    if (
+      !user ||
+      !organizations.some((organization) => organization.id === organizationId)
+    ) {
+      return;
+    }
+
+    window.localStorage.setItem(
+      `equivista.active-organization.${user.id}`,
+      organizationId,
+    );
+    setActiveOrganizationId(organizationId);
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         session,
         roles,
+        organizations,
+        activeOrganization,
         ready,
         signIn,
         signUp,
@@ -250,6 +374,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updatePassword,
         hasRole,
         isStaff,
+        setActiveOrganization,
         refreshRoles,
       }}
     >
