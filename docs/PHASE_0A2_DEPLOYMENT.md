@@ -4,8 +4,8 @@ Status: review and staging only. Production SQL requires a separate explicit app
 
 ## Coupled release contents
 
-- `supabase/migrations/20260812104929_phase_0a2_security_hotfix.sql`
-- `supabase/rollback/20260812104929_phase_0a2_security_hotfix_rollback.sql`
+- `supabase/migrations/20260812062006_phase_0a2_security_hotfix.sql`
+- `supabase/rollback/20260812062006_phase_0a2_security_hotfix_rollback.sql`
 - commercial frontend hooks/pages and EN/AR copy under `artifacts/equus-voyages/src`
 - `tests/fixtures/phase_0a2_branch_baseline.sql`
 - `tests/rls/phase_0a2_personas.sql`

@@ -2,7 +2,7 @@
 
 Run:
 
-`supabase/rollback/20260812081411_phase_0b2_organization_operations_rollback.sql`
+`supabase/rollback/20260812085957_phase_0b2_organization_operations_rollback.sql`
 
 The rollback removes the four public wrappers, five private implementations,
 and the Phase 0B.2 composite index. It intentionally preserves all organization,

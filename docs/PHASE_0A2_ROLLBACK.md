@@ -9,7 +9,7 @@ Use the rollback only for a release-blocking regression that cannot be fixed for
 ## Sequence
 
 1. Stop further release activity and retain logs/evidence.
-2. Apply `supabase/rollback/20260812104929_phase_0a2_security_hotfix_rollback.sql` in one transaction.
+2. Apply `supabase/rollback/20260812062006_phase_0a2_security_hotfix_rollback.sql` in one transaction.
 3. Verify row counts match the pre-deployment capture.
 4. Run `tests/evidence/before.sql` and compare grants, policies, functions, and bucket configuration with the captured baseline.
 5. Roll the application back to the matching pre-Phase-0A.2 build only if required.
