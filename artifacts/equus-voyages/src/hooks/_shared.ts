@@ -8,6 +8,26 @@ export async function requireUserId(): Promise<string> {
   return data.user.id;
 }
 
+export function scopeByOrganization<T>(query: T, organizationId: string | null): T {
+  const scopedQuery = query as T & {
+    eq: (column: string, value: string) => T;
+    is: (column: string, value: null) => T;
+  };
+
+  return organizationId
+    ? scopedQuery.eq("organization_id", organizationId)
+    : scopedQuery.is("organization_id", null);
+}
+
+export function requireOrganizationId(
+  organizationId: string | null,
+): string {
+  if (!organizationId) {
+    throw new Error("Select an organization before creating tenant data");
+  }
+  return organizationId;
+}
+
 /** Generic async loader → { data, loading, error, refetch } */
 export function useQuery<T>(
   fn: () => Promise<T>,

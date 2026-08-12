@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { PAYMENT_SERVICE_PENDING } from "@/lib/commercial-actions";
 import type { CurrentMembership, MembershipPlan, QueryState } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import { useQuery, requireUserId, cents, scopeByOrganization } from "./_shared";
 
 const mapPlan = (p: any): MembershipPlan => ({
   id: p.id,
@@ -17,29 +18,37 @@ const mapPlan = (p: any): MembershipPlan => ({
 });
 
 export function useMembershipPlans(): QueryState<MembershipPlan[]> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<MembershipPlan[]>(async () => {
-    const { data, error } = await supabase
-      .from("membership_plans")
-      .select("*")
-      .eq("active", true)
-      .order("sort_order");
+    const { data, error } = await scopeByOrganization(
+      supabase.from("membership_plans").select("*").eq("active", true),
+      organizationId,
+    ).order("sort_order");
     if (error) throw error;
     return (data ?? []).map(mapPlan);
-  });
+  }, [organizationId]);
 }
 
 export function useCurrentMembership(): QueryState<CurrentMembership | null> & {
   refetch: () => void;
 } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<CurrentMembership | null>(async () => {
     const uid = await requireUserId();
-    const { data: m, error } = await supabase
-      .from("memberships")
-      .select(
-        "status, renews_at, lessons_used, analyses_used, plan:membership_plans(name, lessons_per_month, analyses_per_month)",
-      )
-      .eq("user_id", uid)
-      .in("status", ["trialing", "active", "past_due"])
+    const { data: m, error } = await scopeByOrganization(
+      supabase
+        .from("memberships")
+        .select(
+          "status, renews_at, lessons_used, analyses_used, plan:membership_plans(name, lessons_per_month, analyses_per_month)",
+        )
+        .eq("user_id", uid)
+        .in("status", ["trialing", "active", "past_due"]),
+      organizationId,
+    )
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -55,7 +64,7 @@ export function useCurrentMembership(): QueryState<CurrentMembership | null> & {
       analysesUsed: m.analyses_used,
       analysesAllowed: plan?.analyses_per_month ?? 0,
     };
-  });
+  }, [organizationId]);
 }
 
 export function useManageMembership() {

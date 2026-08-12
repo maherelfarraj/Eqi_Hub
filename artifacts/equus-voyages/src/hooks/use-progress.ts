@@ -1,25 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Metric, ProgressMetrics, QueryState, SessionRow } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import { useQuery, requireUserId, scopeByOrganization } from "./_shared";
 
 export function useProgressMetrics(
   periodDays: 30 | 90 | 365,
 ): QueryState<ProgressMetrics | null> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<ProgressMetrics | null>(async () => {
     const uid = await requireUserId();
     const since = new Date(Date.now() - periodDays * 864e5)
       .toISOString()
       .slice(0, 10);
 
-    const { data, error } = await supabase
-      .from("video_analyses")
-      .select("session_date, score, discipline, metrics")
-      .eq("rider_id", uid)
-      .eq("status", "analyzed")
-      .not("score", "is", null)
-      .gte("session_date", since)
-      .order("session_date", { ascending: true });
+    const { data, error } = await scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select("session_date, score, discipline, metrics")
+        .eq("rider_id", uid)
+        .eq("status", "analyzed")
+        .not("score", "is", null)
+        .gte("session_date", since),
+      organizationId,
+    ).order("session_date", { ascending: true });
     if (error) throw error;
 
     const rows = data ?? [];
@@ -67,19 +73,24 @@ export function useProgressMetrics(
       })),
       categoryScores,
     };
-  }, [periodDays]);
+  }, [periodDays, organizationId]);
 }
 
 export function useSessionHistory(): QueryState<SessionRow[]> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<SessionRow[]>(async () => {
     const uid = await requireUserId();
-    const { data, error } = await supabase
-      .from("video_analyses")
-      .select(
-        "id, session_date, discipline, score, status, horse:horse_id(name)",
-      )
-      .eq("rider_id", uid)
-      .order("session_date", { ascending: false });
+    const { data, error } = await scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select(
+          "id, session_date, discipline, score, status, horse:horse_id(name)",
+        )
+        .eq("rider_id", uid),
+      organizationId,
+    ).order("session_date", { ascending: false });
     if (error) throw error;
     return (data ?? []).map((r: any) => ({
       id: r.id,
@@ -89,5 +100,5 @@ export function useSessionHistory(): QueryState<SessionRow[]> {
       score: r.score,
       status: r.status,
     }));
-  });
+  }, [organizationId]);
 }

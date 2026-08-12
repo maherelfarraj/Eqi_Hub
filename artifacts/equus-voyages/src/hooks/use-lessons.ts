@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import type { BookLessonInput, Lesson, QueryState, Trainer } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import {
+  useQuery,
+  requireUserId,
+  requireOrganizationId,
+  scopeByOrganization,
+} from "./_shared";
 
 export type LessonFilter = "upcoming" | "past" | "requests";
 
@@ -24,6 +30,9 @@ const mapLesson = (l: any): Lesson => ({
 export function useLessons(
   filter: LessonFilter,
 ): QueryState<Lesson[]> & { refetch: () => void } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<Lesson[]>(async () => {
     const uid = await requireUserId();
     let q = supabase
@@ -32,6 +41,8 @@ export function useLessons(
         "*, trainer:trainer_id(full_name, avatar_url), horse:horse_id(name)",
       )
       .eq("rider_id", uid);
+
+    q = scopeByOrganization(q, organizationId);
 
     if (filter === "upcoming") {
       q = q
@@ -49,11 +60,31 @@ export function useLessons(
     const { data, error } = await q;
     if (error) throw error;
     return (data ?? []).map(mapLesson);
-  }, [filter]);
+  }, [filter, organizationId]);
 }
 
 export function useTrainers(): QueryState<Trainer[]> {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<Trainer[]>(async () => {
+    if (organizationId) {
+      const { data, error } = await supabase
+        .from("organization_memberships")
+        .select(
+          "user:profiles(id, full_name, avatar_url), organization_member_roles!inner(role)",
+        )
+        .eq("organization_id", organizationId)
+        .eq("status", "active")
+        .eq("organization_member_roles.role", "coach");
+      if (error) throw error;
+      return (data ?? []).map((membership: any) => ({
+        id: membership.user?.id,
+        name: membership.user?.full_name ?? "Trainer",
+        avatarUrl: membership.user?.avatar_url ?? null,
+      }));
+    }
+
     const { data, error } = await supabase
       .from("profiles")
       .select("id, full_name, avatar_url")
@@ -65,10 +96,12 @@ export function useTrainers(): QueryState<Trainer[]> {
       name: t.full_name ?? "Trainer",
       avatarUrl: t.avatar_url,
     }));
-  });
+  }, [organizationId]);
 }
 
 export function useBookLesson() {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +110,9 @@ export function useBookLesson() {
     setError(null);
     try {
       const uid = await requireUserId();
+      const tenantId = requireOrganizationId(organizationId);
       const { error: err } = await supabase.from("lessons").insert({
+        organization_id: tenantId,
         rider_id: uid,
         trainer_id: input.trainerId,
         horse_id: input.horseId,
@@ -95,13 +130,15 @@ export function useBookLesson() {
     } finally {
       setSubmitting(false);
     }
-  }, []);
+  }, [organizationId]);
 
   return { book, submitting, error };
 }
 
 /** Trainer-side: log feedback on a completed lesson */
 export function useLogLesson() {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
   const [submitting, setSubmitting] = useState(false);
 
   const log = useCallback(
@@ -113,22 +150,26 @@ export function useLogLesson() {
     ) => {
       setSubmitting(true);
       try {
-        const { error } = await supabase
-          .from("lessons")
-          .update({
-            feedback_text: feedbackText,
-            homework,
-            analysis_id: analysisId ?? null,
-            status: "completed",
-          })
-          .eq("id", lessonId);
+        const tenantId = requireOrganizationId(organizationId);
+        const { error } = await scopeByOrganization(
+          supabase
+            .from("lessons")
+            .update({
+              feedback_text: feedbackText,
+              homework,
+              analysis_id: analysisId ?? null,
+              status: "completed",
+            })
+            .eq("id", lessonId),
+          tenantId,
+        );
         if (error) throw error;
         return true;
       } finally {
         setSubmitting(false);
       }
     },
-    [],
+    [organizationId],
   );
 
   return { log, submitting };

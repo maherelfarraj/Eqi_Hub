@@ -1,13 +1,84 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardSummary, QueryState, Role } from "./types";
-import { useQuery, requireUserId, cents } from "./_shared";
+import { useQuery, requireUserId, cents, scopeByOrganization } from "./_shared";
 
 export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
   refetch: () => void;
 } {
+  const { activeOrganization } = useAuth();
+  const organizationId = activeOrganization?.id ?? null;
+
   return useQuery<DashboardSummary | null>(async () => {
     const uid = await requireUserId();
+
+    const lessonsQuery = scopeByOrganization(
+      supabase
+        .from("lessons")
+        .select(
+          "id, date_time, lesson_type, status, trainer:trainer_id(full_name), horse:horse_id(name)",
+        )
+        .eq("rider_id", uid)
+        .in("status", ["pending", "confirmed"])
+        .gte("date_time", new Date().toISOString()),
+      organizationId,
+    )
+      .order("date_time", { ascending: true })
+      .limit(3);
+
+    const membershipQuery = scopeByOrganization(
+      supabase
+        .from("memberships")
+        .select(
+          "status, renews_at, lessons_used, analyses_used, plan:membership_plans(name, lessons_per_month, analyses_per_month)",
+        )
+        .eq("user_id", uid)
+        .in("status", ["trialing", "active", "past_due"]),
+      organizationId,
+    )
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const analysesQuery = scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select("id, title, status, score, created_at, horse:horse_id(name)")
+        .eq("rider_id", uid),
+      organizationId,
+    )
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    const invoicesQuery = scopeByOrganization(
+      supabase
+        .from("invoices")
+        .select("total_cents, currency")
+        .eq("user_id", uid)
+        .in("status", ["open", "overdue"]),
+      organizationId,
+    );
+
+    const horsesQuery = scopeByOrganization(
+      supabase
+        .from("horses")
+        .select("id", { count: "exact", head: true })
+        .eq("owner_id", uid),
+      organizationId,
+    );
+
+    const trendQuery = scopeByOrganization(
+      supabase
+        .from("video_analyses")
+        .select("session_date, score")
+        .eq("rider_id", uid)
+        .eq("status", "analyzed")
+        .not("score", "is", null),
+      organizationId,
+    )
+      .order("session_date", { ascending: true })
+      .limit(8);
 
     const [
       profileRes,
@@ -23,49 +94,12 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
         .select("full_name, role")
         .eq("id", uid)
         .single(),
-      supabase
-        .from("lessons")
-        .select(
-          "id, date_time, lesson_type, status, trainer:trainer_id(full_name), horse:horse_id(name)",
-        )
-        .eq("rider_id", uid)
-        .in("status", ["pending", "confirmed"])
-        .gte("date_time", new Date().toISOString())
-        .order("date_time", { ascending: true })
-        .limit(3),
-      supabase
-        .from("memberships")
-        .select(
-          "status, renews_at, lessons_used, analyses_used, plan:membership_plans(name, lessons_per_month, analyses_per_month)",
-        )
-        .eq("user_id", uid)
-        .in("status", ["trialing", "active", "past_due"])
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from("video_analyses")
-        .select("id, title, status, score, created_at, horse:horse_id(name)")
-        .eq("rider_id", uid)
-        .order("created_at", { ascending: false })
-        .limit(3),
-      supabase
-        .from("invoices")
-        .select("total_cents, currency")
-        .eq("user_id", uid)
-        .in("status", ["open", "overdue"]),
-      supabase
-        .from("horses")
-        .select("id", { count: "exact", head: true })
-        .eq("owner_id", uid),
-      supabase
-        .from("video_analyses")
-        .select("session_date, score")
-        .eq("rider_id", uid)
-        .eq("status", "analyzed")
-        .not("score", "is", null)
-        .order("session_date", { ascending: true })
-        .limit(8),
+      lessonsQuery,
+      membershipQuery,
+      analysesQuery,
+      invoicesQuery,
+      horsesQuery,
+      trendQuery,
     ]);
 
     const outstanding = (invoicesRes.data ?? []).reduce(
@@ -117,5 +151,5 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
         score: Number(t.score),
       })),
     };
-  });
+  }, [organizationId]);
 }
