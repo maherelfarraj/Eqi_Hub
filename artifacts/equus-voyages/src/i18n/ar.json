@@ -206,6 +206,7 @@
       "upgradeTo": "الترقية إلى {{plan}}", "choosePlan": "اختيار {{plan}}", "upgradeSuccess": "تمت ترقية عضويتك.", "cancelSuccess": "تم إلغاء عضويتك.",
       "confirmUpgradeTitle": "تأكيد ترقية العضوية", "confirmUpgradeDescription": "هل تريد نقل عضويتك الحالية إلى {{plan}}؟", "confirmCancelTitle": "إلغاء العضوية؟", "confirmCancelDescription": "ستتوقف خطتك ولن تتجدد الحصص المستقبلية.",
       "confirmUpgrade": "تأكيد الترقية", "confirmCancel": "إلغاء العضوية", "upgradeConsequence": "تصبح الخطة المحددة نشطة فوراً.", "cancelConsequence": "يوقف هذا الإجراء العضوية النشطة الحالية.",
+      "paymentServicePendingTitle": "خدمة الدفع قريباً", "paymentServicePendingDescription": "تغييرات العضوية متاحة للقراءة فقط مؤقتاً أثناء ربط خدمة الدفع المحمية. تبقى خطتك الحالية واستخدامك متاحين.", "paymentServicePendingButton": "خدمة الدفع قيد الإعداد",
       "intervals": { "month": "شهر", "year": "سنة" }
     },
     "payments": {

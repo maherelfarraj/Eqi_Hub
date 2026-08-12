@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
-  BusyLabel,
   EmptyState,
   ErrorState,
   Modal,
@@ -25,16 +24,10 @@ import {
   labelClass,
 } from "@/components/EquiVistaUI";
 import {
-  useAddPaymentMethod,
   useCheckout,
   usePaymentMethods,
 } from "@/hooks/use-payments";
 import type { PaymentMethod } from "@/hooks/types";
-
-type ConfirmationAction =
-  | { kind: "default"; method: PaymentMethod }
-  | { kind: "remove"; method: PaymentMethod }
-  | null;
 
 function methodName(method: PaymentMethod, fallback: string) {
   return method.brand?.trim() || fallback;
@@ -52,26 +45,9 @@ export default function PaymentsPage() {
 function SavedMethodsView() {
   const { t } = useTranslation();
   const { data, loading, error, refetch } = usePaymentMethods();
-  const { setDefault, remove, saving } = useAddPaymentMethod();
-  const [confirmation, setConfirmation] = useState<ConfirmationAction>(null);
   const [providerOpen, setProviderOpen] = useState(false);
-  const [working, setWorking] = useState(false);
 
   const methods = data ?? [];
-
-  const confirmAction = async () => {
-    if (!confirmation) return;
-
-    setWorking(true);
-    if (confirmation.kind === "default") {
-      await setDefault(confirmation.method.id);
-    } else {
-      await remove(confirmation.method.id);
-    }
-    setWorking(false);
-    setConfirmation(null);
-    refetch();
-  };
 
   if (loading) return <PageSkeleton cards={3} />;
   if (error) {
@@ -165,10 +141,7 @@ function SavedMethodsView() {
                   {!method.isDefault ? (
                     <OutlineButton
                       type="button"
-                      disabled={working || saving}
-                      onClick={() =>
-                        setConfirmation({ kind: "default", method })
-                      }
+                      disabled
                     >
                       <CheckCircle2 className="size-4" aria-hidden="true" />
                       {t("payments.setDefault")}
@@ -176,8 +149,7 @@ function SavedMethodsView() {
                   ) : null}
                   <OutlineButton
                     type="button"
-                    disabled={working || saving}
-                    onClick={() => setConfirmation({ kind: "remove", method })}
+                    disabled
                     className="text-error-600 hover:border-error-500/40 hover:bg-error-50"
                   >
                     <Trash2 className="size-4" aria-hidden="true" />
@@ -189,61 +161,6 @@ function SavedMethodsView() {
           </div>
         )}
       </SurfaceCard>
-
-      <Modal
-        open={Boolean(confirmation)}
-        title={t(
-          confirmation?.kind === "remove"
-            ? "payments.confirmRemoveTitle"
-            : "payments.confirmDefaultTitle",
-        )}
-        description={
-          confirmation
-            ? t(
-                confirmation.kind === "remove"
-                  ? "payments.confirmRemoveDescription"
-                  : "payments.confirmDefaultDescription",
-                {
-                  brand: methodName(confirmation.method, t("payments.card")),
-                  last4: confirmation.method.last4 ?? "••••",
-                },
-              )
-            : undefined
-        }
-        onClose={() => {
-          if (!working) setConfirmation(null);
-        }}
-        footer={
-          <>
-            <OutlineButton
-              type="button"
-              disabled={working}
-              onClick={() => setConfirmation(null)}
-            >
-              {t("common.cancel")}
-            </OutlineButton>
-            <PrimaryButton
-              type="button"
-              disabled={working}
-              onClick={confirmAction}
-            >
-              {working ? (
-                <BusyLabel label={t("common.loading")} />
-              ) : (
-                t("common.confirm")
-              )}
-            </PrimaryButton>
-          </>
-        }
-      >
-        <div className="flex items-center gap-3 rounded-xl bg-cream-50 p-4 text-sm text-text-secondary">
-          <ShieldCheck
-            className="size-5 shrink-0 text-primary-600"
-            aria-hidden="true"
-          />
-          {t("payments.confirmationSafety")}
-        </div>
-      </Modal>
 
       <ProviderModal
         open={providerOpen}
@@ -266,11 +183,8 @@ function CheckoutView({ planId }: { planId: string | null }) {
     data: checkout,
     loading: checkoutLoading,
     error: checkoutError,
-    applyPromo,
   } = useCheckout(planId);
   const [selectedMethodId, setSelectedMethodId] = useState("");
-  const [promoCode, setPromoCode] = useState("");
-  const [applyingPromo, setApplyingPromo] = useState(false);
   const [providerOpen, setProviderOpen] = useState(false);
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const methods = methodsData ?? [];
@@ -282,14 +196,6 @@ function CheckoutView({ planId }: { planId: string | null }) {
   const discountPct = checkout?.appliedPromo?.discountPct ?? 0;
   const discount = (price * discountPct) / 100;
   const total = Math.max(0, price - discount);
-
-  const submitPromo = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!promoCode.trim()) return;
-    setApplyingPromo(true);
-    await applyPromo(promoCode.trim());
-    setApplyingPromo(false);
-  };
 
   if (methodsLoading || checkoutLoading) return <PageSkeleton cards={2} />;
   if (methodsError || checkoutError) {
@@ -410,7 +316,7 @@ function CheckoutView({ planId }: { planId: string | null }) {
           </SurfaceCard>
 
           <SurfaceCard className="p-5 sm:p-6">
-            <form onSubmit={submitPromo}>
+            <form onSubmit={(event) => event.preventDefault()}>
               <label htmlFor="promo-code" className={labelClass}>
                 {t("payments.promoCode")}
               </label>
@@ -418,20 +324,17 @@ function CheckoutView({ planId }: { planId: string | null }) {
                 <input
                   id="promo-code"
                   type="text"
-                  value={promoCode}
-                  onChange={(event) => setPromoCode(event.target.value)}
+                  value=""
+                  readOnly
                   placeholder={t("payments.promoPlaceholder")}
                   className={`${fieldClass} mt-0 flex-1`}
+                  disabled
                 />
                 <OutlineButton
                   type="submit"
-                  disabled={applyingPromo || !promoCode.trim()}
+                  disabled
                 >
-                  {applyingPromo ? (
-                    <BusyLabel label={t("common.loading")} />
-                  ) : (
-                    t("payments.applyPromo")
-                  )}
+                  {t("payments.providerUnavailable")}
                 </OutlineButton>
               </div>
               {checkout.appliedPromo ? (
@@ -479,12 +382,11 @@ function CheckoutView({ planId }: { planId: string | null }) {
           </dl>
           <PrimaryButton
             type="button"
-            disabled={!selected}
-            onClick={() => setProviderOpen(true)}
+            disabled
             className="w-full"
           >
             <LockKeyhole className="size-4" aria-hidden="true" />
-            {t("payments.subscribeAndPay")}
+            {t("payments.providerUnavailable")}
           </PrimaryButton>
           {!selected ? (
             <p className="mt-2 text-center text-xs text-warning-700">

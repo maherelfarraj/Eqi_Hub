@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,10 +9,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import {
-  BusyLabel,
   EmptyState,
   ErrorState,
-  Modal,
   OutlineButton,
   PageHeader,
   PageSkeleton,
@@ -26,15 +23,8 @@ import {
 } from "@/components/EquiVistaUI";
 import {
   useCurrentMembership,
-  useManageMembership,
   useMembershipPlans,
 } from "@/hooks/use-membership";
-import type { MembershipPlan } from "@/hooks/types";
-
-type Confirmation =
-  | { action: "upgrade"; plan: MembershipPlan }
-  | { action: "cancel" }
-  | null;
 
 function usagePercent(used: number, allowed: number) {
   if (allowed <= 0) return 0;
@@ -47,39 +37,6 @@ export default function MembershipPage() {
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const plans = useMembershipPlans();
   const current = useCurrentMembership();
-  const manage = useManageMembership();
-  const [confirmation, setConfirmation] = useState<Confirmation>(null);
-  const [success, setSuccess] = useState("");
-
-  const choosePlan = (plan: MembershipPlan) => {
-    setSuccess("");
-    if (!current.data) {
-      navigate(`/payments/checkout?plan=${encodeURIComponent(plan.id)}`);
-      return;
-    }
-    if (current.data.planName !== plan.name) {
-      setConfirmation({ action: "upgrade", plan });
-    }
-  };
-
-  const confirmAction = async () => {
-    if (!confirmation) return;
-    const completed =
-      confirmation.action === "upgrade"
-        ? await manage.upgrade(confirmation.plan.id)
-        : await manage.cancel();
-    if (!completed) return;
-
-    setSuccess(
-      t(
-        confirmation.action === "upgrade"
-          ? "membership.upgradeSuccess"
-          : "membership.cancelSuccess",
-      ),
-    );
-    setConfirmation(null);
-    current.refetch();
-  };
 
   if (plans.loading || current.loading) return <PageSkeleton cards={3} />;
 
@@ -93,14 +50,20 @@ export default function MembershipPage() {
         description={t("membership.description")}
       />
 
-      {success ? (
-        <div
-          className="mb-5 rounded-xl border border-success-500/25 bg-success-50 px-4 py-3 text-sm font-semibold text-success-700"
-          role="status"
-        >
-          {success}
+      <div
+        className="mb-6 flex items-start gap-3 rounded-2xl border border-warning-500/25 bg-warning-50 p-4 text-sm text-warning-700"
+        role="status"
+      >
+        <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+        <div>
+          <p className="font-bold">
+            {t("membership.paymentServicePendingTitle")}
+          </p>
+          <p className="mt-1 leading-6">
+            {t("membership.paymentServicePendingDescription")}
+          </p>
         </div>
-      ) : null}
+      </div>
 
       {pageError ? (
         <ErrorState message={pageError} />
@@ -170,13 +133,9 @@ export default function MembershipPage() {
                   <OutlineButton
                     type="button"
                     className="text-error-700"
-                    onClick={() => {
-                      setSuccess("");
-                      setConfirmation({ action: "cancel" });
-                    }}
-                    disabled={manage.working}
+                    disabled
                   >
-                    {t("membership.cancelMembership")}
+                    {t("membership.paymentServicePendingButton")}
                   </OutlineButton>
                 </div>
               </div>
@@ -295,12 +254,9 @@ export default function MembershipPage() {
                       <PrimaryButton
                         type="button"
                         className="w-full"
-                        onClick={() => choosePlan(plan)}
-                        disabled={manage.working}
+                        disabled
                       >
-                        {current.data
-                          ? t("membership.upgradeTo", { plan: plan.name })
-                          : t("membership.choosePlan", { plan: plan.name })}
+                        {t("membership.paymentServicePendingButton")}
                       </PrimaryButton>
                     )}
                   </article>
@@ -311,61 +267,6 @@ export default function MembershipPage() {
         </>
       )}
 
-      {manage.error ? (
-        <div className="mt-5">
-          <ErrorState message={manage.error} />
-        </div>
-      ) : null}
-
-      <Modal
-        open={confirmation !== null}
-        title={
-          confirmation?.action === "upgrade"
-            ? t("membership.confirmUpgradeTitle")
-            : t("membership.confirmCancelTitle")
-        }
-        description={
-          confirmation?.action === "upgrade"
-            ? t("membership.confirmUpgradeDescription", {
-                plan: confirmation.plan.name,
-              })
-            : t("membership.confirmCancelDescription")
-        }
-        onClose={() => {
-          if (!manage.working) setConfirmation(null);
-        }}
-        footer={
-          <>
-            <OutlineButton
-              type="button"
-              onClick={() => setConfirmation(null)}
-              disabled={manage.working}
-            >
-              {t("common.cancel")}
-            </OutlineButton>
-            <PrimaryButton
-              type="button"
-              onClick={confirmAction}
-              disabled={manage.working}
-              className={confirmation?.action === "cancel" ? "bg-error-500 hover:bg-error-600" : ""}
-            >
-              {manage.working ? (
-                <BusyLabel label={t("common.working")} />
-              ) : confirmation?.action === "upgrade" ? (
-                t("membership.confirmUpgrade")
-              ) : (
-                t("membership.confirmCancel")
-              )}
-            </PrimaryButton>
-          </>
-        }
-      >
-        <div className="rounded-xl border border-warning-500/25 bg-warning-50 p-4 text-sm leading-6 text-warning-700">
-          {confirmation?.action === "upgrade"
-            ? t("membership.upgradeConsequence")
-            : t("membership.cancelConsequence")}
-        </div>
-      </Modal>
     </section>
   );
 }

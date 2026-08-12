@@ -206,6 +206,7 @@
       "upgradeTo": "Upgrade to {{plan}}", "choosePlan": "Choose {{plan}}", "upgradeSuccess": "Your membership was upgraded.", "cancelSuccess": "Your membership was cancelled.",
       "confirmUpgradeTitle": "Confirm membership upgrade", "confirmUpgradeDescription": "Move your current membership to {{plan}}?", "confirmCancelTitle": "Cancel membership?", "confirmCancelDescription": "Your plan will stop and future allowances will no longer renew.",
       "confirmUpgrade": "Confirm upgrade", "confirmCancel": "Cancel membership", "upgradeConsequence": "The selected plan becomes active immediately.", "cancelConsequence": "This action stops the current active membership.",
+      "paymentServicePendingTitle": "Payment service coming soon", "paymentServicePendingDescription": "Membership changes are temporarily read-only while the protected payment service is being connected. Your current plan and usage remain available.", "paymentServicePendingButton": "Payment service pending",
       "intervals": { "month": "month", "year": "year" }
     },
     "payments": {
