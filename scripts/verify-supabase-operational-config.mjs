@@ -127,6 +127,12 @@ const expectedBuckets = new Map([
   ],
 ]);
 
+if (!configText.includes('[storage]\nfile_size_limit = "500MiB"')) {
+  throw new Error(
+    "Global Storage file_size_limit must be 500MiB so video bucket limits are valid",
+  );
+}
+
 const bucketHeaderPattern = /^\[storage\.buckets\.(?:"([^"]+)"|([a-z0-9_-]+))\]$/gm;
 const headers = [...configText.matchAll(bucketHeaderPattern)];
 const buckets = new Map();

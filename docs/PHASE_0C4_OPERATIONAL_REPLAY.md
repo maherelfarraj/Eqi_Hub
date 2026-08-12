@@ -10,7 +10,8 @@ gate and must be observed before merge.
 ## Repository contract
 
 - `supabase/config.toml` declares all five buckets and their access, size, and
-  MIME-type settings.
+  MIME-type settings. Its global Storage limit is 500 MiB so neither video
+  bucket exceeds the project-wide limit during seeding.
 - `supabase/seed.sql` idempotently replaces the stable-name cron job.
 - `scripts/verify-supabase-operational-config.mjs` rejects missing or changed
   declarations, commented-out or malformed cron SQL, and obvious secret
