@@ -2,15 +2,6 @@ name: Frontend CI
 
 on:
   pull_request:
-    paths:
-      - "artifacts/**"
-      - "lib/**"
-      - "scripts/**"
-      - ".npmrc"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "pnpm-workspace.yaml"
-      - ".github/workflows/frontend-ci.yml"
   push:
     branches: [main]
     paths:

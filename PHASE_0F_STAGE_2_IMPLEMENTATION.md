@@ -1,7 +1,7 @@
 # Phase 0F Stage 2 — Frontend CI and Browser Security Headers
 
 **Implementation date:** 2026-08-13  
-**Status:** Implemented locally; not published or deployed.
+**Status:** Published in draft PR #22; not merged or deployed.
 
 ## Scope
 
@@ -11,7 +11,8 @@
 
 ## Frontend CI
 
-The `frontend-verify` job runs for relevant pull requests and pushes to `main`.
+The `frontend-verify` job runs for every pull request and for relevant pushes
+to `main`.
 It uses Node.js 22 and pnpm 11.16.0 and performs:
 
 1. Frozen-lockfile dependency installation.
@@ -24,6 +25,11 @@ configuration validates both variables during configuration loading.
 The check context is intentionally named `frontend-verify`. The existing
 Worker and Supabase jobs already use `verify`, so reusing that name would make
 required-check ownership ambiguous.
+
+The pull-request trigger intentionally has no path filter. GitHub leaves a
+required workflow skipped by path filtering in a pending state, which would
+block unrelated pull requests after `frontend-verify` becomes required. The
+push-to-`main` trigger remains path-scoped to avoid unnecessary duplicate runs.
 
 The repository does not currently define root lint or test scripts. Adding
 those quality gates is follow-up product-engineering work and is not simulated
@@ -51,12 +57,13 @@ provider-managed HSTS configuration.
 
 Before production deployment:
 
-1. Publish the patch on a dedicated branch and open a draft PR.
-2. Confirm the new `frontend-verify` check passes.
-3. Verify branch protection requires the intended distinct checks.
-4. Validate a preview for login, password recovery, Google Fonts, Supabase
+1. Confirm the corrected `frontend-verify` check passes on draft PR #22.
+2. Verify branch protection requires the intended distinct checks.
+3. Validate a Replit preview for login, password recovery, Google Fonts, Supabase
    reads/writes, riding-video upload, playback, and Realtime behavior.
-5. Redeploy Replit separately, then verify every header on the live domain.
+4. Redeploy Replit separately, then verify every header on the live domain.
 
-No GitHub, Replit, Railway, or Supabase mutation is included in this local
-implementation.
+Supabase ignored PR #22 because it contains no `supabase/**` changes, so no
+paid Supabase preview branch was created. Publishing this correction changes
+only the existing GitHub feature branch; it does not mutate Replit, Railway,
+Supabase, or production.
