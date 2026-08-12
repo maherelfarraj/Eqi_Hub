@@ -12,6 +12,9 @@ enabled = true
 enabled = true
 sql_paths = ["./seed.sql"]
 
+[storage]
+file_size_limit = "500MiB"
+
 # Bucket rows are operational configuration, not schema DDL. Supabase recommends
 # declaring them here because schema-only migration squashes omit bucket data.
 [storage.buckets.avatars]
