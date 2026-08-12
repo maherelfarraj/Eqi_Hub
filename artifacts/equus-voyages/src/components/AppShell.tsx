@@ -4,6 +4,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   ChartNoAxesCombined,
+  Building2,
   CreditCard,
   Globe2,
   Heart,
@@ -27,12 +28,14 @@ const navigation = [
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
   { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
+  { path: "/organization", labelKey: "nav.organization", icon: Building2 },
   { path: "/settings", labelKey: "nav.settings", icon: Settings },
 ] as const;
 
 export default function AppShell() {
   const { t, i18n } = useTranslation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, activeOrganization, organizations, hasRole } =
+    useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -109,26 +112,33 @@ export default function AppShell() {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-          {navigation.map(({ path, labelKey, icon: Icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition-colors ${
-                  isActive
-                    ? "border border-cream-200 bg-white text-primary-700 shadow-sm"
-                    : "border border-transparent text-text-secondary hover:border-cream-200 hover:bg-white/70 hover:text-espresso"
-                }`
-              }
-            >
-              <Icon
-                className="size-5 shrink-0 text-primary-500"
-                aria-hidden="true"
-              />
-              <span>{t(labelKey)}</span>
-            </NavLink>
-          ))}
+          {navigation
+            .filter(
+              ({ path }) =>
+                path !== "/organization" ||
+                organizations.length > 0 ||
+                hasRole("platform_admin"),
+            )
+            .map(({ path, labelKey, icon: Icon }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? "border border-cream-200 bg-white text-primary-700 shadow-sm"
+                      : "border border-transparent text-text-secondary hover:border-cream-200 hover:bg-white/70 hover:text-espresso"
+                  }`
+                }
+              >
+                <Icon
+                  className="size-5 shrink-0 text-primary-500"
+                  aria-hidden="true"
+                />
+                <span>{t(labelKey)}</span>
+              </NavLink>
+            ))}
         </nav>
 
         <div className="space-y-2 border-t border-cream-200 p-4">
@@ -139,6 +149,11 @@ export default function AppShell() {
             <p className="mt-1 truncate text-sm text-text-secondary">
               {user?.email}
             </p>
+            {activeOrganization ? (
+              <p className="mt-1 truncate text-xs font-semibold text-primary-700">
+                {activeOrganization.name}
+              </p>
+            ) : null}
           </div>
           <button
             type="button"
