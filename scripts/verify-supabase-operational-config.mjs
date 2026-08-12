@@ -3,14 +3,107 @@ import { resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const supabaseRoot = resolve(repositoryRoot, "supabase");
-const configText = await readFile(resolve(supabaseRoot, "config.toml"), "utf8");
-const seedText = await readFile(resolve(supabaseRoot, "seed.sql"), "utf8");
+const configPath = process.env.SUPABASE_CONFIG_PATH ?? resolve(supabaseRoot, "config.toml");
+const seedPath = process.env.SUPABASE_SEED_PATH ?? resolve(supabaseRoot, "seed.sql");
+const configText = await readFile(configPath, "utf8");
+const seedText = await readFile(seedPath, "utf8");
 const inventory = JSON.parse(
-  await readFile(
-    resolve(supabaseRoot, "canonical-baseline.inventory.json"),
-    "utf8",
-  ),
+  await readFile(resolve(supabaseRoot, "canonical-baseline.inventory.json"), "utf8"),
 );
+
+function stripSqlComments(sql) {
+  let output = "";
+  let index = 0;
+  let state = "code";
+  let dollarTag = null;
+
+  while (index < sql.length) {
+    const pair = sql.slice(index, index + 2);
+
+    if (state === "line-comment") {
+      if (sql[index] === "\n") {
+        output += "\n";
+        state = "code";
+      }
+      index += 1;
+      continue;
+    }
+
+    if (state === "block-comment") {
+      if (pair === "*/") {
+        state = "code";
+        index += 2;
+      } else {
+        if (sql[index] === "\n") output += "\n";
+        index += 1;
+      }
+      continue;
+    }
+
+    if (state === "single-quote") {
+      output += sql[index];
+      if (pair === "''") {
+        output += sql[index + 1];
+        index += 2;
+      } else {
+        if (sql[index] === "'") state = "code";
+        index += 1;
+      }
+      continue;
+    }
+
+    if (state === "dollar-quote") {
+      if (sql.startsWith(dollarTag, index)) {
+        output += dollarTag;
+        index += dollarTag.length;
+        state = "code";
+      } else {
+        output += sql[index];
+        index += 1;
+      }
+      continue;
+    }
+
+    if (pair === "--") {
+      state = "line-comment";
+      index += 2;
+      continue;
+    }
+    if (pair === "/*") {
+      state = "block-comment";
+      index += 2;
+      continue;
+    }
+    if (sql[index] === "'") {
+      output += sql[index];
+      state = "single-quote";
+      index += 1;
+      continue;
+    }
+
+    const dollarMatch = sql.slice(index).match(/^\$[a-zA-Z_][a-zA-Z0-9_]*\$|^\$\$/);
+    if (dollarMatch) {
+      dollarTag = dollarMatch[0];
+      output += dollarTag;
+      index += dollarTag.length;
+      state = "dollar-quote";
+      continue;
+    }
+
+    output += sql[index];
+    index += 1;
+  }
+
+  if (state === "block-comment" || state === "single-quote" || state === "dollar-quote") {
+    throw new Error(`Unterminated SQL ${state}`);
+  }
+
+  return output;
+}
+
+function normalizeSql(sql) {
+  return stripSqlComments(sql).replace(/\s+/g, " ").trim();
+}
 
 const expectedBuckets = new Map([
   ["avatars", { public: true }],
@@ -34,8 +127,7 @@ const expectedBuckets = new Map([
   ],
 ]);
 
-const bucketHeaderPattern =
-  /^\[storage\.buckets\.(?:"([^"]+)"|([a-z0-9_-]+))\]$/gm;
+const bucketHeaderPattern = /^\[storage\.buckets\.(?:"([^"]+)"|([a-z0-9_-]+))\]$/gm;
 const headers = [...configText.matchAll(bucketHeaderPattern)];
 const buckets = new Map();
 
@@ -84,36 +176,41 @@ for (const [name, expected] of expectedBuckets) {
   }
 }
 
-if (
-  !configText.includes(
-    '[db.seed]\nenabled = true\nsql_paths = ["./seed.sql"]',
-  )
-) {
+if (!configText.includes('[db.seed]\nenabled = true\nsql_paths = ["./seed.sql"]')) {
   throw new Error("Supabase seed execution is not enabled for ./seed.sql");
 }
 
-const expectedCron = {
-  name: "equivista-continuous-controls-daily",
-  schedule: "15 2 * * *",
-  command: "select private.run_continuous_controls_monitoring('scheduled');",
-};
+const normalizedSeed = normalizeSql(seedText);
+const expectedCronBlock = normalizeSql(`
+  do $seed$
+  declare
+    existing_job_id bigint;
+  begin
+    for existing_job_id in
+      select jobid
+      from cron.job
+      where jobname = 'equivista-continuous-controls-daily'
+    loop
+      perform cron.unschedule(existing_job_id);
+    end loop;
 
-for (const value of Object.values(expectedCron)) {
-  if (!seedText.includes(value)) {
-    throw new Error(`Seed is missing expected cron value: ${value}`);
-  }
-}
+    perform cron.schedule(
+      'equivista-continuous-controls-daily',
+      '15 2 * * *',
+      $cron$select private.run_continuous_controls_monitoring('scheduled');$cron$
+    );
+  end
+  $seed$;
+`);
 
-if (!seedText.includes("cron.unschedule(existing_job_id)")) {
+if (normalizedSeed !== expectedCronBlock) {
   throw new Error(
-    "Cron seed must remove an existing stable-name job before scheduling",
+    "seed.sql must contain exactly the executable, idempotent Phase 0C.4 cron block",
   );
 }
 
 if (inventory.counts.cron_jobs !== 1) {
-  throw new Error(
-    `Canonical inventory expected ${inventory.counts.cron_jobs} cron jobs`,
-  );
+  throw new Error(`Canonical inventory expected ${inventory.counts.cron_jobs} cron jobs`);
 }
 
 const forbiddenPatterns = [
@@ -126,9 +223,7 @@ const forbiddenPatterns = [
 
 for (const pattern of forbiddenPatterns) {
   if (pattern.test(configText) || pattern.test(seedText)) {
-    throw new Error(
-      `Operational configuration contains forbidden secret material: ${pattern}`,
-    );
+    throw new Error(`Operational configuration contains forbidden secret material: ${pattern}`);
   }
 }
 
