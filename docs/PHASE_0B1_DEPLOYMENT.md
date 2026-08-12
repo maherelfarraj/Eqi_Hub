@@ -49,8 +49,8 @@ is added indiscriminately to `profiles`, `notification_prefs`, `horse_riders`,
 1. Create a fresh Supabase development branch from production.
 2. If the branch does not contain the canonical schema because of historical
    migration drift, apply `tests/fixtures/phase_0a2_branch_baseline.sql`.
-3. Apply `supabase/migrations/20260812104929_phase_0a2_security_hotfix.sql`.
-4. Apply `supabase/migrations/20260812073038_phase_0b1_tenancy_rbac_foundation.sql`.
+3. Apply `supabase/migrations/20260812062006_phase_0a2_security_hotfix.sql`.
+4. Apply `supabase/migrations/20260812075717_phase_0b1_tenancy_rbac_foundation.sql`.
 5. Run `tests/rls/phase_0a2_personas.sql`.
 6. Run `tests/rls/phase_0b1_personas.sql`.
 7. Capture security and performance advisors.

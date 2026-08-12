@@ -1,0 +1,54 @@
+{
+  "phase": "0C.2A",
+  "scope": [
+    "public schema",
+    "private schema",
+    "custom auth trigger",
+    "custom storage policies",
+    "storage bucket configuration",
+    "non-secret cron configuration"
+  ],
+  "counts": {
+    "tables": 23,
+    "columns": 211,
+    "triggers": 14,
+    "cron_jobs": 1,
+    "functions": 74,
+    "sequences": 1,
+    "rls_tables": 23,
+    "constraints": 127,
+    "foreign_keys": 63,
+    "primary_keys": 23,
+    "indexes_total": 86,
+    "vault_secrets": 0,
+    "storage_buckets": 5,
+    "policies_storage": 5,
+    "check_constraints": 30,
+    "indexes_secondary": 52,
+    "unique_constraints": 11,
+    "policies_application": 36,
+    "realtime_publication_tables": 0
+  },
+  "sha256": {
+    "rls": "3e044413adaa278486187996c8cb6bae3e87612636521da5cdb6f7bd3ee09103",
+    "columns": "e6f9bea0fb371de4a1f49fb1b2b02bc11b58c48c7f3d1ce02f230f6a19e18105",
+    "indexes": "ee934b2471e43773ce3394a69befd4630fa3b6f220e6b655615c6d974420b388",
+    "policies": "dfa1911a2e66c4d772329d95e0488db3f7c16abd66a571b18b7d401ba6081c4c",
+    "triggers": "0c870a9a0515597c261d244d81c733a6b870ad7e969c21c65e9c5cb7b8f8f980",
+    "cron_jobs": "abeb551b177c00cfb5480a1fb42006cf66f3c609b48ec9d530376779b45cd241",
+    "functions": "34f39cc061f165e530fa2529c7f880336653d8171bff9045c4b9bed79ad15653",
+    "constraints": "ef76bf32cfb1c19d424e5d57671701e1f585d1ba8f7b4f72da9436047edba574",
+    "storage_buckets": "576d11d0f6065903ff295738c49ae9747ecfb81175b0b7a7e4e64428d4dfd8fd"
+  },
+  "excluded": [
+    "production table rows",
+    "auth identities",
+    "storage objects",
+    "vault secrets",
+    "project secrets"
+  ],
+  "extraction_date": "2026-08-12",
+  "postgres_version": "17.6",
+  "migration_version": "20260812101436",
+  "source_project_ref": "gtogwivozgrmjnrtungm"
+}

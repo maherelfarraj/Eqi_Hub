@@ -1,7 +1,7 @@
 # Phase 0B.1 rollback
 
 Rollback file:
-`supabase/rollback/20260812073038_phase_0b1_tenancy_rbac_foundation_rollback.sql`
+`supabase/rollback/20260812075717_phase_0b1_tenancy_rbac_foundation_rollback.sql`
 
 The rollback is intentionally guarded. It succeeds only before tenant
 adoption, when:

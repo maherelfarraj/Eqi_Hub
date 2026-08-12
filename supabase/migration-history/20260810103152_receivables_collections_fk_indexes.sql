@@ -1,0 +1,7 @@
+begin;
+
+create index receivable_collection_cases_created_by_idx on public.receivable_collection_cases(created_by);
+create index receivable_collection_cases_updated_by_idx on public.receivable_collection_cases(updated_by);
+create index receivable_collection_events_academy_idx on public.receivable_collection_events(academy_id);
+
+commit;

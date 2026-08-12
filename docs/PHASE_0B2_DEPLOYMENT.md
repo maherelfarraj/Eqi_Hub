@@ -30,7 +30,7 @@ Direct browser writes to Phase 0B.1 tables remain denied.
 ## Review and staging sequence
 
 1. Apply Phase 0A.2 and Phase 0B.1 to a disposable Supabase branch.
-2. Apply `20260812081411_phase_0b2_organization_operations.sql`.
+2. Apply `20260812085957_phase_0b2_organization_operations.sql`.
 3. Run `tests/rls/phase_0b1_personas.sql`.
 4. Run `tests/rls/phase_0b2_personas.sql`.
 5. Run Security and Performance Advisors.
