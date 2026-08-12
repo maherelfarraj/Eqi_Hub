@@ -202,7 +202,7 @@
       "lessonsUsage": "Lessons: {{used}} of {{total}}", "analysesUsage": "Analyses: {{used}} of {{total}}",
       "noPlanTitle": "Choose your riding rhythm", "noPlanDescription": "Start a membership to unlock recurring lessons and video analyses.",
       "plansEyebrow": "Plans", "plansTitle": "A plan for every stage", "emptyPlansTitle": "No plans available", "emptyPlansDescription": "Membership plans will appear here when available.",
-      "mostPopular": "Most popular", "lessonsPerMonth": "{{count}} lessons / month", "analysesPerMonth": "{{count}} analyses / month", "currentPlanButton": "Current plan",
+      "mostPopular": "Most popular", "lessonsPerMonth": "lessons / month", "analysesPerMonth": "analyses / month", "currentPlanButton": "Current plan",
       "upgradeTo": "Upgrade to {{plan}}", "choosePlan": "Choose {{plan}}", "upgradeSuccess": "Your membership was upgraded.", "cancelSuccess": "Your membership was cancelled.",
       "confirmUpgradeTitle": "Confirm membership upgrade", "confirmUpgradeDescription": "Move your current membership to {{plan}}?", "confirmCancelTitle": "Cancel membership?", "confirmCancelDescription": "Your plan will stop and future allowances will no longer renew.",
       "confirmUpgrade": "Confirm upgrade", "confirmCancel": "Cancel membership", "upgradeConsequence": "The selected plan becomes active immediately.", "cancelConsequence": "This action stops the current active membership.",
