@@ -144,10 +144,7 @@ export function useUploadVideo() {
         .single();
       if (insErr) throw insErr;
 
-      // Kick off AI processing (Edge Function — deploy separately)
-      supabase.functions
-        .invoke("process-video", { body: { analysisId: data.id } })
-        .catch(() => {});
+      // Railway polling is the sole processing authority for uploaded analyses.
 
       setProgress(100);
       return data.id as string;

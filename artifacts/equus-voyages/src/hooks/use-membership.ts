@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { PAYMENT_SERVICE_PENDING } from "@/lib/commercial-actions";
 import type { CurrentMembership, MembershipPlan, QueryState } from "./types";
 import { useQuery, requireUserId, cents } from "./_shared";
 
@@ -61,70 +62,26 @@ export function useManageMembership() {
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const run = useCallback(async (fn: () => PromiseLike<{ error: any }>) => {
+  const blockCommercialWrite = useCallback(async () => {
     setWorking(true);
     setError(null);
-    try {
-      const { error: err } = await fn();
-      if (err) throw err;
-      return true;
-    } catch (e: any) {
-      setError(e?.message ?? "Action failed");
-      return false;
-    } finally {
-      setWorking(false);
-    }
+    await Promise.resolve();
+    setError(PAYMENT_SERVICE_PENDING);
+    setWorking(false);
+    return false;
   }, []);
 
-  /** Call AFTER successful payment (see useCheckout). */
   const subscribe = useCallback(
-    (planId: string) =>
-      run(async () => {
-        const uid = await requireUserId();
-        const renews = new Date();
-        renews.setMonth(renews.getMonth() + 1);
-        return supabase.from("memberships").insert({
-          user_id: uid,
-          plan_id: planId,
-          status: "active",
-          renews_at: renews.toISOString(),
-        });
-      }),
-    [run],
+    (_planId: string) => blockCommercialWrite(),
+    [blockCommercialWrite],
   );
 
   const upgrade = useCallback(
-    (planId: string) =>
-      run(async () => {
-        const uid = await requireUserId();
-        const { data: current } = await supabase
-          .from("memberships")
-          .select("id")
-          .eq("user_id", uid)
-          .in("status", ["trialing", "active", "past_due"])
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
-        return supabase
-          .from("memberships")
-          .update({ plan_id: planId, status: "active" })
-          .eq("id", current!.id);
-      }),
-    [run],
+    (_planId: string) => blockCommercialWrite(),
+    [blockCommercialWrite],
   );
 
-  const cancel = useCallback(
-    () =>
-      run(async () => {
-        const uid = await requireUserId();
-        return supabase
-          .from("memberships")
-          .update({ status: "cancelled" })
-          .eq("user_id", uid)
-          .in("status", ["trialing", "active", "past_due"]);
-      }),
-    [run],
-  );
+  const cancel = useCallback(() => blockCommercialWrite(), [blockCommercialWrite]);
 
   return { subscribe, upgrade, cancel, working, error };
 }
