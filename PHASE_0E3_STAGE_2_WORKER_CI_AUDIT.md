@@ -27,7 +27,7 @@ uses Node 22 and pnpm 11.16.0.
 ## Rollout gate
 
 Do not enable Railway **Wait for CI** in this stage. Publish the workflow on a
-feature branch, confirm `Worker / verify` passes in the pull request, merge it,
+feature branch, confirm `verify` passes in the pull request, merge it,
 confirm the `main` run passes, and only then enable Railway **Wait for CI** in a
 separately authorized provider change.
 
