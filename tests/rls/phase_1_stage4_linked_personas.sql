@@ -6,6 +6,120 @@ begin;
 set local statement_timeout = '30s';
 set local lock_timeout = '5s';
 
+-- Preview branches do not copy production data. Seed one disposable relationship
+-- graph only when no active guardian link exists; the outer transaction always
+-- rolls it back. Production verification continues to use the real pilot link.
+do $fixture$
+begin
+  if not exists (select 1 from public.guardian_riders where active) then
+    insert into auth.users (id, email, raw_user_meta_data)
+    values
+      ('10000000-0000-4000-8000-000000000001', 'stage4-guardian@example.invalid', '{"full_name":"Stage 4 Guardian"}'::jsonb),
+      ('10000000-0000-4000-8000-000000000002', 'stage4-rider@example.invalid', '{"full_name":"Stage 4 Rider"}'::jsonb),
+      ('10000000-0000-4000-8000-000000000003', 'stage4-owner@example.invalid', '{"full_name":"Stage 4 Owner"}'::jsonb);
+
+    update public.profiles
+    set role = 'owner'
+    where id in (
+      '10000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000003'
+    );
+
+    insert into public.organizations (id, name, slug, organization_type)
+    values (
+      '20000000-0000-4000-8000-000000000001',
+      'Stage 4 Preview Academy',
+      'stage-4-preview-academy',
+      'academy'
+    );
+
+    insert into public.organization_memberships (id, organization_id, user_id, status)
+    values
+      ('30000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'active'),
+      ('30000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'active'),
+      ('30000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'active');
+
+    insert into public.organization_member_roles (membership_id, role)
+    values
+      ('30000000-0000-4000-8000-000000000001', 'guardian'),
+      ('30000000-0000-4000-8000-000000000002', 'rider'),
+      ('30000000-0000-4000-8000-000000000003', 'horse_owner');
+
+    insert into public.guardian_riders (
+      organization_id,
+      guardian_id,
+      rider_id,
+      active
+    ) values (
+      '20000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000002',
+      true
+    );
+
+    insert into public.horses (id, organization_id, owner_id, name)
+    values (
+      '40000000-0000-4000-8000-000000000001',
+      '20000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000003',
+      'Stage 4 Preview Horse'
+    );
+
+    insert into public.horse_access_assignments (
+      organization_id,
+      horse_id,
+      profile_id,
+      access_type,
+      active
+    ) values (
+      '20000000-0000-4000-8000-000000000001',
+      '40000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000002',
+      'rider',
+      true
+    );
+
+    insert into public.video_analyses (
+      id,
+      organization_id,
+      rider_id,
+      horse_id,
+      title,
+      discipline,
+      status
+    ) values (
+      '50000000-0000-4000-8000-000000000001',
+      '20000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000002',
+      '40000000-0000-4000-8000-000000000001',
+      'Stage 4 Preview Analysis',
+      'Flatwork',
+      'analyzed'
+    );
+
+    insert into public.lessons (
+      id,
+      organization_id,
+      rider_id,
+      horse_id,
+      analysis_id,
+      date_time,
+      lesson_type,
+      status
+    ) values (
+      '60000000-0000-4000-8000-000000000001',
+      '20000000-0000-4000-8000-000000000001',
+      '10000000-0000-4000-8000-000000000002',
+      '40000000-0000-4000-8000-000000000001',
+      '50000000-0000-4000-8000-000000000001',
+      now(),
+      'Flatwork',
+      'completed'
+    );
+  end if;
+end
+$fixture$;
+
 do $context$
 declare
   v_organization_id uuid;
