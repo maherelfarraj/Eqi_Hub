@@ -6,6 +6,7 @@ import {
   useQuery,
   requireUserId,
   requireOrganizationId,
+  resolveAccessibleRiderIds,
   scopeByOrganization,
 } from "./_shared";
 
@@ -35,12 +36,13 @@ export function useLessons(
 
   return useQuery<Lesson[]>(async () => {
     const uid = await requireUserId();
+    const riderIds = await resolveAccessibleRiderIds(uid, organizationId);
     let q = supabase
       .from("lessons")
       .select(
         "*, trainer:trainer_id(full_name, avatar_url), horse:horse_id(name)",
       )
-      .eq("rider_id", uid);
+      .in("rider_id", riderIds);
 
     q = scopeByOrganization(q, organizationId);
 
@@ -105,32 +107,35 @@ export function useBookLesson() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const book = useCallback(async (input: BookLessonInput) => {
-    setSubmitting(true);
-    setError(null);
-    try {
-      const uid = await requireUserId();
-      const tenantId = requireOrganizationId(organizationId);
-      const { error: err } = await supabase.from("lessons").insert({
-        organization_id: tenantId,
-        rider_id: uid,
-        trainer_id: input.trainerId,
-        horse_id: input.horseId,
-        lesson_type: input.type,
-        date_time: input.dateTime,
-        duration_min: input.durationMin,
-        notes: input.notes ?? null,
-        status: "pending",
-      });
-      if (err) throw err;
-      return true;
-    } catch (e: any) {
-      setError(e?.message ?? "Booking failed");
-      return false;
-    } finally {
-      setSubmitting(false);
-    }
-  }, [organizationId]);
+  const book = useCallback(
+    async (input: BookLessonInput) => {
+      setSubmitting(true);
+      setError(null);
+      try {
+        const uid = await requireUserId();
+        const tenantId = requireOrganizationId(organizationId);
+        const { error: err } = await supabase.from("lessons").insert({
+          organization_id: tenantId,
+          rider_id: uid,
+          trainer_id: input.trainerId,
+          horse_id: input.horseId,
+          lesson_type: input.type,
+          date_time: input.dateTime,
+          duration_min: input.durationMin,
+          notes: input.notes ?? null,
+          status: "pending",
+        });
+        if (err) throw err;
+        return true;
+      } catch (e: any) {
+        setError(e?.message ?? "Booking failed");
+        return false;
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [organizationId],
+  );
 
   return { book, submitting, error };
 }

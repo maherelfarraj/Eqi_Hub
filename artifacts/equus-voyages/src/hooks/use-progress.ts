@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Metric, ProgressMetrics, QueryState, SessionRow } from "./types";
-import { useQuery, requireUserId, scopeByOrganization } from "./_shared";
+import {
+  useQuery,
+  requireUserId,
+  resolveAccessibleRiderIds,
+  scopeByOrganization,
+} from "./_shared";
 
 export function useProgressMetrics(
   periodDays: 30 | 90 | 365,
@@ -16,11 +21,12 @@ export function useProgressMetrics(
       .toISOString()
       .slice(0, 10);
 
+    const riderIds = await resolveAccessibleRiderIds(uid, organizationId);
     const { data, error } = await scopeByOrganization(
       supabase
         .from("video_analyses")
         .select("session_date, score, discipline, metrics")
-        .eq("rider_id", uid)
+        .in("rider_id", riderIds)
         .eq("status", "analyzed")
         .not("score", "is", null)
         .gte("session_date", since),
@@ -82,13 +88,14 @@ export function useSessionHistory(): QueryState<SessionRow[]> {
 
   return useQuery<SessionRow[]>(async () => {
     const uid = await requireUserId();
+    const riderIds = await resolveAccessibleRiderIds(uid, organizationId);
     const { data, error } = await scopeByOrganization(
       supabase
         .from("video_analyses")
         .select(
           "id, session_date, discipline, score, status, horse:horse_id(name)",
         )
-        .eq("rider_id", uid),
+        .in("rider_id", riderIds),
       organizationId,
     ).order("session_date", { ascending: false });
     if (error) throw error;

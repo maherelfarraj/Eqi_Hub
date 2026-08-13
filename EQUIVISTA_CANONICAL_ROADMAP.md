@@ -15,11 +15,11 @@
 
 ## Executive progress snapshot
 
-| Measurement                                    | Estimated progress | Current position                                                                            |
-| ---------------------------------------------- | -----------------: | ------------------------------------------------------------------------------------------- |
-| Production hardening and operational readiness |                96% | Critical technical launch gates are closed; commercial and legal launch gates remain.       |
+| Measurement                                    | Estimated progress | Current position                                                                               |
+| ---------------------------------------------- | -----------------: | ---------------------------------------------------------------------------------------------- |
+| Production hardening and operational readiness |                96% | Critical technical launch gates are closed; commercial and legal launch gates remain.          |
 | Core academy MVP                               |                84% | Pilot personas are provisioned and preflight READY; linked-persona browser acceptance is next. |
-| Full enterprise product roadmap                |                44% | Launch foundations are stronger; enterprise workflows still require product implementation. |
+| Full enterprise product roadmap                |                44% | Launch foundations are stronger; enterprise workflows still require product implementation.    |
 
 The percentages are planning estimates, not a count of migrations or pull requests. A database foundation does not count as a completed product feature.
 
@@ -208,4 +208,4 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 ## Immediate next milestone
 
-Begin **Phase 1 Stage 4 — Linked-Persona Access Correction and Acceptance**: align guardian-derived record visibility and the canonical horse-access model with the legacy horse visibility helper, verify the changes with persona/RLS regression tests, then populate the ignored activation manifest and run the named four-persona browser acceptance window. Unrestricted commercial launch remains on hold.
+Validate and publish **Phase 1 Stage 4 — Linked-Persona Access Correction**: replay the canonical migration on one disposable preview, run linked guardian/rider RLS acceptance plus security advisors, review and merge the corrective PR, apply only the approved migration to production, deploy the frontend query correction, and run the named four-persona browser acceptance window. Unrestricted commercial launch remains on hold.
