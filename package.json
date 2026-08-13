@@ -9,7 +9,7 @@
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
     "verify:pilot": "node scripts/verify-phase1-pilot-readiness.mjs --template pilot/phase1-pilot.example.json && node scripts/verify-phase1-pilot-preflight.mjs --template pilot/phase1-production-preflight.example.json",
     "test:pilot": "node --test scripts/test-phase1-pilot-readiness.mjs scripts/test-phase1-pilot-preflight.mjs",
-    "verify:supabase": "node scripts/verify-supabase-migration-ledger.mjs && node scripts/verify-supabase-operational-config.mjs && node scripts/test-supabase-operational-config.mjs && node scripts/verify-supabase-storage-policies.mjs && node scripts/test-supabase-storage-policies.mjs && node scripts/verify-phase1-linked-persona-access.mjs && node --test scripts/test-phase1-linked-persona-access.mjs",
+    "verify:supabase": "node scripts/verify-supabase-migration-ledger.mjs && node scripts/verify-supabase-operational-config.mjs && node scripts/test-supabase-operational-config.mjs && node scripts/verify-supabase-storage-policies.mjs && node scripts/test-supabase-storage-policies.mjs && node scripts/verify-phase1-linked-persona-access.mjs && node --test scripts/test-phase1-linked-persona-access.mjs && node scripts/verify-phase1-stage5-profile-access.mjs && node --test scripts/test-phase1-stage5-profile-access.mjs",
     "verify:supabase:storage-policies": "node scripts/verify-supabase-storage-policies.mjs && node scripts/test-supabase-storage-policies.mjs"
   },
   "private": true,
