@@ -1,7 +1,7 @@
 # Phase 0F Stage 2 — Corrective Header-Serving Implementation
 
 **Implementation date:** 2026-08-13  
-**Status:** Implemented and tested locally; not published or deployed.
+**Status:** Implemented, tested, and published on the corrective feature branch; not deployed.
 
 ## Trigger
 
