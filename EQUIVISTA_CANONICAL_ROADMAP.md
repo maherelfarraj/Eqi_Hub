@@ -164,10 +164,11 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 ### Phase 1 — Controlled academy pilot
 
-1. Pilot rider, parent/member, coach, and administrator personas.
-2. Validate horse, rider, lesson, progress, membership, and AI-analysis journeys.
-3. Establish support, incident, monitoring, feedback, and rollback routines.
-4. Measure adoption, errors, video-analysis quality, processing time, and cost.
+1. **Complete:** repository foundation for rider, parent/member (`guardian`), coach, and administrator personas.
+2. **Complete with activation hold:** read-only production preflight and fail-closed evidence automation; guardian persona and guardian–rider link are absent.
+3. **Next:** provision or select the real guardian persona, populate the ignored activation manifest, and validate horse, rider, lesson, progress, membership, and AI-analysis journeys.
+4. Establish support, incident, monitoring, feedback, and rollback routines during the named pilot window.
+5. Measure adoption, errors, video-analysis quality, processing time, and cost.
 
 ### Phase 2 — Commercial billing and payments
 
@@ -207,4 +208,4 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 ## Immediate next milestone
 
-Begin **Phase 1 Stage 1 — Controlled Pilot Foundation**: define the rider, parent/member, coach, and academy-administrator cohort; establish support, monitoring, incident, rollback, and feedback ownership; encode the acceptance matrix and success metrics; and require automated pilot-readiness validation in CI before any controlled pilot activation.
+Begin **Phase 1 Stage 3 — Controlled Pilot Activation** only after a real parent/member account is approved for the `guardian` persona, added as an active member of the rider's organization, and linked to the rider. Then require a fresh READY preflight, populate the ignored four-account activation manifest, and run the named multi-persona acceptance window. Unrestricted commercial launch remains on hold.

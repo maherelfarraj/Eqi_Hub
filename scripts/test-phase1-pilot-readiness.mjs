@@ -22,13 +22,13 @@ test("rejects activation while owners and accounts are placeholders", () => {
 test("rejects a missing required persona and journey", () => {
   const invalid = structuredClone(example);
   invalid.personas = invalid.personas.filter(
-    (persona) => persona.role !== "parent",
+    (persona) => persona.role !== "guardian",
   );
   invalid.journeys = invalid.journeys.filter(
     (journey) => journey.id !== "notifications",
   );
   const errors = validatePilotManifest(invalid, { template: true });
-  assert.ok(errors.includes("personas must contain exactly one parent"));
+  assert.ok(errors.includes("personas must contain exactly one guardian"));
   assert.ok(errors.includes("journeys must contain exactly one notifications"));
 });
 

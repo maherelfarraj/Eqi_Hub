@@ -25,7 +25,7 @@
       ]
     },
     {
-      "role": "parent",
+      "role": "guardian",
       "account_ref": "REPLACE_WITH_SUPABASE_USER_ID",
       "journeys": [
         "auth-session",
