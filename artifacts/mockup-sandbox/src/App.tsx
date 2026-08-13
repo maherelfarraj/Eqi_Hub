@@ -1,8 +1,12 @@
 import { useEffect, useState, type ComponentType } from "react";
 
-import { modules as discoveredModules } from "./.generated/mockup-components";
-
 type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
+
+const discoveredModules = import.meta.glob([
+  "./components/mockups/**/*.tsx",
+  "!./components/mockups/**/_*/**",
+  "!./components/mockups/**/_*.tsx",
+]) as ModuleMap;
 
 function _resolveComponent(
   mod: Record<string, unknown>,
