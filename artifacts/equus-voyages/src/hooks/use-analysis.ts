@@ -14,6 +14,7 @@ import {
   useQuery,
   requireUserId,
   requireOrganizationId,
+  resolveAccessibleRiderIds,
   scopeByOrganization,
 } from "./_shared";
 
@@ -74,13 +75,14 @@ export function useVideoAnalyses(): QueryState<VideoAnalysisListItem[]> & {
 
   return useQuery<VideoAnalysisListItem[]>(async () => {
     const uid = await requireUserId();
+    const riderIds = await resolveAccessibleRiderIds(uid, organizationId);
     const { data, error } = await scopeByOrganization(
       supabase
         .from("video_analyses")
         .select(
           "id, title, discipline, status, score, thumbnail_url, created_at, horse:horse_id(name)",
         )
-        .eq("rider_id", uid),
+        .in("rider_id", riderIds),
       organizationId,
     ).order("created_at", { ascending: false });
     if (error) throw error;
@@ -131,50 +133,53 @@ export function useUploadVideo() {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const upload = useCallback(async (input: UploadVideoInput) => {
-    setUploading(true);
-    setProgress(0);
-    setError(null);
-    try {
-      const uid = await requireUserId();
-      const tenantId = requireOrganizationId(organizationId);
-      const ext = input.file.name.split(".").pop() ?? "mp4";
-      const path = `${uid}/${crypto.randomUUID()}.${ext}`;
+  const upload = useCallback(
+    async (input: UploadVideoInput) => {
+      setUploading(true);
+      setProgress(0);
+      setError(null);
+      try {
+        const uid = await requireUserId();
+        const tenantId = requireOrganizationId(organizationId);
+        const ext = input.file.name.split(".").pop() ?? "mp4";
+        const path = `${uid}/${crypto.randomUUID()}.${ext}`;
 
-      setProgress(30);
-      const { error: upErr } = await supabase.storage
-        .from("videos")
-        .upload(path, input.file, { contentType: input.file.type });
-      if (upErr) throw upErr;
+        setProgress(30);
+        const { error: upErr } = await supabase.storage
+          .from("videos")
+          .upload(path, input.file, { contentType: input.file.type });
+        if (upErr) throw upErr;
 
-      setProgress(70);
-      const { data, error: insErr } = await supabase
-        .from("video_analyses")
-        .insert({
-          organization_id: tenantId,
-          rider_id: uid,
-          horse_id: input.horseId,
-          title: input.title,
-          discipline: input.discipline,
-          session_date: input.sessionDate,
-          video_url: path,
-          status: "uploaded",
-        })
-        .select("id")
-        .single();
-      if (insErr) throw insErr;
+        setProgress(70);
+        const { data, error: insErr } = await supabase
+          .from("video_analyses")
+          .insert({
+            organization_id: tenantId,
+            rider_id: uid,
+            horse_id: input.horseId,
+            title: input.title,
+            discipline: input.discipline,
+            session_date: input.sessionDate,
+            video_url: path,
+            status: "uploaded",
+          })
+          .select("id")
+          .single();
+        if (insErr) throw insErr;
 
-      // Railway polling is the sole processing authority for uploaded analyses.
+        // Railway polling is the sole processing authority for uploaded analyses.
 
-      setProgress(100);
-      return data.id as string;
-    } catch (e: any) {
-      setError(e?.message ?? "Upload failed");
-      return null;
-    } finally {
-      setUploading(false);
-    }
-  }, [organizationId]);
+        setProgress(100);
+        return data.id as string;
+      } catch (e: any) {
+        setError(e?.message ?? "Upload failed");
+        return null;
+      } finally {
+        setUploading(false);
+      }
+    },
+    [organizationId],
+  );
 
   return { upload, uploading, progress, error };
 }

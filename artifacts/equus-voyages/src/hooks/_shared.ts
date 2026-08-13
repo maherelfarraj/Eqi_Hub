@@ -8,7 +8,10 @@ export async function requireUserId(): Promise<string> {
   return data.user.id;
 }
 
-export function scopeByOrganization<T>(query: T, organizationId: string | null): T {
+export function scopeByOrganization<T>(
+  query: T,
+  organizationId: string | null,
+): T {
   const scopedQuery = query as T & {
     eq: (column: string, value: string) => T;
     is: (column: string, value: null) => T;
@@ -19,13 +22,30 @@ export function scopeByOrganization<T>(query: T, organizationId: string | null):
     : scopedQuery.is("organization_id", null);
 }
 
-export function requireOrganizationId(
-  organizationId: string | null,
-): string {
+export function requireOrganizationId(organizationId: string | null): string {
   if (!organizationId) {
     throw new Error("Select an organization before creating tenant data");
   }
   return organizationId;
+}
+
+export async function resolveAccessibleRiderIds(
+  userId: string,
+  organizationId: string | null,
+): Promise<string[]> {
+  if (!organizationId) return [userId];
+
+  const { data, error } = await supabase
+    .from("guardian_riders")
+    .select("rider_id")
+    .eq("organization_id", organizationId)
+    .eq("guardian_id", userId)
+    .eq("active", true);
+
+  if (error) throw error;
+  return Array.from(
+    new Set([userId, ...(data ?? []).map((link) => link.rider_id)]),
+  );
 }
 
 /** Generic async loader → { data, loading, error, refetch } */

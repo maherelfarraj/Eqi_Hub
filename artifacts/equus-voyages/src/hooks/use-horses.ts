@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-import type { DocumentItem, Horse, HorseDetail, QueryState, UpsertHorseInput } from "./types";
+import type {
+  DocumentItem,
+  Horse,
+  HorseDetail,
+  QueryState,
+  UpsertHorseInput,
+} from "./types";
 import {
   useQuery,
   requireUserId,
@@ -19,8 +25,9 @@ const mapHorse = (h: any): Horse => ({
   heightCm: h.height_cm,
   photoUrl: h.photo_url,
   status: h.status,
-  riderNames: (h.horse_riders ?? [])
-    .map((hr: any) => hr.rider?.full_name)
+  riderNames: (h.horse_access_assignments ?? [])
+    .filter((access: any) => access.active && access.access_type === "rider")
+    .map((access: any) => access.profile?.full_name)
     .filter(Boolean),
 });
 
@@ -34,7 +41,9 @@ export function useHorses(): QueryState<Horse[]> & { refetch: () => void } {
     const { data, error } = await scopeByOrganization(
       supabase
         .from("horses")
-        .select("*, horse_riders(rider:profiles(full_name))"),
+        .select(
+          "*, horse_access_assignments(access_type, active, profile:profiles(full_name))",
+        ),
       organizationId,
     ).order("name");
     if (error) throw error;
@@ -55,7 +64,9 @@ export function useHorse(
         scopeByOrganization(
           supabase
             .from("horses")
-            .select("*, horse_riders(rider:profiles(full_name))")
+            .select(
+              "*, horse_access_assignments(access_type, active, profile:profiles(full_name))",
+            )
             .eq("id", id),
           organizationId,
         ).single(),
@@ -112,53 +123,56 @@ export function useUpsertHorse() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const upsert = useCallback(async (input: UpsertHorseInput) => {
-    setSaving(true);
-    setError(null);
-    try {
-      const uid = await requireUserId();
-      const tenantId = requireOrganizationId(organizationId);
-      let photoUrl: string | undefined;
+  const upsert = useCallback(
+    async (input: UpsertHorseInput) => {
+      setSaving(true);
+      setError(null);
+      try {
+        const uid = await requireUserId();
+        const tenantId = requireOrganizationId(organizationId);
+        let photoUrl: string | undefined;
 
-      if (input.photo) {
-        const ext = input.photo.name.split(".").pop() ?? "jpg";
-        const path = `${uid}/horses/${crypto.randomUUID()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from("horse-photos")
-          .upload(path, input.photo);
-        if (upErr) throw upErr;
-        photoUrl = supabase.storage.from("horse-photos").getPublicUrl(path)
-          .data.publicUrl;
+        if (input.photo) {
+          const ext = input.photo.name.split(".").pop() ?? "jpg";
+          const path = `${uid}/horses/${crypto.randomUUID()}.${ext}`;
+          const { error: upErr } = await supabase.storage
+            .from("horse-photos")
+            .upload(path, input.photo);
+          if (upErr) throw upErr;
+          photoUrl = supabase.storage.from("horse-photos").getPublicUrl(path)
+            .data.publicUrl;
+        }
+
+        const row: any = {
+          organization_id: tenantId,
+          owner_id: uid,
+          name: input.name,
+          breed: input.breed ?? null,
+          birth_year: input.birthYear ?? null,
+          color: input.color ?? null,
+          height_cm: input.heightCm ?? null,
+          status: input.status ?? "active",
+        };
+        if (photoUrl) row.photo_url = photoUrl;
+
+        const q = input.id
+          ? scopeByOrganization(
+              supabase.from("horses").update(row).eq("id", input.id),
+              tenantId,
+            )
+          : supabase.from("horses").insert(row);
+        const { error: err } = await q;
+        if (err) throw err;
+        return true;
+      } catch (e: any) {
+        setError(e?.message ?? "Save failed");
+        return false;
+      } finally {
+        setSaving(false);
       }
-
-      const row: any = {
-        organization_id: tenantId,
-        owner_id: uid,
-        name: input.name,
-        breed: input.breed ?? null,
-        birth_year: input.birthYear ?? null,
-        color: input.color ?? null,
-        height_cm: input.heightCm ?? null,
-        status: input.status ?? "active",
-      };
-      if (photoUrl) row.photo_url = photoUrl;
-
-      const q = input.id
-        ? scopeByOrganization(
-            supabase.from("horses").update(row).eq("id", input.id),
-            tenantId,
-          )
-        : supabase.from("horses").insert(row);
-      const { error: err } = await q;
-      if (err) throw err;
-      return true;
-    } catch (e: any) {
-      setError(e?.message ?? "Save failed");
-      return false;
-    } finally {
-      setSaving(false);
-    }
-  }, [organizationId]);
+    },
+    [organizationId],
+  );
 
   return { upsert, saving, error };
 }

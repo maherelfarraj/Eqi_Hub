@@ -2,7 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardSummary, QueryState, Role } from "./types";
-import { useQuery, requireUserId, cents, scopeByOrganization } from "./_shared";
+import {
+  useQuery,
+  requireUserId,
+  resolveAccessibleRiderIds,
+  cents,
+  scopeByOrganization,
+} from "./_shared";
 
 export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
   refetch: () => void;
@@ -12,6 +18,7 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
 
   return useQuery<DashboardSummary | null>(async () => {
     const uid = await requireUserId();
+    const riderIds = await resolveAccessibleRiderIds(uid, organizationId);
 
     const lessonsQuery = scopeByOrganization(
       supabase
@@ -19,7 +26,7 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
         .select(
           "id, date_time, lesson_type, status, trainer:trainer_id(full_name), horse:horse_id(name)",
         )
-        .eq("rider_id", uid)
+        .in("rider_id", riderIds)
         .in("status", ["pending", "confirmed"])
         .gte("date_time", new Date().toISOString()),
       organizationId,
@@ -45,7 +52,7 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
       supabase
         .from("video_analyses")
         .select("id, title, status, score, created_at, horse:horse_id(name)")
-        .eq("rider_id", uid),
+        .in("rider_id", riderIds),
       organizationId,
     )
       .order("created_at", { ascending: false })
@@ -61,10 +68,7 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
     );
 
     const horsesQuery = scopeByOrganization(
-      supabase
-        .from("horses")
-        .select("id", { count: "exact", head: true })
-        .eq("owner_id", uid),
+      supabase.from("horses").select("id", { count: "exact", head: true }),
       organizationId,
     );
 
@@ -72,7 +76,7 @@ export function useDashboardSummary(): QueryState<DashboardSummary | null> & {
       supabase
         .from("video_analyses")
         .select("session_date, score")
-        .eq("rider_id", uid)
+        .in("rider_id", riderIds)
         .eq("status", "analyzed")
         .not("score", "is", null),
       organizationId,
