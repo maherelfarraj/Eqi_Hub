@@ -1,0 +1,127 @@
+{
+  "$schema": "./phase1-pilot.schema.json",
+  "version": 1,
+  "phase": "1.1",
+  "environment": "production-controlled-pilot",
+  "status": "template",
+  "owners": {
+    "pilot": "REPLACE_BEFORE_ACTIVATION",
+    "support": "REPLACE_BEFORE_ACTIVATION",
+    "monitoring": "REPLACE_BEFORE_ACTIVATION",
+    "incident": "REPLACE_BEFORE_ACTIVATION",
+    "rollback": "REPLACE_BEFORE_ACTIVATION"
+  },
+  "personas": [
+    {
+      "role": "rider",
+      "account_ref": "REPLACE_WITH_SUPABASE_USER_ID",
+      "journeys": [
+        "auth-session",
+        "core-records",
+        "lessons",
+        "progress",
+        "membership",
+        "ai-analysis"
+      ]
+    },
+    {
+      "role": "parent",
+      "account_ref": "REPLACE_WITH_SUPABASE_USER_ID",
+      "journeys": [
+        "auth-session",
+        "core-records",
+        "lessons",
+        "progress",
+        "notifications"
+      ]
+    },
+    {
+      "role": "coach",
+      "account_ref": "REPLACE_WITH_SUPABASE_USER_ID",
+      "journeys": [
+        "auth-session",
+        "core-records",
+        "lessons",
+        "progress",
+        "ai-analysis",
+        "notifications"
+      ]
+    },
+    {
+      "role": "academy_admin",
+      "account_ref": "REPLACE_WITH_SUPABASE_USER_ID",
+      "journeys": [
+        "auth-session",
+        "core-records",
+        "lessons",
+        "membership",
+        "organization-admin",
+        "notifications"
+      ]
+    }
+  ],
+  "journeys": [
+    {
+      "id": "auth-session",
+      "evidence": "REPLACE_WITH_SIGN_IN_RECOVERY_REFRESH_SIGN_OUT_EVIDENCE"
+    },
+    {
+      "id": "core-records",
+      "evidence": "REPLACE_WITH_AUTHORIZED_AND_DENIED_RECORD_ACCESS_EVIDENCE"
+    },
+    {
+      "id": "lessons",
+      "evidence": "REPLACE_WITH_LESSON_JOURNEY_EVIDENCE"
+    },
+    {
+      "id": "progress",
+      "evidence": "REPLACE_WITH_PROGRESS_JOURNEY_EVIDENCE"
+    },
+    {
+      "id": "membership",
+      "evidence": "REPLACE_WITH_MEMBERSHIP_JOURNEY_EVIDENCE"
+    },
+    {
+      "id": "ai-analysis",
+      "evidence": "REPLACE_WITH_AI_ANALYSIS_EVIDENCE"
+    },
+    {
+      "id": "organization-admin",
+      "evidence": "REPLACE_WITH_ORGANIZATION_ADMIN_EVIDENCE"
+    },
+    {
+      "id": "notifications",
+      "evidence": "REPLACE_WITH_NOTIFICATION_EVIDENCE"
+    }
+  ],
+  "metrics": {
+    "max_error_rate_pct": 5,
+    "min_journey_success_rate_pct": 95,
+    "max_video_processing_minutes": 10,
+    "max_cost_per_analysis_usd": 2,
+    "minimum_feedback_responses": 4
+  },
+  "operations": {
+    "support_channel": "REPLACE_BEFORE_ACTIVATION",
+    "monitoring_dashboard": "REPLACE_BEFORE_ACTIVATION",
+    "feedback_register": "REPLACE_BEFORE_ACTIVATION",
+    "incident_runbook": "docs/PHASE_1_STAGE_1_CONTROLLED_PILOT.md",
+    "rollback_runbook": "docs/PHASE_1_STAGE_1_CONTROLLED_PILOT.md"
+  },
+  "rollback": {
+    "triggers": [
+      "cross-tenant data exposure",
+      "authentication or recovery outage",
+      "sustained error rate above threshold",
+      "uncontrolled processing cost",
+      "materially unsafe AI guidance"
+    ],
+    "actions": [
+      "stop new pilot activity",
+      "disable affected workflow without deleting evidence",
+      "preserve logs and timestamps",
+      "notify the incident and rollback owners",
+      "record recovery evidence before resuming"
+    ]
+  }
+}

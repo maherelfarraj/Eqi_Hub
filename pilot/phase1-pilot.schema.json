@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/phase1-pilot.schema.json",
+  "title": "EquiVista Phase 1 controlled-pilot manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "phase",
+    "environment",
+    "status",
+    "owners",
+    "personas",
+    "journeys",
+    "metrics",
+    "operations",
+    "rollback"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "phase": { "const": "1.1" },
+    "environment": { "const": "production-controlled-pilot" },
+    "status": { "enum": ["template", "ready"] },
+    "owners": { "type": "object" },
+    "personas": { "type": "array", "minItems": 4, "maxItems": 4 },
+    "journeys": { "type": "array", "minItems": 8, "maxItems": 8 },
+    "metrics": { "type": "object" },
+    "operations": { "type": "object" },
+    "rollback": { "type": "object" }
+  }
+}
