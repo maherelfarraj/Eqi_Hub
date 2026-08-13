@@ -194,6 +194,8 @@ export default function LessonsPage() {
   const horses = useHorses();
   const bookingAction = useBookLesson();
   const lessonItems = lessons.data ?? [];
+  const trainerItems = trainers.data ?? [];
+  const horseItems = horses.data ?? [];
 
   const groupedLessons = useMemo(() => {
     const groups = new Map<string, Lesson[]>();
@@ -525,13 +527,13 @@ export default function LessonsPage() {
                   ? t("common.loading")
                   : t("lessons.selectTrainer")}
               </option>
-              {trainers.data.map((trainer) => (
+              {trainerItems.map((trainer) => (
                 <option key={trainer.id} value={trainer.id}>
                   {trainer.name}
                 </option>
               ))}
             </select>
-            {!trainers.loading && !trainers.error && trainers.data.length === 0 ? (
+            {!trainers.loading && !trainers.error && trainerItems.length === 0 ? (
               <p className="mt-2 text-xs text-warning-700">
                 {t("lessons.noTrainers")}
               </p>
@@ -555,7 +557,7 @@ export default function LessonsPage() {
               disabled={horses.loading}
             >
               <option value="">{t("lessons.noHorseSelected")}</option>
-              {horses.data.map((horse) => (
+              {horseItems.map((horse) => (
                 <option key={horse.id} value={horse.id}>
                   {horse.name}
                 </option>
