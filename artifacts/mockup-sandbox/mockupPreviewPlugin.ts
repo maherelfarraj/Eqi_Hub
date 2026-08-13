@@ -13,6 +13,34 @@ interface DiscoveredComponent {
   importPath: string;
 }
 
+function isAllowedPathCharacter(character: string): boolean {
+  const code = character.charCodeAt(0);
+  return (
+    (code >= 48 && code <= 57) ||
+    (code >= 65 && code <= 90) ||
+    (code >= 97 && code <= 122) ||
+    character === "." ||
+    character === "_" ||
+    character === "-"
+  );
+}
+
+export function isSafeMockupModulePath(file: string): boolean {
+  if (file === "" || path.posix.isAbsolute(file) || !file.endsWith(".tsx")) {
+    return false;
+  }
+
+  const segments = file.split("/");
+  return segments.every(
+    (segment) =>
+      segment !== "" &&
+      segment !== "." &&
+      segment !== ".." &&
+      !segment.startsWith("_") &&
+      Array.from(segment).every(isAllowedPathCharacter),
+  );
+}
+
 export function mockupPreviewPlugin(): Plugin {
   let root = "";
   let currentSource = "";
@@ -45,10 +73,16 @@ export function mockupPreviewPlugin(): Plugin {
       ignore: ["**/_*/**", "**/_*.tsx"],
     });
 
-    return files.map((f) => ({
-      globKey: "./" + f.slice("src/".length),
-      importPath: path.posix.relative("src/.generated", f),
-    }));
+    return files.map((f) => {
+      if (!isSafeMockupModulePath(f)) {
+        throw new Error(`Unsafe mockup module path: ${JSON.stringify(f)}`);
+      }
+
+      return {
+        globKey: "./" + f.slice("src/".length),
+        importPath: path.posix.relative("src/.generated", f),
+      };
+    });
   }
 
   function generateSource(components: Array<DiscoveredComponent>): string {

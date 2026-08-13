@@ -460,6 +460,7 @@
       "profile": "الملف الشخصي",
       "yourProfile": "ملفك الشخصي",
       "changeAvatar": "تغيير صورة الملف",
+      "invalidAvatarType": "اختر صورة بصيغة GIF أو JPEG أو PNG أو WebP.",
       "memberSince": "عضو منذ {{date}}",
       "phone": "الهاتف",
       "profileSaved": "تم حفظ تغييرات الملف.",

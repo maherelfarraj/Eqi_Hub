@@ -33,6 +33,7 @@ import {
   useUpdateProfile,
 } from "@/hooks/use-profile";
 import type { NotificationPrefs } from "@/hooks/types";
+import { getSafeAvatarUrl, isAllowedAvatarFile } from "@/lib/avatar-security";
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -47,6 +48,7 @@ export default function SettingsPage() {
   const [ridingDraft, setRidingDraft] = useState({ discipline: "", skillLevel: "", goals: "" });
   const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -68,6 +70,17 @@ export default function SettingsPage() {
   useEffect(() => {
     if (prefsQuery.data) setPrefs(prefsQuery.data);
   }, [prefsQuery.data]);
+
+  useEffect(() => {
+    if (!avatar) {
+      setAvatarPreviewUrl(null);
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(avatar);
+    setAvatarPreviewUrl(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [avatar]);
 
   if (profileQuery.loading && prefsQuery.loading) return <PageSkeleton />;
 
@@ -156,6 +169,8 @@ export default function SettingsPage() {
   };
 
   const profile = profileQuery.data;
+  const storedAvatarUrl = getSafeAvatarUrl(profile?.avatarUrl, window.location.origin);
+  const displayedAvatarUrl = avatarPreviewUrl ?? storedAvatarUrl;
 
   return (
     <div>
@@ -175,12 +190,28 @@ export default function SettingsPage() {
           <div className="mb-6 flex items-start gap-4">
             <div className="relative">
               <div className="flex size-20 items-center justify-center overflow-hidden rounded-full border border-cream-200 bg-cream-100 text-primary-600">
-                {avatar ? <img src={URL.createObjectURL(avatar)} alt="" className="size-full object-cover" /> : profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" className="size-full object-cover" /> : <UserRound className="size-8" aria-hidden="true" />}
+                {displayedAvatarUrl ? <img src={displayedAvatarUrl} alt="" className="size-full object-cover" /> : <UserRound className="size-8" aria-hidden="true" />}
               </div>
               <button type="button" onClick={() => avatarInput.current?.click()} className="absolute -bottom-1 -end-1 flex size-8 items-center justify-center rounded-full border border-cream-200 bg-white text-primary-600 shadow-sm" aria-label={t("settings.changeAvatar")}>
                 <Camera className="size-4" aria-hidden="true" />
               </button>
-              <input ref={avatarInput} type="file" accept="image/*" className="hidden" onChange={(event) => setAvatar(event.target.files?.[0] ?? null)} />
+              <input
+                ref={avatarInput}
+                type="file"
+                accept="image/gif,image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(event) => {
+                  const selected = event.target.files?.[0] ?? null;
+                  if (selected && !isAllowedAvatarFile(selected)) {
+                    setAvatar(null);
+                    setActionError(t("settings.invalidAvatarType"));
+                    event.target.value = "";
+                    return;
+                  }
+                  setActionError(null);
+                  setAvatar(selected);
+                }}
+              />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-600">{t("settings.profile")}</p>
