@@ -54,6 +54,7 @@ Thumbs.db
 # Controlled-pilot activation manifests contain production account references.
 /pilot/phase1-pilot.json
 /pilot/phase1-production-preflight.json
+/pilot/phase1-stage5-acceptance.json
 
 # Supabase CLI local metadata.
 /supabase/.temp/
