@@ -11,7 +11,7 @@ This stage converts the canonical roadmap's controlled-pilot milestone into a re
 The first cohort contains exactly one production account for each required persona:
 
 - rider;
-- parent/member;
+- parent/member (`guardian` database role);
 - coach; and
 - academy administrator.
 
@@ -31,7 +31,7 @@ node scripts/verify-phase1-pilot-readiness.mjs pilot/phase1-pilot.json
 
 ## Acceptance matrix
 
-| Journey                     | Rider    | Parent                      | Coach                          | Academy admin               | Minimum evidence                                            |
+| Journey                     | Rider    | Parent/guardian             | Coach                          | Academy admin               | Minimum evidence                                            |
 | --------------------------- | -------- | --------------------------- | ------------------------------ | --------------------------- | ----------------------------------------------------------- |
 | Authentication and session  | Required | Required                    | Required                       | Required                    | Sign-in, refresh, recovery, sign-out                        |
 | Rider and horse records     | Required | Required, linked rider only | Required, assigned riders only | Required, organization only | Authorized success plus cross-tenant denial                 |

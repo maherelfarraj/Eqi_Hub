@@ -1,0 +1,30 @@
+{
+  "$schema": "./phase1-production-preflight.schema.json",
+  "version": 1,
+  "observed_at": "2026-08-13T00:00:00Z",
+  "environment": "production-controlled-pilot",
+  "totals": {
+    "auth_users": 4,
+    "confirmed_auth_users": 4,
+    "profiles": 4,
+    "active_memberships": 4
+  },
+  "organizations": [
+    {
+      "organization_ref": "REPLACE_WITH_ORGANIZATION_ID",
+      "active_members": 4,
+      "distinct_required_role_users": 4,
+      "roles": {
+        "rider": 1,
+        "guardian": 1,
+        "coach": 1,
+        "academy_admin": 1
+      },
+      "relationships": {
+        "active_guardian_rider_links": 1,
+        "active_coach_rider_links": 1,
+        "active_horse_access_assignments": 1
+      }
+    }
+  ]
+}

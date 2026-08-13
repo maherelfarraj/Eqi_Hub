@@ -1,4 +1,11 @@
-export const REQUIRED_PERSONAS = ["rider", "parent", "coach", "academy_admin"];
+// Persona identifiers mirror organization_member_roles exactly. "guardian" is
+// the database role used for the parent/member pilot experience.
+export const REQUIRED_PERSONAS = [
+  "rider",
+  "guardian",
+  "coach",
+  "academy_admin",
+];
 export const REQUIRED_JOURNEYS = [
   "auth-session",
   "core-records",
