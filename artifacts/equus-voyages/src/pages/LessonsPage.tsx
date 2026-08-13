@@ -193,17 +193,18 @@ export default function LessonsPage() {
   const trainers = useTrainers();
   const horses = useHorses();
   const bookingAction = useBookLesson();
+  const lessonItems = lessons.data ?? [];
 
   const groupedLessons = useMemo(() => {
     const groups = new Map<string, Lesson[]>();
-    lessons.data.forEach((lesson) => {
+    lessonItems.forEach((lesson) => {
       const key = localDayKey(lesson.dateTime);
       const current = groups.get(key) ?? [];
       current.push(lesson);
       groups.set(key, current);
     });
     return Array.from(groups.entries());
-  }, [lessons.data]);
+  }, [lessonItems]);
 
   const weekDays = useMemo(() => {
     const start = startOfLocalWeek(weekOffset);
@@ -324,7 +325,7 @@ export default function LessonsPage() {
           retryLabel={t("common.tryAgain")}
           onRetry={lessons.refetch}
         />
-      ) : lessons.data.length === 0 ? (
+      ) : lessonItems.length === 0 ? (
         <SurfaceCard>
           <EmptyState
             icon={CalendarDays}
