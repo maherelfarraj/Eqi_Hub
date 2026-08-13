@@ -18,7 +18,7 @@
 | Measurement                                    | Estimated progress | Current position                                                                            |
 | ---------------------------------------------- | -----------------: | ------------------------------------------------------------------------------------------- |
 | Production hardening and operational readiness |                96% | Critical technical launch gates are closed; commercial and legal launch gates remain.       |
-| Core academy MVP                               |                82% | Core rider journeys are production-verified; multi-persona pilot acceptance is next.        |
+| Core academy MVP                               |                84% | Pilot personas are provisioned and preflight READY; linked-persona browser acceptance is next. |
 | Full enterprise product roadmap                |                44% | Launch foundations are stronger; enterprise workflows still require product implementation. |
 
 The percentages are planning estimates, not a count of migrations or pull requests. A database foundation does not count as a completed product feature.
@@ -165,8 +165,8 @@ The percentages are planning estimates, not a count of migrations or pull reques
 ### Phase 1 — Controlled academy pilot
 
 1. **Complete:** repository foundation for rider, parent/member (`guardian`), coach, and administrator personas.
-2. **Complete with activation hold:** read-only production preflight and fail-closed evidence automation; guardian persona and guardian–rider link are absent.
-3. **Next:** provision or select the real guardian persona, populate the ignored activation manifest, and validate horse, rider, lesson, progress, membership, and AI-analysis journeys.
+2. **Complete:** read-only production preflight and fail-closed evidence automation.
+3. **Provisioning complete:** four distinct active personas, guardian–rider and coach–rider links, and horse-access assignment are present; the production preflight is READY. Linked guardian visibility and legacy horse visibility require correction before browser acceptance.
 4. Establish support, incident, monitoring, feedback, and rollback routines during the named pilot window.
 5. Measure adoption, errors, video-analysis quality, processing time, and cost.
 
@@ -208,4 +208,4 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 ## Immediate next milestone
 
-Begin **Phase 1 Stage 3 — Controlled Pilot Activation** only after a real parent/member account is approved for the `guardian` persona, added as an active member of the rider's organization, and linked to the rider. Then require a fresh READY preflight, populate the ignored four-account activation manifest, and run the named multi-persona acceptance window. Unrestricted commercial launch remains on hold.
+Begin **Phase 1 Stage 4 — Linked-Persona Access Correction and Acceptance**: align guardian-derived record visibility and the canonical horse-access model with the legacy horse visibility helper, verify the changes with persona/RLS regression tests, then populate the ignored activation manifest and run the named four-persona browser acceptance window. Unrestricted commercial launch remains on hold.
