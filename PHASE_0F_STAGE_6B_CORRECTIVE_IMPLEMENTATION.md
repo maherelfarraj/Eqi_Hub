@@ -74,3 +74,5 @@ Implementation and local verification are complete. Publication, review, merge, 
 ## Post-merge CodeQL follow-up
 
 GitHub CodeQL reported a new `js/xss-through-dom` path from a selected local file through `URL.createObjectURL()` into the avatar image source after the initial merge. The follow-up removes the local blob preview entirely; selected files remain MIME-allowlisted and are rendered only after upload through the validated stored-avatar URL path.
+
+The final CodeQL follow-up replaces the mockup plugin's generated JavaScript import source with Vite's compile-time `import.meta.glob()` mapping. This removes the dynamic code-construction sink entirely while preserving automatic mockup discovery and underscore-prefixed exclusions.
