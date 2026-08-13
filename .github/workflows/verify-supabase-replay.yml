@@ -17,7 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  verify:
+  supabase-replay:
+    name: supabase-replay
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -1,0 +1,3 @@
+# Default ownership for review routing. Branch protection must separately
+# require code-owner review before this becomes an enforcement control.
+* @maherelfarraj

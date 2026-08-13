@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Local migration snapshots are recovery artifacts, not source.
+/.migration-backup/
