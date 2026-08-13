@@ -48,7 +48,6 @@ export default function SettingsPage() {
   const [ridingDraft, setRidingDraft] = useState({ discipline: "", skillLevel: "", goals: "" });
   const [prefs, setPrefs] = useState<NotificationPrefs | null>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -70,17 +69,6 @@ export default function SettingsPage() {
   useEffect(() => {
     if (prefsQuery.data) setPrefs(prefsQuery.data);
   }, [prefsQuery.data]);
-
-  useEffect(() => {
-    if (!avatar) {
-      setAvatarPreviewUrl(null);
-      return;
-    }
-
-    const previewUrl = URL.createObjectURL(avatar);
-    setAvatarPreviewUrl(previewUrl);
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [avatar]);
 
   if (profileQuery.loading && prefsQuery.loading) return <PageSkeleton />;
 
@@ -170,7 +158,6 @@ export default function SettingsPage() {
 
   const profile = profileQuery.data;
   const storedAvatarUrl = getSafeAvatarUrl(profile?.avatarUrl, window.location.origin);
-  const displayedAvatarUrl = avatarPreviewUrl ?? storedAvatarUrl;
 
   return (
     <div>
@@ -190,7 +177,7 @@ export default function SettingsPage() {
           <div className="mb-6 flex items-start gap-4">
             <div className="relative">
               <div className="flex size-20 items-center justify-center overflow-hidden rounded-full border border-cream-200 bg-cream-100 text-primary-600">
-                {displayedAvatarUrl ? <img src={displayedAvatarUrl} alt="" className="size-full object-cover" /> : <UserRound className="size-8" aria-hidden="true" />}
+                {storedAvatarUrl ? <img src={storedAvatarUrl} alt="" className="size-full object-cover" /> : <UserRound className="size-8" aria-hidden="true" />}
               </div>
               <button type="button" onClick={() => avatarInput.current?.click()} className="absolute -bottom-1 -end-1 flex size-8 items-center justify-center rounded-full border border-cream-200 bg-white text-primary-600 shadow-sm" aria-label={t("settings.changeAvatar")}>
                 <Camera className="size-4" aria-hidden="true" />

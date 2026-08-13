@@ -70,3 +70,7 @@ Existing Dependabot PRs #27, #30, #35, and #36 should be evaluated for supersess
 ## Closeout
 
 Implementation and local verification are complete. Publication, review, merge, and post-merge security verification are tracked in the authorized Stage 6B delivery workflow.
+
+## Post-merge CodeQL follow-up
+
+GitHub CodeQL reported a new `js/xss-through-dom` path from a selected local file through `URL.createObjectURL()` into the avatar image source after the initial merge. The follow-up removes the local blob preview entirely; selected files remain MIME-allowlisted and are rendered only after upload through the validated stored-avatar URL path.
