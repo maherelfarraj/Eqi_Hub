@@ -460,6 +460,7 @@
       "profile": "Profile",
       "yourProfile": "Your profile",
       "changeAvatar": "Change profile photo",
+      "invalidAvatarType": "Choose a GIF, JPEG, PNG, or WebP image.",
       "memberSince": "Member since {{date}}",
       "phone": "Phone",
       "profileSaved": "Profile changes saved.",
