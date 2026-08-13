@@ -6,7 +6,7 @@ Baseline: GitHub `main` commit `730686d5412c9db5cd1247a7d76f8c1d1a178f71`
 
 Workspace: isolated local branch `codex/phase-0f-stage6b-security-corrections`
 
-Delivery status: implementation was completed and verified locally before the separately tracked GitHub delivery workflow
+Delivery status: implementation was completed and verified locally before publication through the authorized GitHub delivery workflow
 
 ## Implemented scope
 
@@ -61,7 +61,7 @@ All checks completed successfully:
 - lockfile search finds none of `brace-expansion@5.0.8`, `fast-uri@3.1.4`, `js-yaml@4.3.0`, or `esbuild@0.27.x`;
 - `git diff --check` passes.
 
-## Expected GitHub effect after a separately authorized publication
+## Expected GitHub effect after publication
 
 The dependency changes are designed to resolve visible Dependabot alerts #1, #2, #3, #4, #5, and #7. The code changes are designed to remove or materially harden all three current CodeQL findings. Actual alert resolution must be confirmed by GitHub after publication and scanning; no alert was dismissed during this local phase.
 
@@ -69,4 +69,4 @@ Existing Dependabot PRs #27, #30, #35, and #36 should be evaluated for supersess
 
 ## Closeout
 
-Local implementation is complete and verified. A separate authorization is required to create a feature branch, stage files, commit, publish, create a PR, trigger a Supabase preview, modify alerts, or change GitHub settings.
+Implementation and local verification are complete. Publication, review, merge, and post-merge security verification are tracked in the authorized Stage 6B delivery workflow.
