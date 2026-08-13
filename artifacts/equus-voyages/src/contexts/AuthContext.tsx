@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         supabase
           .from("organization_memberships")
           .select(
-            "organization_id, organizations(id, name, slug, organization_type, active), organization_member_roles(role)",
+            "organization_id, organizations!organization_memberships_organization_id_fkey(id, name, slug, organization_type, active), organization_member_roles(role)",
           )
           .eq("user_id", userId)
           .eq("status", "active"),
