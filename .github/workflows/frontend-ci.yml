@@ -8,6 +8,9 @@ on:
       - "artifacts/**"
       - "lib/**"
       - "scripts/**"
+      - "docs/**"
+      - "pilot/**"
+      - "EQUIVISTA_CANONICAL_ROADMAP.md"
       - ".npmrc"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -45,5 +48,7 @@ jobs:
         run: pnpm typecheck
       - name: Test production web server
         run: pnpm --filter @workspace/equus-voyages test:server
+      - name: Verify controlled-pilot foundation
+        run: pnpm verify:pilot && pnpm test:pilot
       - name: Build
         run: pnpm build

@@ -50,3 +50,6 @@ Thumbs.db
 
 # Local migration snapshots are recovery artifacts, not source.
 /.migration-backup/
+
+# Controlled-pilot activation manifests contain production account references.
+/pilot/phase1-pilot.json

@@ -7,6 +7,8 @@
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "verify:pilot": "node scripts/verify-phase1-pilot-readiness.mjs --template pilot/phase1-pilot.example.json",
+    "test:pilot": "node --test scripts/test-phase1-pilot-readiness.mjs",
     "verify:supabase": "node scripts/verify-supabase-migration-ledger.mjs && node scripts/verify-supabase-operational-config.mjs && node scripts/test-supabase-operational-config.mjs && node scripts/verify-supabase-storage-policies.mjs && node scripts/test-supabase-storage-policies.mjs",
     "verify:supabase:storage-policies": "node scripts/verify-supabase-storage-policies.mjs && node scripts/test-supabase-storage-policies.mjs"
   },
