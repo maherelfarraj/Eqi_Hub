@@ -183,6 +183,22 @@ The percentages are planning estimates, not a count of migrations or pull reques
 1. Complete horse welfare and rider-pathway product workflows.
 2. Complete scheduling, booking, attendance, waitlist, and notification workflows.
 3. Complete academy lifecycle, staff attendance, coach payroll, and action centre.
+4. Deliver the coach-validated rider ledger, RiderSync scorecard, EquiVista
+   Rider Journey titles, evidence-backed badges, and personal-progress dashboard.
+5. Deliver optional on-demand flatwork, polework, gymnastics, and controlled
+   small-course assignments using a versioned exercise library and coach safety
+   envelopes rather than unrestricted LLM instructions.
+6. Support academy, personal, and guest horses with rider–horse compatibility,
+   workload, document, restriction, facility-approval, and supervision gates.
+7. Deliver the under-18 Guardian View Portal with read-only progress,
+   configurable approvals, weekly summaries, multi-guardian relationships, and
+   automatic access review at adulthood.
+8. Fail closed on digital medical/safety forms, liability waivers, guardian
+   signatures, lesson readiness declarations, document versioning, expiry, and
+   immutable audit receipts.
+9. Add optional assignment packs, AI analysis, coach review, horse assessment,
+   facility/equipment booking, and supervised-session entitlements only after
+   Phase 2 commercial and legal acceptance.
 
 ### Phase 4 — Finance and procurement suite
 

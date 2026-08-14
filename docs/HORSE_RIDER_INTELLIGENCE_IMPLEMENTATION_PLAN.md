@@ -333,9 +333,18 @@ Show:
 
 ### Score design
 
-Display safety, balance, control, position, rhythm/timing, jumping technique,
-consistency, and coach-assessed effort separately before calculating any
-overall 0–100 development score.
+Display a 0–100 **RiderSync Score** with its components visible before the
+overall value is calculated:
+
+- safety and horse welfare: 25%;
+- rhythm and control: 20%;
+- balance and position: 20%;
+- horse–rider partnership: 20%;
+- training consistency: 10%;
+- reflection and coach feedback: 5%.
+
+Discipline-specific measures such as jumping technique may inform the relevant
+components, but fence height and speed must never directly increase the score.
 
 Scores must:
 
@@ -348,15 +357,26 @@ Scores must:
 
 ### Badge design
 
-Support evidence-backed skill, development, safety, consistency, and
-horse–rider partnership badges. Examples include Balanced Seat, Smooth
-Transitions, Steady Hands, Controlled Canter, Correct Release, Balanced
-Landing, Homework Champion, Safety First, Strong Partnership, and Calm
-Recovery.
+Use the **EquiVista Rider Journey** as the progression identity. Its ten
+unlockable titles are Arena Explorer, Rhythm Rider, Balanced Rider, Precision
+Rider, Confident Canter, Course Navigator, Harmony Rider, Performance Rider,
+EquiVista Champion, and Equestrian Elite. A rider may display any previously
+unlocked title.
+
+Support three clearly labelled badge sources: AI-observed, coach-approved, and
+journey. Evidence-backed examples include Horse First, Quiet Hands, Balanced
+Seat, Rhythm Keeper, Straight & True, Grid Graduate, Course Clever, Reflection
+Rider, Training Streak, Comeback Rider, Perfect Partner, and Coach's Choice.
+Use circular enamel-style medallions with ivory, bronze, silver, gold, and deep
+burgundy progression, a simple horse/rider symbol, and the EquiVista seal.
+Badge detail includes the date, horse, evidence, award reason, and approval
+status.
 
 Badges may use staged Bronze, Silver, and Gold thresholds. AI may propose a
 badge, but the coach approves it and supplies a short message. Formal academy
 certificates require administrator approval and verifiable supporting lessons.
+Badges and titles are motivational records, not professional qualifications or
+competition certification.
 
 ### Healthy motivation controls
 
@@ -368,6 +388,128 @@ certificates require administrator approval and verifiable supporting lessons.
 - allow notification preferences for badges, goals, homework, coach replies,
   and weekly summaries;
 - provide a respectful review path when a rider questions an assessment.
+
+## Phase 5C — On-demand smart training assignments
+
+Offer an optional paid assignment for a free-riding or training day. A rider
+chooses the horse, available time, arena dimensions, available equipment, and
+goal. The planner uses coach-approved history, current competencies, recent
+workload, horse restrictions, and equipment to produce:
+
+- warm-up, controlled flatwork, polework, horse gymnastics, or a small jumping
+  course;
+- exercise order, repetitions, rest periods, maximum session duration, and
+  cool-down;
+- rider focus points, common mistakes, welfare checks, and stop conditions;
+- a visual arena/course layout, equipment list, downloadable session card,
+  optional voice guidance, and safe alternative exercises;
+- post-session reflection, optional video upload, analysis, and coach review.
+
+The LLM proposes only inside a deterministic, versioned safety envelope. The
+exercise library, not free-form generation, defines permitted movements,
+distances, combinations, prerequisites, and contraindications. Flatwork may be
+released immediately only when all configured checks pass. Jumping requires an
+existing coach-approved envelope or explicit coach approval and any configured
+supervision.
+
+## Phase 5D — Academy, personal, and guest horses
+
+Allow the rider to select an academy horse, a previously approved personal
+horse, or a guest horse for one session. Horse onboarding records age, breed,
+height, experience, fitness, training level, temperament, known risks,
+restrictions, maximum approved fence height, workload, recovery, vaccinations,
+insurance, facility documents, and owner/veterinary emergency contacts.
+
+Before assignment release, check rider–horse compatibility, recent workload,
+soundness declaration, arena surface, weather where relevant, equipment, and
+required supervision. A new rider–horse combination or guest horse requires
+facility approval. Until cleared, limit the plan to the academy's safe
+familiarisation, groundwork, or controlled-flatwork policy; do not generate a
+jumping assignment.
+
+## Phase 5E — Coach safety and approval controls
+
+Give the assigned coach an auditable safety envelope for each rider–horse pair:
+
+- permitted exercise families and prohibited activities;
+- maximum fence height, complexity, repetitions, duration, and workload;
+- supervision, facility, surface, equipment, and recovery requirements;
+- current rider and horse restrictions;
+- validity period and review date.
+
+The coach can approve, edit, replace, or reject an AI assignment, approve
+achievement evidence, award Coach's Choice, and set the next development
+focus. Facility staff retain authority to stop a session regardless of a prior
+approval. AI output cannot override a coach, facility, veterinary restriction,
+or stop condition.
+
+## Phase 5F — Guardian View Portal
+
+For a rider below the jurisdiction-configured adult age, require at least one
+verified parent or legal guardian and provide a view-only portal showing:
+
+- attendance, RiderSync components, titles, badges, achievements, goals, and
+  coach-approved summaries;
+- upcoming lessons, approved assignments, assigned horses, training-load
+  status, invoices, purchases, and safety or incident notifications;
+- weekly progress summaries with positively worded focus areas.
+
+Guardians may approve only configured actions such as purchases, personal- or
+guest-horse registration, video/AI consent, and supervised jumping. They cannot
+alter assessments, scores, lesson records, achievement evidence, or private
+staff notes. Support multiple verified guardians per rider and multiple minors
+per guardian, audit every approval and access change, and automatically review
+guardian access when the rider reaches adulthood. An adult rider may separately
+invite and revoke an optional Supporter View.
+
+## Phase 5G — Digital medical, waiver, and consent gate
+
+Block activation when required safety documents are incomplete:
+
+1. At registration and every membership renewal, collect the current full
+   medical/safety form, liability waiver, emergency-treatment consent, and
+   relevant photo, video, and AI-processing choices.
+2. Require a new full signature when the document version or declared medical
+   information changes.
+3. Before every lesson or independent assignment, collect a short health and
+   readiness declaration linked to the current full documents.
+4. An adult rider signs personally. For a minor, a verified parent or legal
+   guardian provides the legally required signature and approvals; a minor's
+   acknowledgement does not replace it.
+
+Preserve the exact signed content, document version, rider and signer IDs,
+relationship, lesson or membership reference, signature evidence, timestamps,
+expiry, supersession, and a downloadable PDF receipt. Signed records are
+immutable; corrections create a new version. Expose only `Cleared`,
+`Restricted`, `Review Required`, or `Pending Consent` plus the minimum necessary
+safety instructions to coaches. Apply field-level access, retention, deletion,
+breach-response, and jurisdiction-specific legal review to medical and minor
+data.
+
+## Phase 5H — Commerce and optional add-ons
+
+Model purchasable products for a single assignment, multi-session pack,
+monthly training assistant, AI video analysis, coach-reviewed assignment,
+personal-horse assessment, facility/equipment booking, and supervised jumping.
+Show price, inclusions, expiry, cancellation/refund terms, required approvals,
+and processing-cost limits before purchase. Purchases by minors require the
+configured guardian approval. Payment enablement remains subject to the
+separate commercial, legal, PCI, refund, dispute, and reconciliation gates in
+the canonical roadmap.
+
+### Phase 5 rollout order
+
+1. Rider ledger, competency pathway, and coach approval.
+2. Dashboard, RiderSync components, Rider Journey titles, and badges.
+3. Guardian relationships, view boundaries, and approval permissions.
+4. Versioned medical/safety forms, waivers, signatures, and activation gates.
+5. Academy, personal, and guest-horse profiles plus facility approval.
+6. Deterministic flatwork and polework assignment library.
+7. Course builder, gymnastics, and coach-controlled jumping assignments.
+8. Commercial entitlements and optional add-ons after Phase 2 acceptance.
+9. Video analysis, adaptive plans, and coach correction feedback.
+10. Four-persona browser acceptance plus separate minor/guardian, horse,
+    safety, payment, and rollback gates before cohort expansion.
 
 ## Phase 6 — Product and production integration
 
@@ -386,6 +528,14 @@ Store compact summaries and lineage in Postgres:
 - reviewer corrections and acceptance timestamps.
 - lesson development reports, competency evidence, pathway changes, scores,
   achievements, badges, reflections, approvals, and superseded versions.
+- assignment templates and versions, generated plans, safety-envelope checks,
+  course layouts, equipment, completion evidence, and coach decisions;
+- horse ownership/use relationships, horse documents, rider–horse approvals,
+  workload, restrictions, and expiry states;
+- guardian relationships, scoped permissions, approvals, and access history;
+- consent-document versions, immutable signatures, health declarations,
+  clearance status, expiry, and receipt references;
+- add-on catalogue, orders, guardian approvals, refunds, and entitlement state.
 
 Store dense frame keypoints and overlay artifacts in private object storage,
 not as unbounded relational rows. Apply existing organization, rider, guardian,
@@ -420,6 +570,14 @@ coach, administrator, and Storage access rules to every new artifact.
 - tenancy/RLS and private-storage tests;
 - idempotency, retry, timeout, and rollback tests;
 - browser tests for overlays, confidence, review, and bilingual copy;
+- permission tests for minor, guardian, coach, academy, and adult-supporter
+  boundaries;
+- waiver/version/expiry tests that fail closed before renewal, lesson, or
+  assignment activation;
+- deterministic assignment-safety tests for level, horse, workload,
+  supervision, equipment, and jumping constraints;
+- commerce tests for entitlements, guardian approval, cancellation, and
+  payment-provider failure without double fulfilment;
 - representative coach acceptance across horses, riders, fences, arenas, and
   devices.
 
