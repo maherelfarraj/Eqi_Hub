@@ -6,7 +6,7 @@ import test from "node:test";
 import { validateRiderDevelopmentFoundation } from "./verify-rider-development-foundation.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
-const [migration, rollback] = await Promise.all([
+const [migration, rollback, acceptanceFixture] = await Promise.all([
   readFile(
     resolve(
       repositoryRoot,
@@ -21,10 +21,23 @@ const [migration, rollback] = await Promise.all([
     ),
     "utf8",
   ),
+  readFile(
+    resolve(repositoryRoot, "tests/rls/batch_1_rider_development.sql"),
+    "utf8",
+  ),
 ]);
 
 test("accepts the rider development foundation", () => {
   assert.deepEqual(validateRiderDevelopmentFoundation(migration, rollback), []);
+});
+
+test("uses unambiguous report variables and typed acceptance scores", () => {
+  assert.match(migration, /v_report_id uuid;/i);
+  assert.doesNotMatch(migration, /\n\s*report_id uuid;/i);
+  assert.match(
+    acceptanceFixture,
+    /4::smallint,\s*4::smallint,\s*3::smallint,\s*jsonb_build_array\(/i,
+  );
 });
 
 test("rejects guardian-visible drafts", () => {

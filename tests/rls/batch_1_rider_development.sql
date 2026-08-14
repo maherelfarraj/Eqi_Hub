@@ -99,9 +99,9 @@ begin
     'Practise five walk-trot transitions in each direction.',
     now() + interval '7 days',
     'Prepare transitions before asking.',
-    4,
-    4,
-    3,
+    4::smallint,
+    4::smallint,
+    3::smallint,
     jsonb_build_array(
       jsonb_build_object(
         'competency_id', 'c1000000-0000-4000-8000-000000000004',

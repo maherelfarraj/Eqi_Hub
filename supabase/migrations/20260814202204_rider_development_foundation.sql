@@ -935,7 +935,7 @@ set search_path = ''
 as $$
 declare
   scoped_lesson public.lessons%rowtype;
-  report_id uuid;
+  v_report_id uuid;
   report_status text;
   actor uuid := (select auth.uid());
 begin
@@ -952,7 +952,7 @@ begin
   from public.lessons
   where id = p_lesson_id;
 
-  select id, status into report_id, report_status
+  select id, status into v_report_id, report_status
   from public.lesson_development_reports
   where lesson_id = p_lesson_id;
 
@@ -961,7 +961,7 @@ begin
       using errcode = '55000';
   end if;
 
-  if report_id is null then
+  if v_report_id is null then
     insert into public.lesson_development_reports (
       organization_id,
       lesson_id,
@@ -1000,7 +1000,7 @@ begin
       p_lesson_difficulty_score,
       actor,
       actor
-    ) returning id into report_id;
+    ) returning id into v_report_id;
   else
     update public.lesson_development_reports
     set objectives = coalesce(p_objectives, '{}'),
@@ -1016,11 +1016,11 @@ begin
         rider_confidence_score = p_rider_confidence_score,
         lesson_difficulty_score = p_lesson_difficulty_score,
         updated_by = actor
-    where id = report_id;
+    where id = v_report_id;
   end if;
 
   delete from public.rider_competency_evidence
-  where rider_competency_evidence.report_id = report_id
+  where rider_competency_evidence.report_id = v_report_id
     and approved_at is null;
 
   insert into public.rider_competency_evidence (
@@ -1033,7 +1033,7 @@ begin
     created_by
   )
   select
-    report_id,
+    v_report_id,
     scoped_lesson.organization_id,
     scoped_lesson.rider_id,
     catalog.id,
@@ -1056,14 +1056,14 @@ begin
       author_id,
       note
     ) values (
-      report_id,
+      v_report_id,
       scoped_lesson.organization_id,
       actor,
       btrim(p_private_note)
     );
   end if;
 
-  return report_id;
+  return v_report_id;
 end;
 $$;
 
