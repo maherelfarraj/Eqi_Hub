@@ -35,16 +35,30 @@ export async function resolveAccessibleRiderIds(
 ): Promise<string[]> {
   if (!organizationId) return [userId];
 
-  const { data, error } = await supabase
-    .from("guardian_riders")
-    .select("rider_id")
-    .eq("organization_id", organizationId)
-    .eq("guardian_id", userId)
-    .eq("active", true);
+  const [guardianLinks, coachAssignments] = await Promise.all([
+    supabase
+      .from("guardian_riders")
+      .select("rider_id")
+      .eq("organization_id", organizationId)
+      .eq("guardian_id", userId)
+      .eq("active", true),
+    supabase
+      .from("coach_rider_assignments")
+      .select("rider_id")
+      .eq("organization_id", organizationId)
+      .eq("coach_id", userId)
+      .eq("active", true),
+  ]);
 
-  if (error) throw error;
+  if (guardianLinks.error) throw guardianLinks.error;
+  if (coachAssignments.error) throw coachAssignments.error;
+
   return Array.from(
-    new Set([userId, ...(data ?? []).map((link) => link.rider_id)]),
+    new Set([
+      userId,
+      ...(guardianLinks.data ?? []).map((link) => link.rider_id),
+      ...(coachAssignments.data ?? []).map((assignment) => assignment.rider_id),
+    ]),
   );
 }
 
