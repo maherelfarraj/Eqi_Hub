@@ -6,6 +6,8 @@ export type AnalysisStatus = "uploaded" | "processing" | "analyzed" | "failed";
 export type HorseStatus = "active" | "resting" | "retired";
 export type MembershipStatus = "trialing" | "active" | "past_due" | "cancelled";
 export type InvoiceStatus = "paid" | "open" | "overdue" | "void";
+export type CompetencyStage =
+  "introduced" | "practising" | "demonstrated" | "achieved";
 
 // ---- Dashboard ----
 export interface UpcomingLesson {
@@ -114,6 +116,8 @@ export interface UploadVideoInput {
 // ---- Lessons ----
 export interface Lesson {
   id: string;
+  riderId: string;
+  riderName: string;
   dateTime: string;
   durationMin: number;
   trainerName: string;
@@ -124,6 +128,68 @@ export interface Lesson {
   notes: string | null;
   feedback: { text: string; homework: string | null } | null;
   analysisId: string | null;
+  developmentReport: LessonDevelopmentReport | null;
+}
+export interface CompetencyDefinition {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  description: string | null;
+}
+export interface CompetencyEvidence {
+  competencyId: string;
+  competencyName: string;
+  stage: CompetencyStage;
+  note: string | null;
+}
+export interface RiderReflection {
+  id: string;
+  reflection: string | null;
+  question: string | null;
+  visibleToGuardian: boolean;
+  acknowledgedAt: string;
+}
+export interface LessonDevelopmentReport {
+  id: string;
+  status: "draft" | "approved";
+  objectives: string[];
+  summary: string;
+  strengths: string[];
+  focusAreas: string[];
+  horseObservations: string | null;
+  interactionObservations: string | null;
+  homework: string | null;
+  homeworkDueAt: string | null;
+  nextFocus: string;
+  effortScore: number | null;
+  riderConfidenceScore: number | null;
+  lessonDifficultyScore: number | null;
+  approvedAt: string | null;
+  competencies: CompetencyEvidence[];
+  reflection: RiderReflection | null;
+}
+export interface LessonCompetencyInput {
+  competencyId: string;
+  stage: CompetencyStage;
+  evidenceNote?: string;
+}
+export interface LessonDevelopmentInput {
+  lessonId: string;
+  objectives: string[];
+  summary: string;
+  strengths: string[];
+  focusAreas: string[];
+  horseObservations?: string;
+  interactionObservations?: string;
+  homework?: string;
+  homeworkDueAt?: string;
+  nextFocus: string;
+  effortScore: number;
+  riderConfidenceScore?: number;
+  lessonDifficultyScore?: number;
+  competencies: LessonCompetencyInput[];
+  privateNote?: string;
 }
 export interface Trainer {
   id: string;
