@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ClipboardCheck,
   Clock3,
   GraduationCap,
   List,
@@ -28,18 +29,20 @@ import {
   formatDate,
   labelClass,
 } from "@/components/EquiVistaUI";
+import {
+  LessonCloseoutModal,
+  LessonDevelopmentSummary,
+} from "@/components/LessonDevelopment";
+import { useAuth } from "@/contexts/AuthContext";
 import { useHorses } from "@/hooks/use-horses";
 import {
   useBookLesson,
+  useCompetencyCatalog,
   useLessons,
   useTrainers,
   type LessonFilter,
 } from "@/hooks/use-lessons";
-import type {
-  BookLessonInput,
-  Lesson,
-  LessonType,
-} from "@/hooks/types";
+import type { BookLessonInput, Lesson, LessonType } from "@/hooks/types";
 
 type ViewMode = "list" | "week";
 
@@ -87,10 +90,16 @@ function LessonCard({
   lesson,
   locale,
   onOpenAnalysis,
+  canManageDevelopment,
+  onCloseout,
+  onChanged,
 }: {
   lesson: Lesson;
   locale: string;
   onOpenAnalysis: (id: string) => void;
+  canManageDevelopment: boolean;
+  onCloseout: (lesson: Lesson) => void;
+  onChanged: () => void;
 }) {
   const { t } = useTranslation();
   const time = new Intl.DateTimeFormat(locale, {
@@ -112,8 +121,14 @@ function LessonCard({
             />
           </div>
           <p className="mt-2 flex items-center gap-2 text-sm text-text-secondary">
-            <GraduationCap className="size-4 text-primary-500" aria-hidden="true" />
+            <GraduationCap
+              className="size-4 text-primary-500"
+              aria-hidden="true"
+            />
             {lesson.trainerName}
+          </p>
+          <p className="mt-1 text-sm text-text-secondary">
+            {t("lessons.riderLabel", { name: lesson.riderName })}
           </p>
           {lesson.horseName ? (
             <p className="mt-1 text-sm text-text-secondary">
@@ -139,20 +154,32 @@ function LessonCard({
         <details className="group mt-4 rounded-xl border border-cream-200 bg-cream-50">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-espresso">
             <span className="flex items-center gap-2">
-              <MessageSquareText className="size-4 text-primary-600" aria-hidden="true" />
+              <MessageSquareText
+                className="size-4 text-primary-600"
+                aria-hidden="true"
+              />
               {t("lessons.feedbackTitle")}
             </span>
-            <ChevronDown className="size-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+            <ChevronDown
+              className="size-4 transition-transform group-open:rotate-180"
+              aria-hidden="true"
+            />
           </summary>
           <div className="space-y-4 border-t border-cream-200 px-4 py-4 text-sm leading-6">
             <div>
-              <p className="font-bold text-espresso">{t("lessons.trainerFeedback")}</p>
+              <p className="font-bold text-espresso">
+                {t("lessons.trainerFeedback")}
+              </p>
               <p className="mt-1 text-text-secondary">{lesson.feedback.text}</p>
             </div>
             {lesson.feedback.homework ? (
               <div className="border-s-2 border-primary-500 ps-3">
-                <p className="font-bold text-espresso">{t("lessons.homework")}</p>
-                <p className="mt-1 text-text-secondary">{lesson.feedback.homework}</p>
+                <p className="font-bold text-espresso">
+                  {t("lessons.homework")}
+                </p>
+                <p className="mt-1 text-text-secondary">
+                  {lesson.feedback.homework}
+                </p>
               </div>
             ) : null}
             {lesson.analysisId ? (
@@ -167,12 +194,28 @@ function LessonCard({
           </div>
         </details>
       ) : null}
+
+      <LessonDevelopmentSummary lesson={lesson} onChanged={onChanged} />
+
+      {canManageDevelopment &&
+      ["confirmed", "completed"].includes(lesson.status) &&
+      lesson.developmentReport?.status !== "approved" ? (
+        <div className="mt-4 border-t border-cream-200 pt-4">
+          <OutlineButton type="button" onClick={() => onCloseout(lesson)}>
+            <ClipboardCheck className="size-4" aria-hidden="true" />
+            {lesson.developmentReport
+              ? t("lessons.development.editDraft")
+              : t("lessons.development.closeLesson")}
+          </OutlineButton>
+        </div>
+      ) : null}
     </article>
   );
 }
 
 export default function LessonsPage() {
   const { t, i18n } = useTranslation();
+  const { hasRole } = useAuth();
   const navigate = useNavigate();
   const locale = i18n.resolvedLanguage ?? i18n.language;
   const [filter, setFilter] = useState<LessonFilter>("upcoming");
@@ -180,6 +223,7 @@ export default function LessonsPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [success, setSuccess] = useState("");
+  const [closeoutLesson, setCloseoutLesson] = useState<Lesson | null>(null);
   const [booking, setBooking] = useState<BookLessonInput>({
     trainerId: "",
     horseId: null,
@@ -190,12 +234,20 @@ export default function LessonsPage() {
   });
 
   const lessons = useLessons(filter);
+  const competencies = useCompetencyCatalog();
   const trainers = useTrainers();
   const horses = useHorses();
   const bookingAction = useBookLesson();
   const lessonItems = lessons.data ?? [];
   const trainerItems = trainers.data ?? [];
   const horseItems = horses.data ?? [];
+  const competencyItems = competencies.data ?? [];
+  const canManageDevelopment = [
+    "coach",
+    "academy_admin",
+    "stable_manager",
+    "platform_admin",
+  ].some(hasRole);
 
   const groupedLessons = useMemo(() => {
     const groups = new Map<string, Lesson[]>();
@@ -360,6 +412,9 @@ export default function LessonsPage() {
                     lesson={lesson}
                     locale={locale}
                     onOpenAnalysis={(id) => navigate(`/analysis/${id}`)}
+                    canManageDevelopment={canManageDevelopment}
+                    onCloseout={setCloseoutLesson}
+                    onChanged={lessons.refetch}
                   />
                 ))}
               </div>
@@ -375,7 +430,10 @@ export default function LessonsPage() {
               onClick={() => setWeekOffset((current) => current - 1)}
               aria-label={t("lessons.previousWeek")}
             >
-              <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
+              <ChevronLeft
+                className="size-4 rtl:rotate-180"
+                aria-hidden="true"
+              />
             </OutlineButton>
             <div className="text-center">
               <p className="font-serif text-lg text-espresso">
@@ -406,7 +464,10 @@ export default function LessonsPage() {
               onClick={() => setWeekOffset((current) => current + 1)}
               aria-label={t("lessons.nextWeek")}
             >
-              <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+              <ChevronRight
+                className="size-4 rtl:rotate-180"
+                aria-hidden="true"
+              />
             </OutlineButton>
           </SurfaceCard>
 
@@ -499,7 +560,11 @@ export default function LessonsPage() {
           </>
         }
       >
-        <form id="book-lesson-form" className="space-y-5" onSubmit={submitBooking}>
+        <form
+          id="book-lesson-form"
+          className="space-y-5"
+          onSubmit={submitBooking}
+        >
           {bookingAction.error ? (
             <ErrorState message={bookingAction.error} />
           ) : null}
@@ -533,7 +598,9 @@ export default function LessonsPage() {
                 </option>
               ))}
             </select>
-            {!trainers.loading && !trainers.error && trainerItems.length === 0 ? (
+            {!trainers.loading &&
+            !trainers.error &&
+            trainerItems.length === 0 ? (
               <p className="mt-2 text-xs text-warning-700">
                 {t("lessons.noTrainers")}
               </p>
@@ -602,7 +669,9 @@ export default function LessonsPage() {
                 onChange={(event) =>
                   setBooking((current) => ({
                     ...current,
-                    durationMin: Number(event.target.value) as BookLessonInput["durationMin"],
+                    durationMin: Number(
+                      event.target.value,
+                    ) as BookLessonInput["durationMin"],
                   }))
                 }
               >
@@ -654,6 +723,19 @@ export default function LessonsPage() {
           </div>
         </form>
       </Modal>
+
+      <LessonCloseoutModal
+        lesson={closeoutLesson}
+        competencies={competencyItems}
+        open={Boolean(closeoutLesson)}
+        onClose={() => setCloseoutLesson(null)}
+        onSaved={() => {
+          setSuccess(t("lessons.development.saved"));
+          setFilter("past");
+          setView("list");
+          lessons.refetch();
+        }}
+      />
     </section>
   );
 }
