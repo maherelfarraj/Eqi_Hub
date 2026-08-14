@@ -35,29 +35,55 @@ export async function resolveAccessibleRiderIds(
 ): Promise<string[]> {
   if (!organizationId) return [userId];
 
-  const [guardianLinks, coachAssignments] = await Promise.all([
-    supabase
-      .from("guardian_riders")
-      .select("rider_id")
-      .eq("organization_id", organizationId)
-      .eq("guardian_id", userId)
-      .eq("active", true),
-    supabase
-      .from("coach_rider_assignments")
-      .select("rider_id")
-      .eq("organization_id", organizationId)
-      .eq("coach_id", userId)
-      .eq("active", true),
-  ]);
+  const [guardianLinks, coachAssignments, academyAdminMemberships] =
+    await Promise.all([
+      supabase
+        .from("guardian_riders")
+        .select("rider_id")
+        .eq("organization_id", organizationId)
+        .eq("guardian_id", userId)
+        .eq("active", true),
+      supabase
+        .from("coach_rider_assignments")
+        .select("rider_id")
+        .eq("organization_id", organizationId)
+        .eq("coach_id", userId)
+        .eq("active", true),
+      supabase
+        .from("organization_memberships")
+        .select("id, organization_member_roles!inner(role)")
+        .eq("organization_id", organizationId)
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .eq("organization_member_roles.role", "academy_admin")
+        .limit(1),
+    ]);
 
   if (guardianLinks.error) throw guardianLinks.error;
   if (coachAssignments.error) throw coachAssignments.error;
+  if (academyAdminMemberships.error) throw academyAdminMemberships.error;
+
+  let organizationRiderIds: string[] = [];
+  if ((academyAdminMemberships.data ?? []).length > 0) {
+    const organizationRiders = await supabase
+      .from("organization_memberships")
+      .select("user_id, organization_member_roles!inner(role)")
+      .eq("organization_id", organizationId)
+      .eq("status", "active")
+      .eq("organization_member_roles.role", "rider");
+
+    if (organizationRiders.error) throw organizationRiders.error;
+    organizationRiderIds = (organizationRiders.data ?? []).map(
+      (membership) => membership.user_id,
+    );
+  }
 
   return Array.from(
     new Set([
       userId,
       ...(guardianLinks.data ?? []).map((link) => link.rider_id),
       ...(coachAssignments.data ?? []).map((assignment) => assignment.rider_id),
+      ...organizationRiderIds,
     ]),
   );
 }
