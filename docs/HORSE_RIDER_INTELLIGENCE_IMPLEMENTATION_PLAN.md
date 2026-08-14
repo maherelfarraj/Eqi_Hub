@@ -249,6 +249,126 @@ Each finding contains an issue code, severity, confidence, phase, frame/time
 range, visual evidence, plain-language explanation, suggested exercise, and
 human-review status. Low-confidence findings are withheld or marked for review.
 
+## Phase 5A — Coach-validated rider development ledger
+
+Every completed lesson or class produces a structured development record. The
+existing lesson-report and rider-pathway foundations should be extended rather
+than replaced.
+
+### Lesson lifecycle
+
+1. Before the lesson, the coach reviews the rider's current level, previous
+   report, open goals, homework, recent approved findings, and competencies
+   awaiting confirmation.
+2. The coach selects the lesson objectives and planned skills.
+3. Confirmed attendance opens a draft lesson report.
+4. AI may propose strengths, focus areas, interaction findings, evidence
+   frames, competencies, and exercises.
+5. The assigned coach accepts, edits, or rejects every proposed finding; adds
+   professional observations; records effort and training output; and sets
+   homework and the next focus.
+6. The approved report becomes visible to the rider and linked guardian.
+7. The rider may acknowledge the report, add a reflection, or ask a question
+   without altering the coach assessment.
+
+Unreviewed output remains **Draft — awaiting coach review** and must not affect
+official progress, scores, badges, achievements, or level advancement.
+
+### Structured lesson record
+
+Record:
+
+- lesson objectives and skills practised;
+- attendance, effort, rider confidence, and lesson difficulty;
+- coach-approved strengths and current focus areas;
+- horse observations and horse–rider interaction findings;
+- linked video-analysis findings and evidence frames;
+- training output, homework, due date, and completion state;
+- next-lesson focus and open questions;
+- coach approval, rider acknowledgement, revisions, and timestamps.
+
+Private coach notes must be stored separately from rider-visible and
+guardian-visible feedback.
+
+### Competency pathway
+
+Use an academy-controlled, versioned skill catalogue covering safety,
+mounting, walk/trot/canter control, transitions, balance, independent seat,
+aids, pole work, jumping position, approach rhythm, takeoff, release, landing,
+recovery, and course riding.
+
+Each competency progresses through:
+
+`not_started -> introduced -> practising -> demonstrated -> achieved`
+
+A separate review flag identifies uncertain or disputed evidence. Achievement
+requires repeated coach-approved evidence across the academy's configured
+number of lessons; a single successful frame cannot complete a competency.
+
+### Approval responsibilities
+
+- AI proposes only; it never approves progress or achievement.
+- Assigned coaches approve lesson reports and normal competency progress.
+- Academy administrators approve formal level advancement, certificates, and
+  awards configured as academy-level milestones.
+- Riders acknowledge and reflect but cannot rewrite an assessment.
+- Linked guardians receive read-only access plus permitted summaries.
+- Every approval, rejection, correction, and supersession remains auditable.
+
+## Phase 5B — Rider motivation, dashboard, scores, and badges
+
+### Rider dashboard
+
+Show:
+
+- current riding level and progress toward the next level;
+- multidimensional development scorecard and personal trend;
+- latest coach-approved achievements and badges;
+- skills being introduced, practised, demonstrated, and achieved;
+- coach-approved strengths and positively worded **Focus Areas**;
+- homework, next objective, rider reflections, and coach replies;
+- lesson-by-lesson timeline with supporting evidence;
+- horse-specific progress without unfairly combining unlike horses;
+- weekly or monthly digest for the rider and linked guardian.
+
+### Score design
+
+Display safety, balance, control, position, rhythm/timing, jumping technique,
+consistency, and coach-assessed effort separately before calculating any
+overall 0–100 development score.
+
+Scores must:
+
+- compare the rider primarily with their own accepted baseline;
+- account for riding level, discipline, horse, and lesson objective;
+- expose the coach-approved evidence behind every material change;
+- use repeated evidence so one difficult lesson cannot create a punitive drop;
+- never be used as a medical, employment, or safeguarding decision;
+- remain private by default with no public rider leaderboard.
+
+### Badge design
+
+Support evidence-backed skill, development, safety, consistency, and
+horse–rider partnership badges. Examples include Balanced Seat, Smooth
+Transitions, Steady Hands, Controlled Canter, Correct Release, Balanced
+Landing, Homework Champion, Safety First, Strong Partnership, and Calm
+Recovery.
+
+Badges may use staged Bronze, Silver, and Gold thresholds. AI may propose a
+badge, but the coach approves it and supplies a short message. Formal academy
+certificates require administrator approval and verifiable supporting lessons.
+
+### Healthy motivation controls
+
+- reward personal improvement, persistence, safe practice, and consistency;
+- do not reward excessive training volume, repeated uploads, unsafe intensity,
+  or comparison with differently situated riders;
+- allow academies to reduce or disable gamification by rider preference or age;
+- use age-appropriate English and Arabic wording;
+- allow notification preferences for badges, goals, homework, coach replies,
+  and weekly summaries;
+- provide a respectful review path when a rider questions an assessment.
+
 ## Phase 6 — Product and production integration
 
 Extend the existing Railway worker rather than creating a second production
@@ -264,6 +384,8 @@ Store compact summaries and lineage in Postgres:
 - processing status, duration, token/resource use, and cost;
 - phase events, metric summaries, findings, confidence, and review state;
 - reviewer corrections and acceptance timestamps.
+- lesson development reports, competency evidence, pathway changes, scores,
+  achievements, badges, reflections, approvals, and superseded versions.
 
 Store dense frame keypoints and overlay artifacts in private object storage,
 not as unbounded relational rows. Apply existing organization, rider, guardian,

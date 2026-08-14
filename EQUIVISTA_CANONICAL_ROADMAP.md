@@ -57,9 +57,9 @@ The percentages are planning estimates, not a count of migrations or pull reques
 | ------------------------------- | --------------- | ---------------------------------------------------------------------------------------- |
 | Horse operations                | Partial         | Lifecycle, assignment, availability, ownership, and operational UX.                      |
 | Horse welfare                   | Foundation only | Health records, vaccinations, farrier, medication, incidents, reminders, and reports.    |
-| Rider pathway                   | Foundation only | Levels, competencies, assessments, goals, progression rules, and coach UX.               |
+| Rider pathway                   | Foundation only | Deliver coach-validated lesson reports, structured competencies, evidence-backed progress, goals, rider reflections, achievement approval, and level advancement. |
 | Lesson scheduling               | Partial         | Resource availability, recurring schedules, conflicts, cancellations, and notifications. |
-| Lesson booking and attendance   | Foundation only | Self-service booking, waitlists, check-in, absence handling, and reporting.              |
+| Lesson booking and attendance   | Foundation only | Self-service booking, waitlists, check-in, absence handling, then coach-approved lesson closeout and training output. |
 | Academy lifecycle management    | Foundation only | Onboarding, suspension, renewal, offboarding, and retention workflows.                   |
 | Staff attendance and timesheets | Foundation only | Clocking, approval, exceptions, leave, and operational reports.                          |
 | Coach payroll automation        | Foundation only | Rate rules, approvals, adjustments, payroll exports, and audit controls.                 |
