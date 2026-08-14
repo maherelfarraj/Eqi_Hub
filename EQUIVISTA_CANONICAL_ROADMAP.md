@@ -47,7 +47,8 @@ The percentages are planning estimates, not a count of migrations or pull reques
 | Frame extraction, riding-content validation, and LLM analysis pipeline | Complete        | Continue representative quality, timing, and cost monitoring.          |
 | Analysis results, feedback, and progress display                       | Partial         | Expand acceptance across representative videos, personas, and devices. |
 | Worker CI, health checks, Railway deployment, and Wait for CI          | Complete        | Record the first normal post-enable deployment observation.            |
-| Advanced coaching insights and longitudinal recommendations            | Planned         | Define model-quality metrics, human review, and product workflows.     |
+| Combined rider, horse, and interaction intelligence                    | Planned         | Execute the versioned pose, kinematics, calibration, safety, shadow-validation, and coach-review plan. |
+| Advanced coaching insights and longitudinal recommendations            | Planned         | Convert accepted frame-linked findings into safe corrections, exercises, trends, and human-reviewed recommendations. |
 | AI operations console, evaluation, cost, and model-quality monitoring  | Foundation only | Build operator UI, alerts, evaluation datasets, and budgets.           |
 
 ## Track C — Academy operations
@@ -143,7 +144,7 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 | Gate                                                 | Status                | Exit criterion                                                                                        |
 | ---------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------- |
-| Controlled pilot readiness                           | Ready with conditions | Named pilot users, support owner, monitoring, rollback, and scoped data.                              |
+| Controlled pilot readiness                           | Active                | Stage 5 acceptance passed; continue only the named four-persona cohort with support, monitoring, and rollback controls. |
 | Riding/non-riding production E2E                     | Complete              | Riding analysis succeeded and non-riding content was rejected in production.                          |
 | Frontend CI and browser security headers             | Complete              | Required frontend and worker checks pass; live approved headers were verified.                        |
 | Payment-provider production acceptance               | Pending               | Live provider, compliant implementation, callbacks, refunds, reconciliation, and acceptance evidence. |
@@ -167,8 +168,8 @@ The percentages are planning estimates, not a count of migrations or pull reques
 1. **Complete:** repository foundation for rider, parent/member (`guardian`), coach, and administrator personas.
 2. **Complete:** read-only production preflight and fail-closed evidence automation.
 3. **Provisioning complete:** four distinct active personas, guardian–rider and coach–rider links, and horse-access assignment are present; the production preflight is READY. Linked guardian visibility and legacy horse visibility require correction before browser acceptance.
-4. Establish support, incident, monitoring, feedback, and rollback routines during the named pilot window.
-5. Measure adoption, errors, video-analysis quality, processing time, and cost.
+4. **Complete:** support, incident, monitoring, feedback, and rollback ownership was exercised during the named Stage 5 acceptance window.
+5. **In progress:** Stage 5 established the passing baseline for errors, video-analysis processing time, cost, and persona feedback; continue measuring adoption and repeat performance during the bounded pilot operating interval.
 
 ### Phase 2 — Commercial billing and payments
 
@@ -208,4 +209,4 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 ## Immediate next milestone
 
-Validate and publish **Phase 1 Stage 4 — Linked-Persona Access Correction**: replay the canonical migration on one disposable preview, run linked guardian/rider RLS acceptance plus security advisors, review and merge the corrective PR, apply only the approved migration to production, deploy the frontend query correction, and run the named four-persona browser acceptance window. Unrestricted commercial launch remains on hold.
+Operate **Phase 1 Stage 6 — Controlled Pilot Observation and Exit Review**: keep the cohort limited to the accepted four personas, monitor production health and support events, record routine adoption and repeat AI-processing time/cost evidence, and make a fresh continue/hold decision at the exit checkpoint. In parallel, begin only the bounded feasibility, dataset-governance, offline, and shadow-mode work in `docs/HORSE_RIDER_INTELLIGENCE_IMPLEMENTATION_PLAN.md`; do not replace accepted user-visible analysis without a separate gate. Do not enable live payments, widen registration, or authorize unrestricted commercial launch.
