@@ -5,30 +5,42 @@ import { defineConfig } from 'vite';
 
 import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 
-const rawPort = process.env.PORT;
+function resolvePort(command: 'build' | 'serve') {
+  const rawPort = process.env.PORT;
 
-if (!rawPort) {
-  throw new Error(
-    'PORT environment variable is required but was not provided.',
-  );
+  if (!rawPort) {
+    if (command === 'build') return 5173;
+
+    throw new Error(
+      'PORT environment variable is required but was not provided.',
+    );
+  }
+
+  const port = Number(rawPort);
+
+  if (Number.isNaN(port) || port <= 0) {
+    throw new Error(`Invalid PORT value: "${rawPort}"`);
+  }
+
+  return port;
 }
 
-const port = Number(rawPort);
+function resolveBasePath(command: 'build' | 'serve') {
+  const basePath = process.env.BASE_PATH;
 
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
+  if (!basePath) {
+    if (command === 'build') return '/';
+
+    throw new Error(
+      'BASE_PATH environment variable is required but was not provided.',
+    );
+  }
+
+  return basePath;
 }
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
-
-export default defineConfig({
-  base: basePath,
+export default defineConfig(async ({ command }) => ({
+  base: resolveBasePath(command),
   plugins: [
     react(),
     tailwindcss(),
@@ -88,7 +100,7 @@ export default defineConfig({
     },
   },
   server: {
-    port,
+    port: resolvePort(command),
     strictPort: true,
     host: '0.0.0.0',
     allowedHosts: true,
@@ -97,8 +109,8 @@ export default defineConfig({
     },
   },
   preview: {
-    port,
+    port: resolvePort(command),
     host: '0.0.0.0',
     allowedHosts: true,
   },
-});
+}));
