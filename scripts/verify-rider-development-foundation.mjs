@@ -25,6 +25,28 @@ const tables = [
   "rider_competency_progress",
 ];
 
+const foreignKeyIndexes = [
+  "lesson_development_reports_rider_id_idx",
+  "lesson_development_reports_coach_id_idx",
+  "lesson_development_reports_created_by_idx",
+  "lesson_development_reports_updated_by_idx",
+  "lesson_development_reports_approved_by_idx",
+  "lesson_development_report_history_organization_id_idx",
+  "lesson_development_report_history_rider_id_idx",
+  "lesson_development_report_history_changed_by_idx",
+  "lesson_development_private_notes_organization_id_idx",
+  "lesson_development_private_notes_author_id_idx",
+  "lesson_development_reflections_organization_id_idx",
+  "lesson_development_reflections_rider_id_idx",
+  "rider_competency_evidence_rider_id_idx",
+  "rider_competency_evidence_competency_id_idx",
+  "rider_competency_evidence_created_by_idx",
+  "rider_competency_evidence_approved_by_idx",
+  "rider_competency_progress_rider_id_idx",
+  "rider_competency_progress_competency_id_idx",
+  "rider_competency_progress_confirmed_by_idx",
+];
+
 export function validateRiderDevelopmentFoundation(migration, rollback) {
   const errors = [];
 
@@ -55,6 +77,14 @@ export function validateRiderDevelopmentFoundation(migration, rollback) {
       if (!(guard.test(migration) || guard.test(rollback))) {
         errors.push(`missing ${table} guard: ${guard}`);
       }
+    }
+  }
+
+  for (const index of foreignKeyIndexes) {
+    if (
+      !new RegExp(`create index ${index}\\s+on public\\.`, "i").test(migration)
+    ) {
+      errors.push(`missing foreign-key index: ${index}`);
     }
   }
 

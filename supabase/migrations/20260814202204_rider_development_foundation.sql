@@ -105,6 +105,16 @@ create index lesson_development_reports_coach_status_idx
     status,
     updated_at desc
   );
+create index lesson_development_reports_rider_id_idx
+  on public.lesson_development_reports (rider_id);
+create index lesson_development_reports_coach_id_idx
+  on public.lesson_development_reports (coach_id);
+create index lesson_development_reports_created_by_idx
+  on public.lesson_development_reports (created_by);
+create index lesson_development_reports_updated_by_idx
+  on public.lesson_development_reports (updated_by);
+create index lesson_development_reports_approved_by_idx
+  on public.lesson_development_reports (approved_by);
 
 create table public.lesson_development_report_history (
   id uuid primary key default gen_random_uuid(),
@@ -121,6 +131,12 @@ create table public.lesson_development_report_history (
 
 create index lesson_development_report_history_report_idx
   on public.lesson_development_report_history (report_id, revision desc);
+create index lesson_development_report_history_organization_id_idx
+  on public.lesson_development_report_history (organization_id);
+create index lesson_development_report_history_rider_id_idx
+  on public.lesson_development_report_history (rider_id);
+create index lesson_development_report_history_changed_by_idx
+  on public.lesson_development_report_history (changed_by);
 
 create table public.lesson_development_private_notes (
   id uuid primary key default gen_random_uuid(),
@@ -136,6 +152,10 @@ create table public.lesson_development_private_notes (
 
 create index lesson_development_private_notes_report_idx
   on public.lesson_development_private_notes (report_id, created_at desc);
+create index lesson_development_private_notes_organization_id_idx
+  on public.lesson_development_private_notes (organization_id);
+create index lesson_development_private_notes_author_id_idx
+  on public.lesson_development_private_notes (author_id);
 
 create table public.lesson_development_reflections (
   id uuid primary key default gen_random_uuid(),
@@ -163,6 +183,10 @@ create table public.lesson_development_reflections (
 
 create index lesson_development_reflections_report_idx
   on public.lesson_development_reflections (report_id, created_at desc);
+create index lesson_development_reflections_organization_id_idx
+  on public.lesson_development_reflections (organization_id);
+create index lesson_development_reflections_rider_id_idx
+  on public.lesson_development_reflections (rider_id);
 
 create table public.rider_competency_evidence (
   id uuid primary key default gen_random_uuid(),
@@ -195,6 +219,14 @@ create index rider_competency_evidence_rider_idx
     rider_id,
     created_at desc
   );
+create index rider_competency_evidence_rider_id_idx
+  on public.rider_competency_evidence (rider_id);
+create index rider_competency_evidence_competency_id_idx
+  on public.rider_competency_evidence (competency_id);
+create index rider_competency_evidence_created_by_idx
+  on public.rider_competency_evidence (created_by);
+create index rider_competency_evidence_approved_by_idx
+  on public.rider_competency_evidence (approved_by);
 
 create table public.rider_competency_progress (
   id uuid primary key default gen_random_uuid(),
@@ -222,6 +254,12 @@ create index rider_competency_progress_rider_stage_idx
     stage,
     updated_at desc
   );
+create index rider_competency_progress_rider_id_idx
+  on public.rider_competency_progress (rider_id);
+create index rider_competency_progress_competency_id_idx
+  on public.rider_competency_progress (competency_id);
+create index rider_competency_progress_confirmed_by_idx
+  on public.rider_competency_progress (confirmed_by);
 
 comment on table public.lesson_development_reports is
   'Coach-authored lesson closeout; draft rows are staff-only and approved rows are rider/guardian visible.';

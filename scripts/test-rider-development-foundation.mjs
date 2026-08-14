@@ -111,6 +111,18 @@ test("rejects missing RLS and explicit Data API grants", () => {
   );
 });
 
+test("rejects a missing foreign-key covering index", () => {
+  const withoutIndex = migration.replace(
+    /create index lesson_development_reports_coach_id_idx\s+on public\.lesson_development_reports \(coach_id\);/i,
+    "",
+  );
+  assert.ok(
+    validateRiderDevelopmentFoundation(withoutIndex, rollback).includes(
+      "missing foreign-key index: lesson_development_reports_coach_id_idx",
+    ),
+  );
+});
+
 test("rejects deprecated auth.role and unconditional RLS", () => {
   assert.ok(
     validateRiderDevelopmentFoundation(
