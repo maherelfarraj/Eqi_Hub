@@ -17,7 +17,6 @@ import {
   Award,
   CalendarRange,
   ChartNoAxesCombined,
-  Medal,
   Target,
   TrendingDown,
   TrendingUp,
@@ -29,10 +28,10 @@ import {
   MetricCard,
   PageHeader,
   PageSkeleton,
-  ProgressMeter,
   StatusBadge,
   SurfaceCard,
 } from "@/components/EquiVistaUI";
+import { RiderSyncDashboard } from "@/components/RiderSyncDashboard";
 import { useProgressMetrics, useSessionHistory } from "@/hooks/use-progress";
 
 type Period = 30 | 90 | 365;
@@ -52,8 +51,6 @@ export default function ProgressPage() {
   const chartError = metricsQuery.error;
   const historyError = historyQuery.error;
   const improvementPositive = (metrics?.improvementPct ?? 0) >= 0;
-  const derivedTier = Math.max(1, Math.min(5, Math.ceil((metrics?.averageScore ?? 0) / 20)));
-  const derivedTierProgress = (metrics?.averageScore ?? 0) % 20 === 0 && (metrics?.averageScore ?? 0) > 0 ? 100 : ((metrics?.averageScore ?? 0) % 20) * 5;
 
   return (
     <div>
@@ -79,7 +76,9 @@ export default function ProgressPage() {
         }
       />
 
-      {chartError ? <ErrorState message={chartError} /> : null}
+      <RiderSyncDashboard />
+
+      {chartError ? <div className="mt-6"><ErrorState message={chartError} /></div> : null}
 
       {metricsQuery.loading ? (
         <PageSkeleton cards={4} />
@@ -139,21 +138,6 @@ export default function ProgressPage() {
             </SurfaceCard>
           </div>
 
-          <SurfaceCard className="mt-6 p-6">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <span className="flex size-12 items-center justify-center rounded-full bg-primary-50 text-primary-700"><Medal className="size-6" aria-hidden="true" /></span>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-600">{t("progress.performanceLadder")}</p>
-                  <h2 className="mt-1 text-2xl text-espresso">{t("progress.tier", { level: derivedTier })}</h2>
-                  <p className="mt-1 text-sm text-text-secondary">{t("progress.ladderDerived")}</p>
-                </div>
-              </div>
-              <div className="w-full sm:max-w-sm">
-                <ProgressMeter value={derivedTierProgress} label={derivedTier === 5 ? t("progress.highestTier") : t("progress.nextTier")} />
-              </div>
-            </div>
-          </SurfaceCard>
         </>
       ) : (
         <EmptyState icon={ChartNoAxesCombined} title={t("progress.emptyTitle")} description={t("progress.emptyDescription")} />

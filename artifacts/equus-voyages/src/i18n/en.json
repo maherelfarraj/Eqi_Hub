@@ -149,6 +149,33 @@
       "emptyTitle": "Your dashboard is getting ready",
       "emptyDescription": "Complete your profile and begin adding riding activity to see your personal overview."
     },
+    "riderSync": {
+      "title": "RiderSync Journey",
+      "description": "A private, coach-backed view of your progress against your own evidence — never a leaderboard.",
+      "score": "RiderSync score",
+      "startingTitle": "Arena Explorer",
+      "nextTitle": "Toward {{name}}",
+      "highestTitle": "Highest journey title reached",
+      "nextFocus": "Next focus",
+      "viewJourney": "View journey",
+      "privateBaseline": "Private self-baseline · no public ranking",
+      "badges": "Achievement medallions",
+      "badgesHelp": "AI may suggest an achievement; only your coach can approve it.",
+      "noBadges": "Your first coach-approved achievement will appear here.",
+      "coachFocus": "Coach-approved training focus",
+      "coachFocusHelp": "The latest approved lesson closeout guides your next practice.",
+      "strengths": "Strengths achieved",
+      "homework": "Training output",
+      "awaitingCoachEvidence": "Complete a lesson closeout with your coach to start this journey.",
+      "competencies": "Evidence ledger",
+      "competenciesHelp": "{{count}} approved evidence points support this snapshot.",
+      "safetyNote": "RiderSync supports motivation and training reflection. It is not a medical, safeguarding, selection, or employment assessment.",
+      "emptyTitle": "Your RiderSync journey starts with coach evidence",
+      "emptyDescription": "After a coach approves your first lesson development report, your private score, title, and focus will appear here.",
+      "components": { "safetyWelfare": "Safety & horse welfare", "rhythmControl": "Rhythm & control", "balancePosition": "Balance & position", "partnership": "Horse-rider partnership", "trainingConsistency": "Training consistency", "reflectionFeedback": "Reflection & feedback" },
+      "tiers": { "ivory": "Ivory", "bronze": "Bronze", "silver": "Silver", "gold": "Gold", "burgundy": "Burgundy" },
+      "stages": { "not_started": "Not started", "introduced": "Introduced", "practising": "Practising", "demonstrated": "Demonstrated", "achieved": "Achieved" }
+    },
     "progress": {
       "eyebrow": "Riding development",
       "title": "Progress",
@@ -223,6 +250,7 @@
       "bookingTitle": "Request a lesson", "bookingDescription": "Choose a trainer, horse, and time. New requests remain pending until confirmed.", "bookingProgress": "Sending request...", "requestLesson": "Request lesson",
       "trainer": "Trainer", "selectTrainer": "Select a trainer", "noTrainers": "No trainers available", "horse": "Horse", "noHorseSelected": "No horse selected", "lessonType": "Lesson type", "duration": "Duration", "dateTime": "Date and time", "notes": "Notes", "notesPlaceholder": "Share goals or context for this lesson", "riderLabel": "Rider: {{name}}",
       "development": {
+        "approveBadge": "Approve an achievement medallion", "approveBadgeHelp": "Choose only an achievement supported by this approved lesson evidence.", "selectBadge": "Select a badge", "badgeMessage": "Optional note explaining what the rider achieved", "approveBadgeAction": "Approve badge", "badgeApproved": "Badge approved",
         "title": "Rider development", "status": { "draft": "Draft", "approved": "Approved" }, "coachSummary": "Coach summary", "strengths": "Strengths", "focusAreas": "Focus areas", "competencies": "Competencies", "effort": "Effort", "confidence": "Confidence", "difficulty": "Difficulty", "homework": "Independent practice", "nextFocus": "Next lesson focus", "riderReflection": "Rider reflection", "reflectionLabel": "What felt good or difficult?", "questionLabel": "Question for your coach", "shareWithGuardian": "Share this reflection with my linked guardian", "saveReflection": "Save reflection", "reflectionSaved": "Reflection saved", "closeoutTitle": "Close out {{rider}}'s lesson", "closeoutDescription": "Capture evidence, next steps, and private safeguarding notes before approval.", "editDraft": "Edit development draft", "closeLesson": "Close out lesson", "saved": "Lesson development saved.", "saveDraft": "Save draft", "saveApprove": "Save and approve", "objectives": "Lesson objectives", "commaSeparated": "Separate each item with a comma", "horseObservations": "Horse observations", "interactionObservations": "Rider–horse interaction", "stages": { "introduced": "Introduced", "practising": "Practising", "demonstrated": "Demonstrated", "achieved": "Achieved" }, "competencyStage": "Stage", "evidencePlaceholder": "Observable evidence from this lesson", "homeworkDue": "Practice due date", "privateNote": "Private coach note", "privateNoteHelp": "Visible only to authorized coaching and academy staff; never shown to riders or guardians."
       },
       "tabs": { "upcoming": "Upcoming", "past": "Past", "requests": "Requests" },

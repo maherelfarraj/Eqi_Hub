@@ -322,7 +322,37 @@ export function useLessonDevelopmentActions() {
     [],
   );
 
-  return { save, approve, saveReflection, submitting, error };
+  const awardBadge = useCallback(
+    async (
+      organizationId: string,
+      riderId: string,
+      badgeCode: string,
+      awardMessage: string,
+      evidenceReportId: string,
+    ) => {
+      setSubmitting(true);
+      setError(null);
+      try {
+        const { error: badgeError } = await supabase.rpc("award_rider_badge", {
+          p_organization_id: organizationId,
+          p_rider_id: riderId,
+          p_badge_code: badgeCode,
+          p_award_message: awardMessage.trim() || null,
+          p_evidence_report_id: evidenceReportId,
+        });
+        if (badgeError) throw badgeError;
+        return true;
+      } catch (cause: any) {
+        setError(cause?.message ?? "Could not approve the rider badge");
+        return false;
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [],
+  );
+
+  return { save, approve, saveReflection, awardBadge, submitting, error };
 }
 
 export function useTrainers(): QueryState<Trainer[]> {
