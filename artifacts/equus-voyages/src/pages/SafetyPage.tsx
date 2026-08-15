@@ -333,7 +333,9 @@ export default function SafetyPage() {
               onChange={(event) => setAccepted(event.target.checked)}
               className="mt-0.5 size-4"
             />
-            <span>{t("safety.explicitConsent")}</span>
+            <span>
+              {arabic ? signing.consentTextAr : signing.consentTextEn}
+            </span>
           </label>
           <div className="mt-5 flex flex-wrap gap-2">
             <PrimaryButton
