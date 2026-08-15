@@ -85,6 +85,26 @@ test("falls back to index.html for an extensionless SPA route", async () => {
   assert.match(await response.text(), /EquiVista test/);
 });
 
+test("falls back to index.html when a production probe accepts any content", async () => {
+  const response = await fetch(`${origin}/auth`, {
+    headers: { accept: "*/*" },
+  });
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /^text\/html/);
+  assertSecurityHeaders(response);
+  assert.match(await response.text(), /EquiVista test/);
+});
+
+test("supports HEAD for an extensionless SPA route without an Accept header", async () => {
+  const response = await fetch(`${origin}/safety`, { method: "HEAD" });
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /^text\/html/);
+  assertSecurityHeaders(response);
+  assert.equal(await response.text(), "");
+});
+
 test("returns 404 for a missing asset instead of the SPA shell", async () => {
   const response = await fetch(`${origin}/assets/missing.js`);
 
