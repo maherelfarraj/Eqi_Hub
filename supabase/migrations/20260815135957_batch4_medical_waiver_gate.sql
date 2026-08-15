@@ -328,7 +328,7 @@ create trigger compliance_audit_immutable
 before update or delete on public.compliance_audit_events
 for each row execute function private.reject_compliance_mutation();
 
-create function public.set_rider_safety_profile(
+create function private.set_rider_safety_profile_impl(
   p_organization_id uuid,
   p_rider_id uuid,
   p_date_of_birth date
@@ -376,7 +376,7 @@ begin
 end;
 $$;
 
-create function public.sign_compliance_document(
+create function private.sign_compliance_document_impl(
   p_organization_id uuid,
   p_rider_id uuid,
   p_template_id uuid,
@@ -491,7 +491,7 @@ begin
 end;
 $$;
 
-create function public.review_medical_declaration(
+create function private.review_medical_declaration_impl(
   p_submission_id uuid,
   p_decision text,
   p_note text default null
@@ -540,7 +540,7 @@ begin
 end;
 $$;
 
-create function public.get_rider_compliance_portal(
+create function private.get_rider_compliance_portal_impl(
   p_organization_id uuid,
   p_rider_id uuid
 )
@@ -600,7 +600,7 @@ begin
 end;
 $$;
 
-create function public.get_compliance_admin_summary(p_organization_id uuid)
+create function private.get_compliance_admin_summary_impl(p_organization_id uuid)
 returns jsonb
 language plpgsql
 stable
@@ -636,6 +636,83 @@ begin
     )
   );
 end;
+$$;
+
+-- Keep PostgREST-facing routines unprivileged. The private implementations
+-- retain the tightly scoped SECURITY DEFINER behavior needed to write the
+-- append-only compliance domain after validating the authenticated caller.
+create function public.set_rider_safety_profile(
+  p_organization_id uuid,
+  p_rider_id uuid,
+  p_date_of_birth date
+)
+returns void
+language sql
+security invoker
+set search_path = ''
+as $$
+  select private.set_rider_safety_profile_impl(
+    p_organization_id, p_rider_id, p_date_of_birth
+  );
+$$;
+
+create function public.sign_compliance_document(
+  p_organization_id uuid,
+  p_rider_id uuid,
+  p_template_id uuid,
+  p_answers jsonb,
+  p_typed_name text,
+  p_consent_hash text
+)
+returns uuid
+language sql
+security invoker
+set search_path = ''
+as $$
+  select private.sign_compliance_document_impl(
+    p_organization_id, p_rider_id, p_template_id, p_answers,
+    p_typed_name, p_consent_hash
+  );
+$$;
+
+create function public.review_medical_declaration(
+  p_submission_id uuid,
+  p_decision text,
+  p_note text default null
+)
+returns void
+language sql
+security invoker
+set search_path = ''
+as $$
+  select private.review_medical_declaration_impl(
+    p_submission_id, p_decision, p_note
+  );
+$$;
+
+create function public.get_rider_compliance_portal(
+  p_organization_id uuid,
+  p_rider_id uuid
+)
+returns jsonb
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select private.get_rider_compliance_portal_impl(
+    p_organization_id, p_rider_id
+  );
+$$;
+
+create function public.get_compliance_admin_summary(p_organization_id uuid)
+returns jsonb
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select private.get_compliance_admin_summary_impl(p_organization_id);
 $$;
 
 create function private.enforce_lesson_compliance()
@@ -759,6 +836,17 @@ grant execute on function private.can_manage_compliance(uuid) to authenticated;
 grant execute on function private.can_read_rider_compliance(uuid, uuid) to authenticated;
 grant execute on function private.rider_is_minor(uuid, uuid, date) to authenticated;
 grant execute on function private.rider_compliance_ready(uuid, uuid, text, timestamptz) to authenticated;
+
+revoke all on function private.set_rider_safety_profile_impl(uuid, uuid, date) from public, anon;
+revoke all on function private.sign_compliance_document_impl(uuid, uuid, uuid, jsonb, text, text) from public, anon;
+revoke all on function private.review_medical_declaration_impl(uuid, text, text) from public, anon;
+revoke all on function private.get_rider_compliance_portal_impl(uuid, uuid) from public, anon;
+revoke all on function private.get_compliance_admin_summary_impl(uuid) from public, anon;
+grant execute on function private.set_rider_safety_profile_impl(uuid, uuid, date) to authenticated;
+grant execute on function private.sign_compliance_document_impl(uuid, uuid, uuid, jsonb, text, text) to authenticated;
+grant execute on function private.review_medical_declaration_impl(uuid, text, text) to authenticated;
+grant execute on function private.get_rider_compliance_portal_impl(uuid, uuid) to authenticated;
+grant execute on function private.get_compliance_admin_summary_impl(uuid) to authenticated;
 
 revoke all on function public.set_rider_safety_profile(uuid, uuid, date) from public, anon;
 revoke all on function public.sign_compliance_document(uuid, uuid, uuid, jsonb, text, text) from public, anon;
