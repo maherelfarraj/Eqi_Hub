@@ -226,6 +226,9 @@ export interface ComplianceDocumentStatus {
   bodyEn: string;
   bodyAr: string;
   contentHash: string;
+  consentTextEn: string;
+  consentTextAr: string;
+  consentHash: string;
   validDays: number;
   status: "missing" | "signed" | "expired" | "superseded" | "rejected";
   medicalReviewStatus:
