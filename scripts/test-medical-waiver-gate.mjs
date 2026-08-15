@@ -51,6 +51,15 @@ test("rejects mutable signature receipts", () => {
   );
 });
 
+test("rejects unqualified pgcrypto digest calls", () => {
+  const unsafe = migration.replaceAll("extensions.digest(", "digest(");
+  assert.ok(
+    validateMedicalWaiverGate(unsafe, rollback).includes(
+      "pgcrypto digest() must be schema-qualified",
+    ),
+  );
+});
+
 test("acceptance covers adult, minor, isolation, expiry, and gates", () => {
   for (const message of [
     "adult rider did not become lesson ready",

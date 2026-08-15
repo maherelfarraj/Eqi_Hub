@@ -29,6 +29,10 @@ export function validateMedicalWaiverGate(migration, rollback) {
   if (!transactional(rollback)) errors.push("rollback must be transactional");
   if (/auth\.role\s*\(/i.test(`${migration}\n${rollback}`))
     errors.push("must not use deprecated auth.role()");
+  if (/(?<![.\w])digest\s*\(/i.test(migration))
+    errors.push("pgcrypto digest() must be schema-qualified");
+  if ((migration.match(/extensions\.digest\s*\(/gi) ?? []).length < 2)
+    errors.push("all Batch 4 pgcrypto digest() calls must use extensions.digest()");
   if (/using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)/i.test(migration))
     errors.push("RLS policies must not be unconditional");
 

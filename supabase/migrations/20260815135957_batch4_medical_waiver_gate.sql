@@ -473,7 +473,7 @@ begin
   ) values (
     created_submission, p_organization_id, p_rider_id, actor, capacity,
     btrim(p_typed_name), template.content_hash, p_consent_hash,
-    encode(digest(
+    encode(extensions.digest(
       created_submission::text || ':' || actor::text || ':' || template.content_hash || ':' || clock_timestamp()::text,
       'sha256'
     ), 'hex')
@@ -780,7 +780,7 @@ insert into public.compliance_document_templates (
 )
 select organization.id, seed.document_type, 1, seed.title_en, seed.title_ar,
   seed.body_en, seed.body_ar,
-  encode(digest(seed.body_en || E'\n---\n' || seed.body_ar, 'sha256'), 'hex'),
+  encode(extensions.digest(seed.body_en || E'\n---\n' || seed.body_ar, 'sha256'), 'hex'),
   seed.valid_days, true, true, true
 from public.organizations as organization
 cross join (values
