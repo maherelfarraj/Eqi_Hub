@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "batch": 5,
+  "phase": "1.6",
+  "environment": "production-controlled-pilot",
+  "status": "template",
+  "observation_start": "2026-08-16",
+  "observation_end": "2026-08-22",
+  "cohort_roles": [
+    "rider",
+    "guardian",
+    "coach",
+    "academy_admin"
+  ],
+  "thresholds": {
+    "min_journey_success_rate_pct": 95,
+    "max_error_rate_pct": 5,
+    "max_video_processing_minutes": 10,
+    "max_cost_per_analysis_usd": 2,
+    "minimum_riding_analyses": 3,
+    "minimum_non_riding_rejections": 1
+  },
+  "days": [
+    {
+      "date": "2026-08-16",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_1_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-17",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_2_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-18",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_3_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-19",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_4_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-20",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_5_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-21",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_6_EVIDENCE_REFERENCE"
+    },
+    {
+      "date": "2026-08-22",
+      "public_checks": {
+        "auth": "pending",
+        "safety": "pending",
+        "security_headers": "pending"
+      },
+      "persona_checks": {
+        "rider": "pending",
+        "guardian": "pending",
+        "coach": "pending",
+        "academy_admin": "pending"
+      },
+      "metrics": {
+        "journey_success_rate_pct": null,
+        "application_error_rate_pct": null,
+        "max_video_processing_minutes": null,
+        "max_cost_per_analysis_usd": null
+      },
+      "ai_evidence": {
+        "riding_analyses_completed": 0,
+        "non_riding_rejections": 0
+      },
+      "incidents": [],
+      "support_events": [],
+      "evidence_ref": "REPLACE_WITH_PRIVATE_DAY_7_EVIDENCE_REFERENCE"
+    }
+  ],
+  "exit_review": {
+    "decision": "pending",
+    "evidence_ref": "REPLACE_WITH_PRIVATE_EXIT_REVIEW_REFERENCE",
+    "open_blockers": []
+  }
+}
