@@ -30,6 +30,9 @@ function mapDocument(row: any): ComplianceDocumentStatus {
     bodyEn: row.body_en,
     bodyAr: row.body_ar,
     contentHash: row.content_hash,
+    consentTextEn: row.consent_text_en,
+    consentTextAr: row.consent_text_ar,
+    consentHash: row.consent_hash,
     validDays: row.valid_days,
     status: row.status,
     medicalReviewStatus: row.medical_review_status ?? null,
@@ -125,14 +128,6 @@ export function useComplianceAdminSummary(
   }, [organizationId, enabled]);
 }
 
-async function sha256(value: string) {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest), (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
-}
-
 export function useComplianceActions(onSaved: () => void) {
   const { activeOrganization } = useAuth();
   const [submitting, setSubmitting] = useState(false);
@@ -182,9 +177,6 @@ export function useComplianceActions(onSaved: () => void) {
       medicalAttentionRequired: boolean,
     ) =>
       run(async () => {
-        const consentHash = await sha256(
-          `${document.contentHash}:equivista-explicit-consent-v1`,
-        );
         const { error: rpcError } = await supabase.rpc(
           "sign_compliance_document",
           {
@@ -200,7 +192,7 @@ export function useComplianceActions(onSaved: () => void) {
                   : false,
             },
             p_typed_name: typedName,
-            p_consent_hash: consentHash,
+            p_consent_hash: document.consentHash,
           },
         );
         if (rpcError) throw rpcError;
