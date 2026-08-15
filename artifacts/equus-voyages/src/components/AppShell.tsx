@@ -14,6 +14,7 @@ import {
   CreditCard,
   Globe2,
   Heart,
+  FileSignature,
   ShieldCheck,
   LayoutDashboard,
   LogOut,
@@ -35,6 +36,7 @@ const navigation = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { path: "/progress", labelKey: "nav.progress", icon: ChartNoAxesCombined },
   { path: "/guardian", labelKey: "nav.guardianView", icon: ShieldCheck },
+  { path: "/safety", labelKey: "nav.safety", icon: FileSignature },
   { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
@@ -134,6 +136,12 @@ export default function AppShell() {
               ({ path }) =>
                 (path !== "/organization" ||
                   organizations.length > 0 ||
+                  hasRole("platform_admin")) &&
+                (path !== "/safety" ||
+                  hasRole("rider") ||
+                  hasRole("guardian") ||
+                  hasRole("academy_admin") ||
+                  hasRole("stable_manager") ||
                   hasRole("platform_admin")) &&
                 isNavigationPathVisible(
                   portalPersona,

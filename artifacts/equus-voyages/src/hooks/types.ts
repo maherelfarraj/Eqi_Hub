@@ -214,6 +214,46 @@ export interface GuardianPortal {
   }>;
 }
 
+export type ComplianceDocumentType =
+  "medical_safety" | "liability_waiver" | "emergency_consent";
+export interface ComplianceDocumentStatus {
+  templateId: string;
+  submissionId: string | null;
+  documentType: ComplianceDocumentType;
+  version: number;
+  titleEn: string;
+  titleAr: string;
+  bodyEn: string;
+  bodyAr: string;
+  contentHash: string;
+  validDays: number;
+  status: "missing" | "signed" | "expired" | "superseded" | "rejected";
+  medicalReviewStatus:
+    "not_required" | "review_required" | "approved" | "rejected" | null;
+  validUntil: string | null;
+  minorAtSigning: boolean | null;
+  signedAt: string | null;
+  signerCapacity: "adult_rider" | "legal_guardian" | null;
+  receiptKey: string | null;
+}
+export interface RiderCompliancePortal {
+  riderId: string;
+  dateOfBirth: string | null;
+  lessonReady: boolean;
+  renewalReady: boolean;
+  documents: ComplianceDocumentStatus[];
+}
+export interface ComplianceRiderSummary {
+  riderId: string;
+  riderName: string;
+  lessonReady: boolean;
+  renewalReady: boolean;
+}
+export interface ComplianceAdminSummary {
+  riders: ComplianceRiderSummary[];
+  medicalReviewRequired: number;
+}
+
 // ---- Analysis ----
 export interface VideoAnalysisListItem {
   id: string;

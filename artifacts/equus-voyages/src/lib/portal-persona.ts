@@ -1,10 +1,11 @@
 export type PortalPersona = "guardian" | "academy_admin" | "default";
 
-const guardianNavigationPaths = new Set(["/guardian", "/settings"]);
+const guardianNavigationPaths = new Set(["/guardian", "/safety", "/settings"]);
 const academyAdminNavigationPaths = new Set([
   "/dashboard",
   "/lessons",
   "/horses",
+  "/safety",
   "/billing",
   "/organization",
   "/settings",
