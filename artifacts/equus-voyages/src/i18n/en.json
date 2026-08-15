@@ -168,7 +168,26 @@
       "noAnalysesDescription": "Your latest AI riding analyses will appear here after your first upload.",
       "noHorse": "No horse selected",
       "emptyTitle": "Your dashboard is getting ready",
-      "emptyDescription": "Complete your profile and begin adding riding activity to see your personal overview."
+      "emptyDescription": "Complete your profile and begin adding riding activity to see your personal overview.",
+      "academyAdmin": {
+        "eyebrow": "Academy operations",
+        "title": "{{organization}} administration",
+        "description": "Manage authorized people, training activity, and account operations without entering the rider workspace.",
+        "manageMembers": "Manage members",
+        "reviewLessons": "Review lessons",
+        "activeMembers": "Active members",
+        "membersDetail": "Authorized organization accounts",
+        "riders": "Riders",
+        "ridersDetail": "Active rider roles",
+        "coaches": "Coaches",
+        "coachesDetail": "Active coach roles",
+        "guardians": "Guardians",
+        "guardiansDetail": "Verified support accounts",
+        "operationsTitle": "Administration shortcuts",
+        "operationsDescription": "Use audited member controls for role changes and the training calendar for academy-wide lesson oversight.",
+        "openAccessControl": "Open access control",
+        "openBilling": "Open billing"
+      }
     },
     "riderSync": {
       "title": "RiderSync Journey",

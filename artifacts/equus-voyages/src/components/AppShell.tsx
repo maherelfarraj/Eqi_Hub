@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   CalendarDays,
   ChartNoAxesCombined,
@@ -19,6 +25,11 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  isNavigationPathVisible,
+  portalRedirect,
+  resolvePortalPersona,
+} from "@/lib/portal-persona";
 
 const navigation = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
@@ -44,6 +55,8 @@ export default function AppShell() {
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState(false);
   const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
+  const portalPersona = resolvePortalPersona(activeOrganization?.roles);
+  const redirectPath = portalRedirect(portalPersona, location.pathname);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -81,6 +94,8 @@ export default function AppShell() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [sidebarOpen]);
+
+  if (redirectPath) return <Navigate to={redirectPath} replace />;
 
   return (
     <div className="flex min-h-screen bg-cream-50 text-espresso">
@@ -120,7 +135,11 @@ export default function AppShell() {
                 (path !== "/organization" ||
                   organizations.length > 0 ||
                   hasRole("platform_admin")) &&
-                (path !== "/guardian" || hasRole("guardian")),
+                isNavigationPathVisible(
+                  portalPersona,
+                  path,
+                  hasRole("guardian"),
+                ),
             )
             .map(({ path, labelKey, icon: Icon }) => (
               <NavLink

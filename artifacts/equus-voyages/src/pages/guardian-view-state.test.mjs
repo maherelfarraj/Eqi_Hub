@@ -13,7 +13,8 @@ const [page, hook, app, shell, english, arabic] = await Promise.all([
 
 test("guardian view is role-gated and supports multiple linked riders", () => {
   assert.match(app, /path="\/guardian"/);
-  assert.match(shell, /path !== "\/guardian" \|\| hasRole\("guardian"\)/);
+  assert.match(shell, /isNavigationPathVisible\(/);
+  assert.match(shell, /portalRedirect\(portalPersona, location\.pathname\)/);
   assert.match(hook, /\.from\("guardian_riders"\)/);
   assert.match(hook, /\.eq\("guardian_id", guardianId\)/);
   assert.match(page, /setRiderId\(link\.riderId\)/);

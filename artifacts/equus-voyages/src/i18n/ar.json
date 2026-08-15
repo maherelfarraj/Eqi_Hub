@@ -164,7 +164,26 @@
       "noAnalysesDescription": "ستظهر أحدث تحليلات الفروسية هنا بعد أول رفع.",
       "noHorse": "لم يتم اختيار حصان",
       "emptyTitle": "يتم تجهيز لوحة التحكم",
-      "emptyDescription": "أكمل ملفك وأضف نشاط الفروسية لعرض ملخصك الشخصي."
+      "emptyDescription": "أكمل ملفك وأضف نشاط الفروسية لعرض ملخصك الشخصي.",
+      "academyAdmin": {
+        "eyebrow": "عمليات الأكاديمية",
+        "title": "إدارة {{organization}}",
+        "description": "إدارة الأشخاص المصرح لهم ونشاط التدريب وعمليات الحساب دون الدخول إلى مساحة الفارس.",
+        "manageMembers": "إدارة الأعضاء",
+        "reviewLessons": "مراجعة الدروس",
+        "activeMembers": "الأعضاء النشطون",
+        "membersDetail": "حسابات المنظمة المصرح لها",
+        "riders": "الفرسان",
+        "ridersDetail": "أدوار الفرسان النشطة",
+        "coaches": "المدربون",
+        "coachesDetail": "أدوار المدربين النشطة",
+        "guardians": "أولياء الأمور",
+        "guardiansDetail": "حسابات الدعم الموثقة",
+        "operationsTitle": "اختصارات الإدارة",
+        "operationsDescription": "استخدم عناصر التحكم المدققة لتغيير الأدوار وتقويم التدريب للإشراف على دروس الأكاديمية.",
+        "openAccessControl": "فتح التحكم بالصلاحيات",
+        "openBilling": "فتح الفوترة"
+      }
     },
     "riderSync": {
       "title": "رحلة RiderSync",
