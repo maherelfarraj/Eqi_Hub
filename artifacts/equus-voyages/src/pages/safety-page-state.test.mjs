@@ -62,3 +62,15 @@ test("medical answers stay outside Guardian View and bilingual copy is complete"
     /get_guardian_portal[\s\S]*?rider_compliance_submissions/,
   );
 });
+
+test("guardian Safety defaults to a verified linked rider before the guardian profile", () => {
+  assert.match(
+    hook,
+    /activeOrganization\?\.roles\.includes\("guardian"\)[\s\S]*?!activeOrganization\.roles\.includes\("academy_admin"\)/,
+  );
+  assert.match(
+    hook,
+    /Number\(left\.id === userId\) - Number\(right\.id === userId\)/,
+  );
+  assert.match(page, /riders\.data\[0\]\.id/);
+});

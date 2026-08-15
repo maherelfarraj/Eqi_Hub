@@ -72,10 +72,19 @@ export function useComplianceRiders(): QueryState<ComplianceRiderOption[]> & {
       .in("id", riderIds)
       .order("full_name");
     if (error) throw error;
-    return (data ?? []).map((profile) => ({
+    const options = (data ?? []).map((profile) => ({
       id: profile.id,
       name: profile.full_name ?? "Rider",
     }));
+    const guardianPersona =
+      activeOrganization?.roles.includes("guardian") &&
+      !activeOrganization.roles.includes("academy_admin");
+    if (!guardianPersona) return options;
+
+    return options.sort(
+      (left, right) =>
+        Number(left.id === userId) - Number(right.id === userId),
+    );
   }, [organizationId, activeOrganization?.roles.join(":")]);
 }
 
