@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, ClipboardCheck, MessageSquareText } from "lucide-react";
+import {
+  Award,
+  CheckCircle2,
+  ClipboardCheck,
+  MessageSquareText,
+} from "lucide-react";
 import {
   BusyLabel,
   ErrorState,
@@ -13,6 +18,7 @@ import {
 } from "@/components/EquiVistaUI";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLessonDevelopmentActions } from "@/hooks/use-lessons";
+import { useRiderBadgeCatalog } from "@/hooks/use-rider-sync";
 import type {
   CompetencyDefinition,
   CompetencyStage,
@@ -95,6 +101,7 @@ export function LessonDevelopmentSummary({
   const { user, activeOrganization } = useAuth();
   const report = lesson.developmentReport;
   const actions = useLessonDevelopmentActions();
+  const badges = useRiderBadgeCatalog();
   const [reflection, setReflection] = useState(
     report?.reflection?.reflection ?? "",
   );
@@ -103,6 +110,9 @@ export function LessonDevelopmentSummary({
     report?.reflection?.visibleToGuardian ?? true,
   );
   const [saved, setSaved] = useState(false);
+  const [badgeCode, setBadgeCode] = useState("");
+  const [badgeMessage, setBadgeMessage] = useState("");
+  const [badgeSaved, setBadgeSaved] = useState(false);
 
   useEffect(() => {
     setReflection(report?.reflection?.reflection ?? "");
@@ -114,6 +124,13 @@ export function LessonDevelopmentSummary({
 
   const canReflect =
     report.status === "approved" && user?.id === lesson.riderId;
+  const canAwardBadge =
+    report.status === "approved" &&
+    Boolean(
+      activeOrganization?.roles.some((role) =>
+        ["coach", "academy_admin", "stable_manager"].includes(role),
+      ),
+    );
 
   const submitReflection = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -128,6 +145,23 @@ export function LessonDevelopmentSummary({
     );
     if (ok) {
       setSaved(true);
+      onChanged();
+    }
+  };
+
+  const submitBadge = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!activeOrganization || !badgeCode) return;
+    const ok = await actions.awardBadge(
+      activeOrganization.id,
+      lesson.riderId,
+      badgeCode,
+      badgeMessage,
+      report.id,
+    );
+    if (ok) {
+      setBadgeSaved(true);
+      setBadgeMessage("");
       onChanged();
     }
   };
@@ -245,6 +279,63 @@ export function LessonDevelopmentSummary({
           </p>
           <p className="mt-1 text-text-secondary">{report.nextFocus}</p>
         </div>
+
+        {canAwardBadge ? (
+          <form
+            className="space-y-3 rounded-xl border border-primary-200 bg-white p-4"
+            onSubmit={submitBadge}
+          >
+            <p className="flex items-center gap-2 font-bold text-espresso">
+              <Award className="size-4 text-primary-600" aria-hidden="true" />
+              {t("lessons.development.approveBadge")}
+            </p>
+            <p className="text-xs text-text-secondary">
+              {t("lessons.development.approveBadgeHelp")}
+            </p>
+            <select
+              className={fieldClass}
+              value={badgeCode}
+              onChange={(event) => {
+                setBadgeCode(event.target.value);
+                setBadgeSaved(false);
+              }}
+              required
+            >
+              <option value="">{t("lessons.development.selectBadge")}</option>
+              {(badges.data ?? []).map((badge) => (
+                <option key={badge.code} value={badge.code}>
+                  {badge.name}
+                </option>
+              ))}
+            </select>
+            <textarea
+              className={`${fieldClass} min-h-20 resize-y`}
+              value={badgeMessage}
+              onChange={(event) => setBadgeMessage(event.target.value)}
+              placeholder={t("lessons.development.badgeMessage")}
+              maxLength={500}
+            />
+            {badges.error ? <ErrorState message={badges.error} /> : null}
+            <div className="flex items-center gap-3">
+              <PrimaryButton
+                type="submit"
+                disabled={actions.submitting || badges.loading || !badgeCode}
+              >
+                {actions.submitting ? (
+                  <BusyLabel label={t("common.saving")} />
+                ) : (
+                  t("lessons.development.approveBadgeAction")
+                )}
+              </PrimaryButton>
+              {badgeSaved ? (
+                <span className="flex items-center gap-1 text-xs font-bold text-success-700">
+                  <CheckCircle2 className="size-4" aria-hidden="true" />
+                  {t("lessons.development.badgeApproved")}
+                </span>
+              ) : null}
+            </div>
+          </form>
+        ) : null}
 
         {report.reflection ? (
           <div className="rounded-xl border border-cream-200 bg-white p-4">

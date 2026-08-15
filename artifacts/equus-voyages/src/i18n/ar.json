@@ -149,6 +149,33 @@
       "emptyTitle": "يتم تجهيز لوحة التحكم",
       "emptyDescription": "أكمل ملفك وأضف نشاط الفروسية لعرض ملخصك الشخصي."
     },
+    "riderSync": {
+      "title": "رحلة RiderSync",
+      "description": "عرض خاص ومدعوم من المدرب لتقدمك مقارنة بأدلتك أنت، وليس ترتيباً عاماً.",
+      "score": "درجة RiderSync",
+      "startingTitle": "مستكشف الميدان",
+      "nextTitle": "نحو {{name}}",
+      "highestTitle": "تم بلوغ أعلى لقب في الرحلة",
+      "nextFocus": "التركيز التالي",
+      "viewJourney": "عرض الرحلة",
+      "privateBaseline": "خط أساس شخصي خاص · بلا ترتيب عام",
+      "badges": "ميداليات الإنجاز",
+      "badgesHelp": "قد يقترح الذكاء الاصطناعي إنجازاً، لكن المدرب وحده يعتمد الشارة.",
+      "noBadges": "ستظهر هنا أول شارة يعتمدها مدربك.",
+      "coachFocus": "تركيز التدريب المعتمد من المدرب",
+      "coachFocusHelp": "يوجه إغلاق آخر درس معتمد تدريبك التالي.",
+      "strengths": "نقاط القوة المحققة",
+      "homework": "مخرجات التدريب",
+      "awaitingCoachEvidence": "أكمل إغلاق درس مع مدربك لبدء هذه الرحلة.",
+      "competencies": "سجل الأدلة",
+      "competenciesHelp": "تدعم هذه اللقطة {{count}} نقاط أدلة معتمدة.",
+      "safetyNote": "يدعم RiderSync التحفيز والتأمل التدريبي، ولا يمثل تقييماً طبياً أو للحماية أو للاختيار أو للتوظيف.",
+      "emptyTitle": "تبدأ رحلة RiderSync بدليل معتمد من المدرب",
+      "emptyDescription": "بعد اعتماد المدرب لأول تقرير تطور للدرس، ستظهر هنا درجتك الخاصة ولقبك وتركيزك.",
+      "components": { "safetyWelfare": "السلامة ورفاهية الحصان", "rhythmControl": "الإيقاع والتحكم", "balancePosition": "التوازن والوضعية", "partnership": "شراكة الحصان والفارس", "trainingConsistency": "استمرارية التدريب", "reflectionFeedback": "التأمل والملاحظات" },
+      "tiers": { "ivory": "عاجي", "bronze": "برونزي", "silver": "فضي", "gold": "ذهبي", "burgundy": "عنابي" },
+      "stages": { "not_started": "لم يبدأ", "introduced": "تم تقديمه", "practising": "قيد الممارسة", "demonstrated": "تم إظهاره", "achieved": "تم تحقيقه" }
+    },
     "progress": {
       "eyebrow": "تطور الفروسية",
       "title": "التقدّم",
@@ -223,6 +250,7 @@
       "bookingTitle": "طلب درس", "bookingDescription": "اختر المدرب والحصان والوقت. تبقى الطلبات معلقة حتى التأكيد.", "bookingProgress": "جارٍ إرسال الطلب...", "requestLesson": "طلب الدرس",
       "trainer": "المدرب", "selectTrainer": "اختر مدرباً", "noTrainers": "لا يوجد مدربون متاحون", "horse": "الحصان", "noHorseSelected": "لم يتم اختيار حصان", "lessonType": "نوع الدرس", "duration": "المدة", "dateTime": "التاريخ والوقت", "notes": "ملاحظات", "notesPlaceholder": "شارك أهدافك أو سياق هذا الدرس", "riderLabel": "الفارس: {{name}}",
       "development": {
+        "approveBadge": "اعتماد ميدالية إنجاز", "approveBadgeHelp": "اختر إنجازاً يدعمه دليل هذا الدرس المعتمد فقط.", "selectBadge": "اختر شارة", "badgeMessage": "ملاحظة اختيارية تشرح ما حققه الفارس", "approveBadgeAction": "اعتماد الشارة", "badgeApproved": "تم اعتماد الشارة",
         "title": "تطور الفارس", "status": { "draft": "مسودة", "approved": "معتمد" }, "coachSummary": "ملخص المدرب", "strengths": "نقاط القوة", "focusAreas": "مجالات التركيز", "competencies": "المهارات", "effort": "الجهد", "confidence": "الثقة", "difficulty": "الصعوبة", "homework": "التدريب المستقل", "nextFocus": "تركيز الدرس التالي", "riderReflection": "تأمل الفارس", "reflectionLabel": "ما الذي كان جيداً أو صعباً؟", "questionLabel": "سؤال لمدربك", "shareWithGuardian": "مشاركة هذا التأمل مع ولي أمري المرتبط", "saveReflection": "حفظ التأمل", "reflectionSaved": "تم حفظ التأمل", "closeoutTitle": "إغلاق درس {{rider}}", "closeoutDescription": "سجل الأدلة والخطوات التالية وملاحظات الحماية الخاصة قبل الاعتماد.", "editDraft": "تعديل مسودة التطور", "closeLesson": "إغلاق الدرس", "saved": "تم حفظ تطور الدرس.", "saveDraft": "حفظ المسودة", "saveApprove": "الحفظ والاعتماد", "objectives": "أهداف الدرس", "commaSeparated": "افصل بين العناصر بفاصلة", "horseObservations": "ملاحظات الحصان", "interactionObservations": "تفاعل الفارس والحصان", "stages": { "introduced": "تم تقديمها", "practising": "قيد التدريب", "demonstrated": "تم إظهارها", "achieved": "تم إتقانها" }, "competencyStage": "المرحلة", "evidencePlaceholder": "دليل قابل للملاحظة من هذا الدرس", "homeworkDue": "موعد إنجاز التدريب", "privateNote": "ملاحظة خاصة للمدرب", "privateNoteHelp": "مرئية فقط لفريق التدريب والأكاديمية المصرح له، ولا تظهر للفارس أو ولي الأمر."
       },
       "tabs": { "upcoming": "القادمة", "past": "السابقة", "requests": "الطلبات" },

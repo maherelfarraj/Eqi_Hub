@@ -32,6 +32,7 @@ import {
   StatusBadge,
   SurfaceCard,
 } from "@/components/EquiVistaUI";
+import { RiderSyncDashboard } from "@/components/RiderSyncDashboard";
 import { useDashboardSummary } from "@/hooks/use-dashboard";
 
 export default function DashboardPage() {
@@ -136,6 +137,10 @@ export default function DashboardPage() {
           </div>
         </SurfaceCard>
       ) : null}
+
+      <div className="mt-6">
+        <RiderSyncDashboard compact onOpen={() => navigate("/progress")} />
+      </div>
 
       <SurfaceCard className="mt-6 p-5 sm:p-6">
         <div className="mb-5 flex items-center justify-between">

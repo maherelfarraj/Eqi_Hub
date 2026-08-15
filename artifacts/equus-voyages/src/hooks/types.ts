@@ -75,6 +75,75 @@ export interface SessionRow {
   status: AnalysisStatus;
 }
 
+export interface RiderSyncSnapshot {
+  id: string;
+  organizationId: string;
+  riderId: string;
+  safetyWelfareScore: number;
+  rhythmControlScore: number;
+  balancePositionScore: number;
+  partnershipScore: number;
+  trainingConsistencyScore: number;
+  reflectionFeedbackScore: number;
+  overallScore: number;
+  evidenceCount: number;
+  calculatedAt: string;
+}
+export interface RiderJourneyTitle {
+  code: string;
+  ordinal: number;
+  name: string;
+  nameAr: string;
+  description: string;
+  descriptionAr: string;
+  minScore: number;
+  unlockedAt: string | null;
+}
+export interface RiderBadgeAward {
+  id: string;
+  code: string;
+  name: string;
+  nameAr: string;
+  description: string;
+  descriptionAr: string;
+  tier: "ivory" | "bronze" | "silver" | "gold" | "burgundy";
+  iconName: string;
+  awardMessage: string | null;
+  approvedAt: string;
+}
+export interface RiderBadgeDefinition {
+  code: string;
+  name: string;
+  nameAr: string;
+  description: string;
+  descriptionAr: string;
+  tier: RiderBadgeAward["tier"];
+}
+export interface RiderSyncCompetency {
+  code: string;
+  name: string;
+  category: string;
+  stage: "not_started" | CompetencyStage;
+  evidenceCount: number;
+  lastEvidenceAt: string | null;
+}
+export interface RiderSyncLatestReport {
+  id: string;
+  summary: string;
+  strengths: string[];
+  focusAreas: string[];
+  homework: string | null;
+  nextFocus: string;
+  approvedAt: string;
+}
+export interface RiderSyncDashboard {
+  snapshot: RiderSyncSnapshot | null;
+  titles: RiderJourneyTitle[];
+  badges: RiderBadgeAward[];
+  competencies: RiderSyncCompetency[];
+  latestReport: RiderSyncLatestReport | null;
+}
+
 // ---- Analysis ----
 export interface VideoAnalysisListItem {
   id: string;
