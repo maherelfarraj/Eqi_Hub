@@ -24,7 +24,7 @@ test("active organization persona gives academy admin precedence", () => {
 test("guardian navigation and direct routes stay inside the view-only portal", () => {
   assert.match(
     persona,
-    /guardianNavigationPaths = new Set\(\["\/guardian", "\/settings"\]\)/,
+    /guardianNavigationPaths = new Set\(\["\/guardian", "\/safety", "\/settings"\]\)/,
   );
   assert.match(
     persona,

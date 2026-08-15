@@ -25,6 +25,7 @@ const NotFoundPage = lazy(() => import("@/pages/not-found"));
 const OrganizationPage = lazy(() => import("@/pages/OrganizationPage"));
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
+const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 
 function RouteSkeleton({ fullScreen = false }: { fullScreen?: boolean }) {
@@ -215,6 +216,14 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <BillingPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/safety"
+          element={
+            <SuspendedPage>
+              <SafetyPage />
             </SuspendedPage>
           }
         />
