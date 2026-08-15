@@ -144,6 +144,76 @@ export interface RiderSyncDashboard {
   latestReport: RiderSyncLatestReport | null;
 }
 
+export type GuardianRelationshipStatus =
+  "pending" | "verified" | "review_required" | "revoked";
+export type GuardianApprovalType =
+  "purchase" | "horse_registration" | "video_ai_consent" | "supervised_jumping";
+export interface GuardianRelationshipSummary {
+  organizationId: string;
+  guardianId: string;
+  riderId: string;
+  riderName: string;
+  relationshipType:
+    "parent" | "legal_guardian" | "court_guardian" | "supporter";
+  verificationStatus: GuardianRelationshipStatus;
+  active: boolean;
+  adulthoodReviewOn: string | null;
+  accessExpiresAt: string | null;
+}
+export interface GuardianApprovalRequest {
+  id: string;
+  approvalType: GuardianApprovalType;
+  subjectType: string;
+  summary: string;
+  status: "pending" | "approved" | "declined" | "withdrawn" | "expired";
+  requestedAt: string;
+  expiresAt: string | null;
+  respondedAt: string | null;
+  responseNote: string | null;
+}
+export interface GuardianPortal {
+  relationship: {
+    relationshipType: GuardianRelationshipSummary["relationshipType"];
+    legalAuthority: boolean;
+    verificationStatus: GuardianRelationshipStatus;
+    adulthoodReviewOn: string | null;
+    accessExpiresAt: string | null;
+    permissions: {
+      viewFinancials: boolean;
+      approvePurchases: boolean;
+      approveHorseRegistration: boolean;
+      approveVideoAi: boolean;
+      approveSupervisedJumping: boolean;
+    };
+  };
+  rider: { id: string; name: string | null };
+  riderSync: RiderSyncDashboard;
+  lessons: Array<{
+    id: string;
+    dateTime: string;
+    durationMin: number;
+    type: LessonType;
+    status: LessonStatus;
+  }>;
+  attendance: { completed: number; scheduled: number };
+  horses: Array<{ id: string; name: string; status: HorseStatus }>;
+  invoices: Array<{
+    id: string;
+    number: string;
+    issueDate: string;
+    dueDate: string | null;
+    status: InvoiceStatus;
+    currency: string;
+    totalCents: number;
+  }>;
+  approvals: GuardianApprovalRequest[];
+  accessHistory: Array<{
+    id: string;
+    eventType: string;
+    occurredAt: string;
+  }>;
+}
+
 // ---- Analysis ----
 export interface VideoAnalysisListItem {
   id: string;

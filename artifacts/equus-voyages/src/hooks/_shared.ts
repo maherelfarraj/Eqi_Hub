@@ -39,10 +39,13 @@ export async function resolveAccessibleRiderIds(
     await Promise.all([
       supabase
         .from("guardian_riders")
-        .select("rider_id")
+        .select(
+          "rider_id, verification_status, access_expires_at, adulthood_review_on",
+        )
         .eq("organization_id", organizationId)
         .eq("guardian_id", userId)
-        .eq("active", true),
+        .eq("active", true)
+        .eq("verification_status", "verified"),
       supabase
         .from("coach_rider_assignments")
         .select("rider_id")
@@ -78,10 +81,20 @@ export async function resolveAccessibleRiderIds(
     );
   }
 
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const activeGuardianRiderIds = (guardianLinks.data ?? [])
+    .filter(
+      (link) =>
+        (!link.access_expires_at || new Date(link.access_expires_at) > now) &&
+        (!link.adulthood_review_on || link.adulthood_review_on > today),
+    )
+    .map((link) => link.rider_id);
+
   return Array.from(
     new Set([
       userId,
-      ...(guardianLinks.data ?? []).map((link) => link.rider_id),
+      ...activeGuardianRiderIds,
       ...(coachAssignments.data ?? []).map((assignment) => assignment.rider_id),
       ...organizationRiderIds,
     ]),
