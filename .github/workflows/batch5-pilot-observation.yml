@@ -1,0 +1,51 @@
+name: Batch 5 Pilot Observation
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: batch5-pilot-observation
+  cancel-in-progress: false
+
+jobs:
+  public-production-checks:
+    name: public-production-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for route in auth safety; do
+            curl               --fail               --location               --silent               --show-error               --retry 2               --max-time 30               --output "/tmp/equivista-${route}.html"               "https://www.equivista.net/${route}"
+            test -s "/tmp/equivista-${route}.html"
+          done
+
+      - name: Check production security headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          headers="$(curl             --fail             --silent             --show-error             --retry 2             --max-time 30             --dump-header -             --output /dev/null             "https://www.equivista.net/auth")"
+          grep -qi '^content-security-policy:' <<<"$headers"
+          grep -qi '^x-content-type-options:[[:space:]]*nosniff' <<<"$headers"
+          grep -qi '^referrer-policy:' <<<"$headers"
+          grep -qi '^permissions-policy:' <<<"$headers"
+
+      - name: Record observation result
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Batch 5 public observation"
+            echo
+            echo "- Checked at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "- Target: https://www.equivista.net"
+            echo "- Scope: read-only public routes and security headers"
+            echo "- Authenticated persona evidence: intentionally excluded"
+          } >> "$GITHUB_STEP_SUMMARY"
