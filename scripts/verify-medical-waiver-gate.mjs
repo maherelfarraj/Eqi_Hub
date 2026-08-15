@@ -187,6 +187,12 @@ export function validateMedicalWaiverGate(migration, rollback) {
     )
       errors.push(`missing foreign-key index: ${index}`);
   }
+  if (
+    !/create index rider_compliance_template_idx\s+on public\.rider_compliance_submissions\s*\(template_id,\s*organization_id\);/i.test(
+      migration,
+    )
+  )
+    errors.push("rider compliance template foreign key requires a composite index");
 
   const portal =
     migration.match(

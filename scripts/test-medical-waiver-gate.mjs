@@ -60,6 +60,18 @@ test("rejects unqualified pgcrypto digest calls", () => {
   );
 });
 
+test("rejects a partial compliance template foreign-key index", () => {
+  const unsafe = migration.replace(
+    "(template_id, organization_id);",
+    "(template_id);",
+  );
+  assert.ok(
+    validateMedicalWaiverGate(unsafe, rollback).includes(
+      "rider compliance template foreign key requires a composite index",
+    ),
+  );
+});
+
 test("acceptance covers adult, minor, isolation, expiry, and gates", () => {
   for (const message of [
     "adult rider did not become lesson ready",

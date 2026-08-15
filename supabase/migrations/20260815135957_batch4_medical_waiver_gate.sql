@@ -115,7 +115,8 @@ create index rider_compliance_rider_status_idx
   on public.rider_compliance_submissions (organization_id, rider_id, status, valid_until);
 create index rider_compliance_rider_id_idx
   on public.rider_compliance_submissions (rider_id);
-create index rider_compliance_template_idx on public.rider_compliance_submissions (template_id);
+create index rider_compliance_template_idx
+  on public.rider_compliance_submissions (template_id, organization_id);
 create index rider_compliance_medical_reviewer_idx
   on public.rider_compliance_submissions (medical_reviewed_by);
 
