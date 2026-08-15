@@ -26,6 +26,9 @@ create table public.compliance_document_templates (
   body_en text not null,
   body_ar text not null,
   content_hash text not null,
+  consent_text_en text not null,
+  consent_text_ar text not null,
+  consent_hash text not null,
   valid_days integer not null default 365,
   requires_guardian_when_minor boolean not null default true,
   required_for_lessons boolean not null default true,
@@ -41,6 +44,7 @@ create table public.compliance_document_templates (
   constraint compliance_template_version_check check (version > 0),
   constraint compliance_template_valid_days_check check (valid_days between 1 and 1095),
   constraint compliance_template_hash_check check (content_hash ~ '^[a-f0-9]{64}$'),
+  constraint compliance_template_consent_hash_check check (consent_hash ~ '^[a-f0-9]{64}$'),
   constraint compliance_template_title_check check (
     char_length(btrim(title_en)) between 3 and 160
     and char_length(btrim(title_ar)) between 3 and 160
@@ -48,6 +52,10 @@ create table public.compliance_document_templates (
   constraint compliance_template_body_check check (
     char_length(btrim(body_en)) between 20 and 20000
     and char_length(btrim(body_ar)) between 20 and 20000
+  ),
+  constraint compliance_template_consent_text_check check (
+    char_length(btrim(consent_text_en)) between 20 and 1000
+    and char_length(btrim(consent_text_ar)) between 20 and 1000
   ),
   constraint compliance_template_retirement_check check (
     (active and retired_at is null) or (not active and retired_at is not null)
@@ -417,6 +425,9 @@ begin
   if template.id is null then
     raise exception 'Active compliance template not found' using errcode = 'P0002';
   end if;
+  if p_consent_hash <> template.consent_hash then
+    raise exception 'Consent text does not match the active template' using errcode = '23514';
+  end if;
 
   if not exists (
     select 1 from public.rider_safety_profiles
@@ -573,8 +584,14 @@ begin
         'body_en', template.body_en,
         'body_ar', template.body_ar,
         'content_hash', template.content_hash,
+        'consent_text_en', template.consent_text_en,
+        'consent_text_ar', template.consent_text_ar,
+        'consent_hash', template.consent_hash,
         'valid_days', template.valid_days,
-        'status', coalesce(submission.status, 'missing'),
+        'status', case
+          when submission.valid_until <= now() then 'expired'
+          else coalesce(submission.status, 'missing')
+        end,
         'medical_review_status', submission.medical_review_status,
         'valid_until', submission.valid_until,
         'minor_at_signing', submission.minor_at_signing,
@@ -859,30 +876,73 @@ grant execute on function public.review_medical_declaration(uuid, text, text) to
 grant execute on function public.get_rider_compliance_portal(uuid, uuid) to authenticated;
 grant execute on function public.get_compliance_admin_summary(uuid) to authenticated;
 
--- Every organization starts with one active, reviewable version of each gate.
--- Legal counsel may replace these drafts through a later versioned migration;
--- the hash prevents signatures from silently carrying across text changes.
+-- Existing and future organizations receive the same versioned defaults.
+create function private.seed_default_compliance_templates(p_organization_id uuid)
+returns void
+language sql
+security definer
+set search_path = ''
+as $$
 insert into public.compliance_document_templates (
   organization_id, document_type, version, title_en, title_ar, body_en, body_ar,
-  content_hash, valid_days, requires_guardian_when_minor,
-  required_for_lessons, required_for_membership_renewal
+  content_hash, consent_text_en, consent_text_ar, consent_hash, valid_days,
+  requires_guardian_when_minor, required_for_lessons,
+  required_for_membership_renewal
 )
-select organization.id, seed.document_type, 1, seed.title_en, seed.title_ar,
+select p_organization_id, seed.document_type, 1, seed.title_en, seed.title_ar,
   seed.body_en, seed.body_ar,
   encode(extensions.digest(seed.body_en || E'\n---\n' || seed.body_ar, 'sha256'), 'hex'),
+  seed.consent_text_en, seed.consent_text_ar,
+  encode(extensions.digest(
+    seed.consent_text_en || E'\n---\n' || seed.consent_text_ar, 'sha256'
+  ), 'hex'),
   seed.valid_days, true, true, true
-from public.organizations as organization
-cross join (values
+from (values
   ('medical_safety', 'Medical and safety declaration', 'إقرار طبي وسلامة',
    'I confirm that the rider medical and emergency information supplied is accurate and I will report any material change before riding.',
-   'أؤكد أن المعلومات الطبية ومعلومات الطوارئ المقدمة للفارس صحيحة، وسأبلغ عن أي تغيير جوهري قبل الركوب.', 365),
+   'أؤكد أن المعلومات الطبية ومعلومات الطوارئ المقدمة للفارس صحيحة، وسأبلغ عن أي تغيير جوهري قبل الركوب.',
+   'I have read this document in full, confirm the information is accurate, and consent to sign it electronically.',
+   'قرأت هذا المستند كاملاً، وأؤكد صحة المعلومات، وأوافق على توقيعه إلكترونياً.', 365),
   ('liability_waiver', 'Riding activity liability waiver', 'إقرار مسؤولية نشاط الفروسية',
    'I understand that equestrian activity carries inherent risk and accept the academy rules, supervision requirements, and emergency procedures.',
-   'أفهم أن نشاط الفروسية ينطوي على مخاطر متأصلة، وأوافق على قواعد الأكاديمية ومتطلبات الإشراف وإجراءات الطوارئ.', 365),
+   'أفهم أن نشاط الفروسية ينطوي على مخاطر متأصلة، وأوافق على قواعد الأكاديمية ومتطلبات الإشراف وإجراءات الطوارئ.',
+   'I have read this document in full, confirm the information is accurate, and consent to sign it electronically.',
+   'قرأت هذا المستند كاملاً، وأؤكد صحة المعلومات، وأوافق على توقيعه إلكترونياً.', 365),
   ('emergency_consent', 'Emergency treatment consent', 'موافقة العلاج الطارئ',
    'If the rider cannot provide consent, I authorize the academy to seek appropriate emergency assistance while attempting to contact the recorded guardian.',
-   'إذا تعذر على الفارس تقديم الموافقة، أفوض الأكاديمية بطلب المساعدة الطارئة المناسبة مع محاولة التواصل مع ولي الأمر المسجل.', 365)
-) as seed(document_type, title_en, title_ar, body_en, body_ar, valid_days)
+   'إذا تعذر على الفارس تقديم الموافقة، أفوض الأكاديمية بطلب المساعدة الطارئة المناسبة مع محاولة التواصل مع ولي الأمر المسجل.',
+   'I have read this document in full, confirm the information is accurate, and consent to sign it electronically.',
+   'قرأت هذا المستند كاملاً، وأؤكد صحة المعلومات، وأوافق على توقيعه إلكترونياً.', 365)
+) as seed(
+  document_type, title_en, title_ar, body_en, body_ar,
+  consent_text_en, consent_text_ar, valid_days
+)
+on conflict (organization_id, document_type, version) do nothing;
+$$;
+
+create function private.seed_compliance_templates_after_organization_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform private.seed_default_compliance_templates(new.id);
+  return new;
+end;
+$$;
+
+create trigger organizations_seed_compliance_templates
+after insert on public.organizations
+for each row execute function private.seed_compliance_templates_after_organization_insert();
+
+revoke all on function private.seed_default_compliance_templates(uuid)
+  from public, anon, authenticated;
+revoke all on function private.seed_compliance_templates_after_organization_insert()
+  from public, anon, authenticated;
+
+select private.seed_default_compliance_templates(organization.id)
+from public.organizations as organization
 where organization.active;
 
 commit;
