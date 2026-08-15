@@ -109,3 +109,40 @@ test("rejects credentials and personal identifiers anywhere in evidence", () => 
   assert.ok(errors.some((error) => error.includes("email")));
   assert.ok(errors.some((error) => error.includes("access_token")));
 });
+
+test("accepts completed past days and pending future days while observing", () => {
+  const manifest = makeManifest();
+  manifest.status = "observing";
+  manifest.exit_review = {
+    decision: "pending",
+    evidence_ref: null,
+    open_blockers: [],
+  };
+
+  for (const day of manifest.days.slice(2)) {
+    for (const key of Object.keys(day.public_checks)) day.public_checks[key] = "pending";
+    for (const key of Object.keys(day.persona_checks)) day.persona_checks[key] = "pending";
+    for (const key of Object.keys(day.metrics)) day.metrics[key] = null;
+    day.ai_evidence.riding_analyses_completed = 0;
+    day.ai_evidence.non_riding_rejections = 0;
+    day.evidence_ref = null;
+  }
+
+  assert.deepEqual(validateStage6Observation(manifest), []);
+  assert.deepEqual(evaluateStage6Exit(manifest), {
+    ready: false,
+    decision: "pending",
+    reasons: ["observation window incomplete"],
+    totals: { riding: 2, rejected: 1 },
+  });
+});
+
+test("complete status rejects pending checks and missing metrics", () => {
+  const manifest = makeManifest();
+  manifest.days[6].public_checks.auth = "pending";
+  manifest.days[6].metrics.journey_success_rate_pct = null;
+  const errors = validateStage6Observation(manifest);
+  assert.ok(errors.some((error) => error.includes("public_checks.auth")));
+  assert.ok(errors.some((error) => error.includes("journey_success_rate_pct")));
+});
+
