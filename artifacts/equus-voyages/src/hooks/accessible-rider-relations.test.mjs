@@ -7,6 +7,9 @@ const source = await readFile(new URL("./_shared.ts", import.meta.url), "utf8");
 test("accessible rider resolution includes active guardian and coach links", () => {
   assert.match(source, /\.from\("guardian_riders"\)/);
   assert.match(source, /\.eq\("guardian_id", userId\)/);
+  assert.match(source, /\.eq\("verification_status", "verified"\)/);
+  assert.match(source, /adulthood_review_on/);
+  assert.match(source, /access_expires_at/);
   assert.match(source, /\.from\("coach_rider_assignments"\)/);
   assert.match(source, /\.eq\("coach_id", userId\)/);
   assert.equal(source.match(/\.eq\("active", true\)/g)?.length, 2);

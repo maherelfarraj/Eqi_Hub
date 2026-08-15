@@ -8,7 +8,7 @@
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "serve:production": "node serve.mjs",
-    "test:server": "node --test serve.test.mjs src/contexts/auth-context-relations.test.mjs src/hooks/accessible-rider-relations.test.mjs src/pages/lessons-page-state.test.mjs src/pages/lesson-development-state.test.mjs src/pages/ridersync-dashboard-state.test.mjs",
+    "test:server": "node --test serve.test.mjs src/contexts/auth-context-relations.test.mjs src/hooks/accessible-rider-relations.test.mjs src/pages/lessons-page-state.test.mjs src/pages/lesson-development-state.test.mjs src/pages/ridersync-dashboard-state.test.mjs src/pages/guardian-view-state.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

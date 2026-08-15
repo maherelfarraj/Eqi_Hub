@@ -8,6 +8,7 @@ import {
   CreditCard,
   Globe2,
   Heart,
+  ShieldCheck,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -22,6 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const navigation = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { path: "/progress", labelKey: "nav.progress", icon: ChartNoAxesCombined },
+  { path: "/guardian", labelKey: "nav.guardianView", icon: ShieldCheck },
   { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
@@ -115,9 +117,10 @@ export default function AppShell() {
           {navigation
             .filter(
               ({ path }) =>
-                path !== "/organization" ||
-                organizations.length > 0 ||
-                hasRole("platform_admin"),
+                (path !== "/organization" ||
+                  organizations.length > 0 ||
+                  hasRole("platform_admin")) &&
+                (path !== "/guardian" || hasRole("guardian")),
             )
             .map(({ path, labelKey, icon: Icon }) => (
               <NavLink

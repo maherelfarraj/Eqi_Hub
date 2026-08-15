@@ -16,6 +16,7 @@ const AnalysisPage = lazy(() => import("@/pages/AnalysisPage"));
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const GuardianViewPage = lazy(() => import("@/pages/GuardianViewPage"));
 const HorsesPage = lazy(() => import("@/pages/HorsesPage"));
 const LessonsPage = lazy(() => import("@/pages/LessonsPage"));
 const LegalPage = lazy(() => import("@/pages/LegalPage"));
@@ -134,6 +135,14 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <ProgressPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/guardian"
+          element={
+            <SuspendedPage>
+              <GuardianViewPage />
             </SuspendedPage>
           }
         />
