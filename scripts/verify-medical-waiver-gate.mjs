@@ -32,7 +32,9 @@ export function validateMedicalWaiverGate(migration, rollback) {
   if (/(?<![.\w])digest\s*\(/i.test(migration))
     errors.push("pgcrypto digest() must be schema-qualified");
   if ((migration.match(/extensions\.digest\s*\(/gi) ?? []).length < 2)
-    errors.push("all Batch 4 pgcrypto digest() calls must use extensions.digest()");
+    errors.push(
+      "all Batch 4 pgcrypto digest() calls must use extensions.digest()",
+    );
   if (/using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)/i.test(migration))
     errors.push("RLS policies must not be unconditional");
   for (const routine of [
@@ -42,12 +44,10 @@ export function validateMedicalWaiverGate(migration, rollback) {
     "get_rider_compliance_portal",
     "get_compliance_admin_summary",
   ]) {
-    const publicDefinition = migration.match(
-      new RegExp(
-        `create function public\\.${routine}[\\s\\S]*?\\$\\$;`,
-        "i",
-      ),
-    )?.[0] ?? "";
+    const publicDefinition =
+      migration.match(
+        new RegExp(`create function public\\.${routine}[\\s\\S]*?\\$\\$;`, "i"),
+      )?.[0] ?? "";
     if (!/security invoker/i.test(publicDefinition))
       errors.push(`${routine} public RPC must be SECURITY INVOKER`);
     if (
@@ -103,6 +103,7 @@ export function validateMedicalWaiverGate(migration, rollback) {
   const guards = [
     [/date_of_birth date not null/, "date of birth is required"],
     [/content_hash text not null/, "versioned document hash is required"],
+    [/consent_hash text not null/, "canonical consent hash is required"],
     [
       /requires_guardian_when_minor boolean not null/,
       "minor guardian rule is required",
@@ -128,6 +129,10 @@ export function validateMedicalWaiverGate(migration, rollback) {
     [
       /signature\.document_hash = template\.content_hash/,
       "readiness must bind the signed document hash",
+    ],
+    [
+      /p_consent_hash <> template\.consent_hash/,
+      "signatures must bind canonical consent text",
     ],
     [
       /submission\.template_version = template\.version/,
@@ -186,6 +191,14 @@ export function validateMedicalWaiverGate(migration, rollback) {
       "admin summary RPC is required",
     ],
     [
+      /create trigger organizations_seed_compliance_templates/,
+      "future organizations must receive compliance templates",
+    ],
+    [
+      /when submission\.valid_until <= now\(\) then 'expired'/,
+      "portal must derive expired document status",
+    ],
+    [
       /Batch 4 rollback refused: compliance evidence exists/,
       "rollback must preserve compliance evidence",
     ],
@@ -215,7 +228,9 @@ export function validateMedicalWaiverGate(migration, rollback) {
       migration,
     )
   )
-    errors.push("rider compliance template foreign key requires a composite index");
+    errors.push(
+      "rider compliance template foreign key requires a composite index",
+    );
 
   const portal =
     migration.match(
