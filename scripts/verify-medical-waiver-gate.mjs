@@ -35,6 +35,29 @@ export function validateMedicalWaiverGate(migration, rollback) {
     errors.push("all Batch 4 pgcrypto digest() calls must use extensions.digest()");
   if (/using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)/i.test(migration))
     errors.push("RLS policies must not be unconditional");
+  for (const routine of [
+    "set_rider_safety_profile",
+    "sign_compliance_document",
+    "review_medical_declaration",
+    "get_rider_compliance_portal",
+    "get_compliance_admin_summary",
+  ]) {
+    const publicDefinition = migration.match(
+      new RegExp(
+        `create function public\\.${routine}[\\s\\S]*?\\$\\$;`,
+        "i",
+      ),
+    )?.[0] ?? "";
+    if (!/security invoker/i.test(publicDefinition))
+      errors.push(`${routine} public RPC must be SECURITY INVOKER`);
+    if (
+      !new RegExp(
+        `create function private\\.${routine}_impl[\\s\\S]*?security definer`,
+        "i",
+      ).test(migration)
+    )
+      errors.push(`${routine} privileged implementation must be private`);
+  }
 
   for (const table of tables) {
     for (const [label, guard, source] of [
@@ -196,7 +219,7 @@ export function validateMedicalWaiverGate(migration, rollback) {
 
   const portal =
     migration.match(
-      /create function public\.get_rider_compliance_portal[\s\S]*?\$\$;/i,
+      /create function private\.get_rider_compliance_portal_impl[\s\S]*?\$\$;/i,
     )?.[0] ?? "";
   if (
     /lesson_development_private_notes|provider_token|payment_method/i.test(
