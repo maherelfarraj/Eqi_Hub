@@ -155,10 +155,9 @@ export async function createStaticServer({ publicDir = DEFAULT_PUBLIC_DIR } = {}
         return;
       }
 
-      const acceptsHtml = (request.headers.accept ?? "").includes("text/html");
       const looksLikeAsset = extname(requestUrl.pathname) !== "";
 
-      if (acceptsHtml && !looksLikeAsset) {
+      if (!looksLikeAsset) {
         await sendFile(request, response, indexFile, "/index.html");
         return;
       }
