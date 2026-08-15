@@ -5,26 +5,56 @@ import test from "node:test";
 import { validateGuardianView } from "./verify-guardian-view.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const [migration, rollback, acceptance] = await Promise.all([
-  readFile(
-    resolve(
-      root,
-      "supabase/migrations/20260815090638_guardian_view_foundation.sql",
+const [migration, rollback, acceptance, indexFix, indexRollback] =
+  await Promise.all([
+    readFile(
+      resolve(
+        root,
+        "supabase/migrations/20260815090638_guardian_view_foundation.sql",
+      ),
+      "utf8",
     ),
-    "utf8",
-  ),
-  readFile(
-    resolve(
-      root,
-      "supabase/rollback/20260815090638_guardian_view_foundation_rollback.sql",
+    readFile(
+      resolve(
+        root,
+        "supabase/rollback/20260815090638_guardian_view_foundation_rollback.sql",
+      ),
+      "utf8",
     ),
-    "utf8",
-  ),
-  readFile(resolve(root, "tests/rls/batch_3_guardian_view.sql"), "utf8"),
-]);
+    readFile(resolve(root, "tests/rls/batch_3_guardian_view.sql"), "utf8"),
+    readFile(
+      resolve(
+        root,
+        "supabase/migrations/20260815093048_guardian_view_relationship_indexes.sql",
+      ),
+      "utf8",
+    ),
+    readFile(
+      resolve(
+        root,
+        "supabase/rollback/20260815093048_guardian_view_relationship_indexes_rollback.sql",
+      ),
+      "utf8",
+    ),
+  ]);
 
 test("accepts the guardian view foundation", () => {
-  assert.deepEqual(validateGuardianView(migration, rollback), []);
+  assert.deepEqual(
+    validateGuardianView(migration, rollback, indexFix, indexRollback),
+    [],
+  );
+});
+
+test("rejects a missing composite relationship index", () => {
+  const unsafe = indexFix.replace(
+    /create index guardian_access_events_relationship_idx[\s\S]*?;\n/,
+    "",
+  );
+  assert.ok(
+    validateGuardianView(migration, rollback, unsafe, indexRollback).includes(
+      "missing composite relationship index: guardian_access_events_relationship_idx",
+    ),
+  );
 });
 
 test("acceptance covers relationship, approval, and isolation boundaries", () => {
@@ -46,9 +76,12 @@ test("rejects verification and adulthood-review bypasses", () => {
     "and link.verification_status <> 'revoked'",
   );
   assert.ok(
-    validateGuardianView(noVerification, rollback).includes(
-      "guardian access must require verification",
-    ),
+    validateGuardianView(
+      noVerification,
+      rollback,
+      indexFix,
+      indexRollback,
+    ).includes("guardian access must require verification"),
   );
 
   const noReview = migration.replace(
@@ -56,7 +89,7 @@ test("rejects verification and adulthood-review bypasses", () => {
     "",
   );
   assert.ok(
-    validateGuardianView(noReview, rollback).includes(
+    validateGuardianView(noReview, rollback, indexFix, indexRollback).includes(
       "guardian access must stop at adulthood review",
     ),
   );
@@ -68,7 +101,7 @@ test("rejects supporter approval widening", () => {
     "relationship_type = 'supporter'",
   );
   assert.ok(
-    validateGuardianView(unsafe, rollback).includes(
+    validateGuardianView(unsafe, rollback, indexFix, indexRollback).includes(
       "supporters must remain approval-free",
     ),
   );
@@ -80,7 +113,7 @@ test("rejects private-note or payment-secret coupling", () => {
     "'privateNotes', (select jsonb_agg(note) from public.lesson_development_private_notes), 'relationship', jsonb_build_object(",
   );
   assert.ok(
-    validateGuardianView(unsafe, rollback).includes(
+    validateGuardianView(unsafe, rollback, indexFix, indexRollback).includes(
       "guardian portal must not reference private notes or credentials",
     ),
   );

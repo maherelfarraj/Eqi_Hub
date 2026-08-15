@@ -10,6 +10,14 @@ const rollbackPath = resolve(
   root,
   "supabase/rollback/20260815090638_guardian_view_foundation_rollback.sql",
 );
+const indexFixPath = resolve(
+  root,
+  "supabase/migrations/20260815093048_guardian_view_relationship_indexes.sql",
+);
+const indexRollbackPath = resolve(
+  root,
+  "supabase/rollback/20260815093048_guardian_view_relationship_indexes_rollback.sql",
+);
 
 const tables = ["guardian_approval_requests", "guardian_access_events"];
 const indexes = [
@@ -20,16 +28,31 @@ const indexes = [
   "guardian_access_events_actor_idx",
   "guardian_access_events_approval_idx",
 ];
+const relationshipIndexes = [
+  ["guardian_approval_requests_relationship_idx", "guardian_approval_requests"],
+  ["guardian_access_events_relationship_idx", "guardian_access_events"],
+];
 
 function transactional(sql) {
   return /^\s*(?:--[^\n]*\n)*begin;/i.test(sql) && /commit;\s*$/i.test(sql);
 }
 
-export function validateGuardianView(migration, rollback) {
+export function validateGuardianView(
+  migration,
+  rollback,
+  indexFix = "",
+  indexRollback = "",
+) {
   const errors = [];
+  const forward = `${migration}\n${indexFix}`;
+  const reverse = `${indexRollback}\n${rollback}`;
   if (!transactional(migration)) errors.push("migration must be transactional");
   if (!transactional(rollback)) errors.push("rollback must be transactional");
-  if (/auth\.role\s*\(/i.test(`${migration}\n${rollback}`))
+  if (indexFix && !transactional(indexFix))
+    errors.push("index migration must be transactional");
+  if (indexRollback && !transactional(indexRollback))
+    errors.push("index rollback must be transactional");
+  if (/auth\.role\s*\(/i.test(`${forward}\n${reverse}`))
     errors.push("must not use deprecated auth.role()");
   if (/using\s*\(\s*true\s*\)|with check\s*\(\s*true\s*\)/i.test(migration))
     errors.push("RLS policies must not be unconditional");
@@ -68,10 +91,22 @@ export function validateGuardianView(migration, rollback) {
   }
 
   for (const index of indexes) {
-    if (
-      !new RegExp(`create index ${index}\\s+on public\\.`, "i").test(migration)
-    )
+    if (!new RegExp(`create index ${index}\\s+on public\\.`, "i").test(forward))
       errors.push(`missing foreign-key index: ${index}`);
+  }
+
+  for (const [index, table] of relationshipIndexes) {
+    if (
+      !new RegExp(
+        `create index ${index}\\s+on public\\.${table}\\s*\\(\\s*organization_id\\s*,\\s*guardian_id\\s*,\\s*rider_id\\s*\\)`,
+        "i",
+      ).test(forward)
+    )
+      errors.push(`missing composite relationship index: ${index}`);
+    if (
+      !new RegExp(`drop index if exists public\\.${index};`, "i").test(reverse)
+    )
+      errors.push(`missing relationship index rollback: ${index}`);
   }
 
   const guards = [
@@ -191,11 +226,18 @@ export function validateGuardianView(migration, rollback) {
 }
 
 if (process.argv[1] === import.meta.filename) {
-  const [migration, rollback] = await Promise.all([
+  const [migration, rollback, indexFix, indexRollback] = await Promise.all([
     readFile(migrationPath, "utf8"),
     readFile(rollbackPath, "utf8"),
+    readFile(indexFixPath, "utf8"),
+    readFile(indexRollbackPath, "utf8"),
   ]);
-  const errors = validateGuardianView(migration, rollback);
+  const errors = validateGuardianView(
+    migration,
+    rollback,
+    indexFix,
+    indexRollback,
+  );
   if (errors.length) throw new Error(errors.join("\n"));
   console.log(
     "Verified guardian lifecycle, adulthood review, scoped approvals, immutable audit, persona RLS, grants, indexes, and rollback",
