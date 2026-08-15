@@ -28,12 +28,14 @@ test("safety and waiver route is available to rider, guardian, and academy admin
   assert.match(persona, /academyAdminNavigationPaths[\s\S]*?"\/safety"/);
 });
 
-test("digital signature binds typed consent to the exact template hash", () => {
+test("digital signature binds typed consent to canonical template consent", () => {
   assert.match(page, /typedName/);
-  assert.match(page, /explicitConsent/);
-  assert.match(hook, /document\.contentHash\}:equivista-explicit-consent-v1/);
+  assert.match(page, /signing\.consentTextAr/);
+  assert.match(page, /signing\.consentTextEn/);
+  assert.match(hook, /p_consent_hash: document\.consentHash/);
   assert.match(hook, /"sign_compliance_document"/);
   assert.match(migration, /signature\.document_hash = template\.content_hash/);
+  assert.match(migration, /p_consent_hash <> template\.consent_hash/);
 });
 
 test("minor, medical review, lesson, and renewal gates remain visible", () => {
@@ -53,7 +55,6 @@ test("medical answers stay outside Guardian View and bilingual copy is complete"
   for (const copy of [en, ar]) {
     assert.ok(copy.title);
     assert.ok(copy.medicalAttention);
-    assert.ok(copy.explicitConsent);
     assert.ok(copy.admin.reviewRequired);
   }
   assert.doesNotMatch(
