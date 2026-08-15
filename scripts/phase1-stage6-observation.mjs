@@ -56,8 +56,8 @@ function requireText(value, path, errors, { template }) {
   }
 }
 
-function validateStatus(value, path, errors, { template }) {
-  const allowed = template ? ["pending", "pass"] : ["pass"];
+function validateStatus(value, path, errors, { allowPending }) {
+  const allowed = allowPending ? ["pending", "pass"] : ["pass"];
   if (!allowed.includes(value)) {
     errors.push(`${path} must be ${allowed.join(" or ")}`);
   }
@@ -82,6 +82,9 @@ export function validateStage6Observation(manifest, { template = false } = {}) {
         : 'status must equal "observing" or "complete"',
     );
   }
+
+  const observing = !template && manifest.status === "observing";
+  const allowPending = template || observing;
 
   if (!isDate(manifest.observation_start)) {
     errors.push("observation_start must be an ISO date");
@@ -147,7 +150,7 @@ export function validateStage6Observation(manifest, { template = false } = {}) {
         errors.push(`${path}.public_checks must be an object`);
       } else {
         for (const check of REQUIRED_PUBLIC_CHECKS) {
-          validateStatus(day.public_checks[check], `${path}.public_checks.${check}`, errors, { template });
+          validateStatus(day.public_checks[check], `${path}.public_checks.${check}`, errors, { allowPending });
         }
       }
 
@@ -155,9 +158,18 @@ export function validateStage6Observation(manifest, { template = false } = {}) {
         errors.push(`${path}.persona_checks must be an object`);
       } else {
         for (const role of REQUIRED_PERSONAS) {
-          validateStatus(day.persona_checks[role], `${path}.persona_checks.${role}`, errors, { template });
+          validateStatus(day.persona_checks[role], `${path}.persona_checks.${role}`, errors, { allowPending });
         }
       }
+
+      const publicStatuses = isObject(day.public_checks)
+        ? REQUIRED_PUBLIC_CHECKS.map((check) => day.public_checks[check])
+        : [];
+      const personaStatuses = isObject(day.persona_checks)
+        ? REQUIRED_PERSONAS.map((role) => day.persona_checks[role])
+        : [];
+      const dayPending = allowPending &&
+        [...publicStatuses, ...personaStatuses].includes("pending");
 
       for (const [key, minimum, maximum] of [
         ["journey_success_rate_pct", 0, 100],
@@ -166,7 +178,7 @@ export function validateStage6Observation(manifest, { template = false } = {}) {
         ["max_cost_per_analysis_usd", 0, 100],
       ]) {
         const value = day.metrics?.[key];
-        if (template && value === null) continue;
+        if ((template || (observing && dayPending)) && value === null) continue;
         if (typeof value !== "number" || value < minimum || value > maximum) {
           errors.push(`${path}.metrics.${key} must be between ${minimum} and ${maximum}`);
         }
@@ -181,16 +193,22 @@ export function validateStage6Observation(manifest, { template = false } = {}) {
 
       if (!Array.isArray(day.incidents)) errors.push(`${path}.incidents must be an array`);
       if (!Array.isArray(day.support_events)) errors.push(`${path}.support_events must be an array`);
-      requireText(day.evidence_ref, `${path}.evidence_ref`, errors, { template });
+      if (observing && dayPending) {
+        if (day.evidence_ref !== null && day.evidence_ref !== undefined) {
+          requireText(day.evidence_ref, `${path}.evidence_ref`, errors, { template: false });
+        }
+      } else {
+        requireText(day.evidence_ref, `${path}.evidence_ref`, errors, { template });
+      }
     });
   }
 
   if (!isObject(manifest.exit_review)) {
     errors.push("exit_review must be an object");
   } else {
-    if (template) {
+    if (template || observing) {
       if (manifest.exit_review.decision !== "pending") {
-        errors.push('template exit_review.decision must equal "pending"');
+        errors.push(`${template ? "template" : "observing"} exit_review.decision must equal "pending"`);
       }
     } else if (manifest.status === "complete") {
       if (!EXIT_DECISIONS.includes(manifest.exit_review.decision)) {
@@ -221,6 +239,15 @@ export function evaluateStage6Exit(manifest) {
     }),
     { riding: 0, rejected: 0 },
   );
+
+  if (manifest.status === "observing") {
+    return {
+      ready: false,
+      decision: "pending",
+      reasons: ["observation window incomplete"],
+      totals,
+    };
+  }
 
   for (const day of manifest.days) {
     if (day.metrics.journey_success_rate_pct < manifest.thresholds.min_journey_success_rate_pct) {
