@@ -2,13 +2,20 @@ import { createHash } from "node:crypto";
 
 const SPLITS = ["train", "validation", "test", "golden"];
 const GROUP_KEYS = ["source_video_ref", "horse_group_ref", "rider_group_ref", "arena_group_ref", "camera_group_ref", "recording_session_ref"];
+const KEYPOINTS = [
+  "poll", "withers", "croup",
+  "near-shoulder", "near-elbow", "near-knee", "near-front-fetlock", "near-front-hoof",
+  "far-shoulder", "far-elbow", "far-knee", "far-front-fetlock", "far-front-hoof",
+  "near-hip-origin", "near-stifle", "near-hock", "near-rear-fetlock", "near-rear-hoof",
+  "far-hip-origin", "far-stifle", "far-hock", "far-rear-fetlock", "far-rear-hoof",
+];
+const STATES = ["visible", "occluded", "outside-frame", "not-applicable"];
 const OUTCOMES = ["accept", "correct", "exclude"];
 const REQUIRED_CODES = ["invalid-input", "lineage-missing", "adjudication-required", "adjudicator-conflict", "correction-invalid", "batch9-rejected", "duplicate-evidence", "partition-drift"];
 const SENSITIVE_KEY = /(?:password|secret|token|api[_-]?key|credential|email|full[_-]?name|phone|user[_-]?id|medical)/i;
 
 const object = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const syntheticRef = (value, prefix) => typeof value === "string" && new RegExp(`^${prefix}-[a-z0-9-]+$`).test(value);
-const hash = (value) => typeof value === "string" && /^[a-f0-9]{64}$/.test(value);
 const lineage = (value) => typeof value === "string" && /^lineage-[a-f0-9]{24}$/.test(value);
 const annotationEvidence = (value) => typeof value === "string" && /^annotation-evidence-[a-f0-9]{24}$/.test(value);
 
@@ -67,23 +74,35 @@ export function validateBatch10Config(config) {
   return errors;
 }
 
+function validAnnotationContent(content, config) {
+  if (!object(content) || content.skeleton_version !== config.skeleton_version || !object(content.bounding_box) || !Array.isArray(content.keypoints) || content.keypoints.length !== KEYPOINTS.length) return false;
+  const box = content.bounding_box;
+  if (![box.x_min, box.y_min, box.x_max, box.y_max].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1) || !(box.x_min < box.x_max && box.y_min < box.y_max)) return false;
+  return content.keypoints.every((point, index) => {
+    if (!object(point) || point.name !== KEYPOINTS[index] || !STATES.includes(point.state)) return false;
+    const coordinatesRequired = point.state === "visible" || point.state === "occluded";
+    return coordinatesRequired
+      ? typeof point.x === "number" && Number.isFinite(point.x) && point.x >= 0 && point.x <= 1 && typeof point.y === "number" && Number.isFinite(point.y) && point.y >= 0 && point.y <= 1
+      : point.x === null && point.y === null;
+  });
+}
+
 function validCorrection(correction, config) {
-  if (!object(correction) || !syntheticRef(correction.correction_ref, "correction") || correction.skeleton_version !== config.skeleton_version || correction.keypoint_count !== 23 || !hash(correction.corrected_content_hash)) return false;
-  const box = correction.bounding_box;
-  return object(box) && [box.x_min, box.y_min, box.x_max, box.y_max].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1) && box.x_min < box.x_max && box.y_min < box.y_max;
+  return object(correction) && syntheticRef(correction.correction_ref, "correction") && validAnnotationContent(correction.content, config);
 }
 
 export function adjudicateAnnotation(input, config) {
   if (validateBatch10Config(config).length || !object(input)) return { decision: "invalid", rejection_codes: ["invalid-input"], evidence_ref: null };
   const codes = [];
   if (!syntheticRef(input.annotation_ref, "annotation") || !annotationEvidence(input.annotation_evidence_ref) || !Array.isArray(input.original_reviewer_refs) || input.original_reviewer_refs.length !== 2 || new Set(input.original_reviewer_refs).size !== 2 || input.original_reviewer_refs.some((ref) => !syntheticRef(ref, "reviewer"))) codes.push("invalid-input");
+  if (!validAnnotationContent(input.annotation_content, config)) codes.push("invalid-input");
   if (!lineage(input.source_lineage_ref) || !lineage(input.window_lineage_ref)) codes.push("lineage-missing");
   if (!["accepted", "review-required", "rejected"].includes(input.batch9_decision)) codes.push("invalid-input");
   if (codes.length) return { decision: "invalid", rejection_codes: [...new Set(codes)], evidence_ref: null };
   if (input.batch9_decision === "rejected") return { decision: "excluded", rejection_codes: ["batch9-rejected"], evidence_ref: null };
   if (input.batch9_decision === "accepted") {
     if (input.adjudication !== null && input.adjudication !== undefined) return { decision: "invalid", rejection_codes: ["invalid-input"], evidence_ref: null };
-    return { decision: "exportable", rejection_codes: [], evidence_ref: input.annotation_evidence_ref, corrected: false };
+    return { decision: "exportable", rejection_codes: [], evidence_ref: input.annotation_evidence_ref, corrected: false, content: input.annotation_content };
   }
   const adjudication = input.adjudication;
   if (!object(adjudication)) return { decision: "review-required", rejection_codes: ["adjudication-required"], evidence_ref: null };
@@ -92,7 +111,13 @@ export function adjudicateAnnotation(input, config) {
   if (adjudication.outcome === "exclude") return { decision: "excluded", rejection_codes: [], evidence_ref: digest("adjudication-evidence", { input, outcome: "exclude" }), corrected: false };
   if (adjudication.outcome === "correct" && !validCorrection(adjudication.correction, config)) return { decision: "invalid", rejection_codes: ["correction-invalid"], evidence_ref: null };
   if (adjudication.outcome !== "correct" && adjudication.correction !== null && adjudication.correction !== undefined) return { decision: "invalid", rejection_codes: ["correction-invalid"], evidence_ref: null };
-  return { decision: "exportable", rejection_codes: [], evidence_ref: digest("adjudication-evidence", { input, versions: { skeleton: config.skeleton_version, guide: config.annotation_guide_version } }), corrected: adjudication.outcome === "correct" };
+  return {
+    decision: "exportable",
+    rejection_codes: [],
+    evidence_ref: digest("adjudication-evidence", { input, versions: { skeleton: config.skeleton_version, guide: config.annotation_guide_version } }),
+    corrected: adjudication.outcome === "correct",
+    content: adjudication.outcome === "correct" ? adjudication.correction.content : input.annotation_content,
+  };
 }
 
 function validGroups(groups) {
@@ -114,7 +139,7 @@ export function buildDatasetExport(items, config) {
       if (partitionByGroup.has(group) && partitionByGroup.get(group) !== item.split) codes.push("partition-drift");
       partitionByGroup.set(group, item.split);
     }
-    rows.push({ annotation_ref: item.annotation.annotation_ref, evidence_ref: result.evidence_ref, source_lineage_ref: item.annotation.source_lineage_ref, window_lineage_ref: item.annotation.window_lineage_ref, split: item.split, groups: item.groups, corrected: result.corrected });
+    rows.push({ annotation_ref: item.annotation.annotation_ref, evidence_ref: result.evidence_ref, source_lineage_ref: item.annotation.source_lineage_ref, window_lineage_ref: item.annotation.window_lineage_ref, split: item.split, groups: item.groups, corrected: result.corrected, content: result.content });
   }
   if (codes.length) return { decision: "invalid", rejection_codes: [...new Set(codes)], rows: [], manifest_hash: null };
   rows.sort((left, right) => left.annotation_ref.localeCompare(right.annotation_ref));
@@ -122,4 +147,4 @@ export function buildDatasetExport(items, config) {
   return { decision: "exportable", rejection_codes: [], rows, manifest_hash: createHash("sha256").update(canonicalJson(manifest)).digest("hex") };
 }
 
-export const batch10Constants = { GROUP_KEYS, OUTCOMES, REQUIRED_CODES, SPLITS };
+export const batch10Constants = { GROUP_KEYS, KEYPOINTS, OUTCOMES, REQUIRED_CODES, SPLITS, STATES };

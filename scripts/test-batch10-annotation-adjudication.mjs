@@ -20,13 +20,13 @@ test("requires adjudication for review-required evidence", () => assert.deepEqua
 test("excludes rejected Batch 9 evidence", () => assert.deepEqual(adjudicateAnnotation(fixture("excluded"), config).rejection_codes, ["batch9-rejected"]));
 test("rejects an invalid correction", () => assert.ok(adjudicateAnnotation(fixture("invalid"), config).rejection_codes.includes("correction-invalid")));
 test("accepts a complete correction with new immutable evidence", () => {
-  const input = structuredClone(fixture("invalid")); input.adjudication.correction.corrected_content_hash = "a".repeat(64);
+  const input = structuredClone(fixture("invalid")); input.adjudication.correction.content.keypoints.push(structuredClone(input.annotation_content.keypoints.at(-1)));
   const result = adjudicateAnnotation(input, config);
   assert.equal(result.decision, "exportable"); assert.equal(result.corrected, true); assert.match(result.evidence_ref, /^adjudication-evidence-[a-f0-9]{24}$/);
 });
 test("canonicalizes correction object key order", () => {
-  const input = structuredClone(fixture("invalid")); input.adjudication.correction.corrected_content_hash = "a".repeat(64);
-  const reordered = structuredClone(input); reordered.adjudication.correction.bounding_box = Object.fromEntries(Object.entries(reordered.adjudication.correction.bounding_box).reverse());
+  const input = structuredClone(fixture("invalid")); input.adjudication.correction.content.keypoints.push(structuredClone(input.annotation_content.keypoints.at(-1)));
+  const reordered = structuredClone(input); reordered.adjudication.correction.content.bounding_box = Object.fromEntries(Object.entries(reordered.adjudication.correction.content.bounding_box).reverse());
   assert.equal(adjudicateAnnotation(input, config).evidence_ref, adjudicateAnnotation(reordered, config).evidence_ref);
 });
 test("rejects an original reviewer as adjudicator", () => {
@@ -39,7 +39,11 @@ test("rejects missing Batch 8 lineage", () => {
 });
 test("builds a deterministic immutable export", () => {
   const first = buildDatasetExport(exportFixture("exportable"), config); const second = buildDatasetExport(structuredClone(exportFixture("exportable")).reverse(), config);
-  assert.equal(first.decision, "exportable"); assert.equal(first.rows.length, 2); assert.match(first.manifest_hash, /^[a-f0-9]{64}$/); assert.equal(first.manifest_hash, second.manifest_hash);
+  assert.equal(first.decision, "exportable"); assert.equal(first.rows.length, 2); assert.equal(first.rows[0].content.keypoints.length, 23); assert.match(first.manifest_hash, /^[a-f0-9]{64}$/); assert.equal(first.manifest_hash, second.manifest_hash);
+});
+test("rejects incomplete ordered annotation content", () => {
+  const input = structuredClone(fixture("exportable")); input.annotation_content.keypoints.pop();
+  assert.ok(adjudicateAnnotation(input, config).rejection_codes.includes("invalid-input"));
 });
 test("rejects duplicate annotation evidence", () => {
   const items = structuredClone(exportFixture("exportable")); items[1].annotation.annotation_ref = items[0].annotation.annotation_ref;
