@@ -14,6 +14,16 @@ test("accepts close double-reviewed annotations", () => {
   assert.match(result.evidence_ref, /^annotation-evidence-[a-f0-9]{24}$/);
 });
 test("returns deterministic evidence", () => assert.deepEqual(evaluateAnnotation(fixture("accepted"), config), evaluateAnnotation(fixture("accepted"), config)));
+test("canonicalizes object and independent-review order", () => {
+  const reordered = structuredClone(fixture("accepted"));
+  reordered.bounding_box = Object.fromEntries(Object.entries(reordered.bounding_box).reverse());
+  reordered.reviews.reverse();
+  assert.equal(evaluateAnnotation(reordered, config).evidence_ref, evaluateAnnotation(fixture("accepted"), config).evidence_ref);
+});
+test("changes evidence when the bounding box changes", () => {
+  const changed = structuredClone(fixture("accepted")); changed.bounding_box.x_min += 0.01;
+  assert.notEqual(evaluateAnnotation(changed, config).evidence_ref, evaluateAnnotation(fixture("accepted"), config).evidence_ref);
+});
 test("routes excessive disagreement to review", () => assert.ok(evaluateAnnotation(fixture("review-required"), config).rejection_codes.includes("agreement-threshold")));
 test("rejects a single reviewer", () => assert.ok(evaluateAnnotation(fixture("rejected"), config).rejection_codes.includes("single-review")));
 test("rejects missing Batch 8 lineage", () => {
@@ -37,6 +47,10 @@ test("rejects personal identifiers and secrets", () => {
   const unsafe = structuredClone(config); unsafe.api_token = "unsafe"; unsafe.fixtures[0].email = "person@example.invalid";
   const errors = validateBatch9Config(unsafe);
   assert.ok(errors.some((error) => error.includes("api_token")) && errors.some((error) => error.includes("email")));
+});
+test("rejects duplicate fixture references", () => {
+  const malformed = structuredClone(config); malformed.fixtures[1].fixture_ref = malformed.fixtures[0].fixture_ref;
+  assert.ok(validateBatch9Config(malformed).some((error) => error.includes("must be unique")));
 });
 test("keeps production, inference, and database changes disabled", () => {
   const unsafe = structuredClone(config); unsafe.safety.production_data_allowed = true; unsafe.safety.model_inference = true;

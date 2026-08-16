@@ -16,6 +16,17 @@ const finite = (value) => typeof value === "number" && Number.isFinite(value);
 const syntheticRef = (value, prefix) => typeof value === "string" && new RegExp(`^${prefix}-[a-z0-9-]+$`).test(value);
 const lineageRef = (value) => typeof value === "string" && /^lineage-[a-f0-9]{24}$/.test(value);
 
+function canonicalJson(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (object(value)) {
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
 function inspectSensitive(value, path, errors) {
   if (Array.isArray(value)) return value.forEach((entry, index) => inspectSensitive(entry, `${path}[${index}]`, errors));
   if (!object(value)) return;
@@ -44,9 +55,12 @@ export function validateBatch9Config(config) {
   for (const key of ["production_data_allowed", "user_visible_results", "model_training", "model_inference", "database_changes"]) if (safety[key] !== false) errors.push(`safety.${key} must equal false`);
   if (!Array.isArray(config.fixtures) || config.fixtures.length < 3) errors.push("fixtures must contain at least three synthetic cases");
   else {
+    const fixtureRefs = new Set();
     const decisions = new Set();
     config.fixtures.forEach((fixture, index) => {
       if (!syntheticRef(fixture?.fixture_ref, "annotation")) errors.push(`fixtures[${index}].fixture_ref must be synthetic`);
+      if (fixtureRefs.has(fixture?.fixture_ref)) errors.push(`fixtures[${index}].fixture_ref must be unique`);
+      fixtureRefs.add(fixture?.fixture_ref);
       if (!["accepted", "review-required", "rejected"].includes(fixture?.expected_decision)) errors.push(`fixtures[${index}].expected_decision is invalid`);
       decisions.add(fixture?.expected_decision);
     });
@@ -95,7 +109,19 @@ export function evaluateAnnotation(input, config) {
   };
   if (metrics.state_agreement < config.thresholds.minimum_state_agreement) codes.push("state-ambiguity");
   if (metrics.mean_normalized_disagreement === null || metrics.mean_normalized_disagreement > config.thresholds.max_normalized_disagreement) codes.push("agreement-threshold");
-  const digest = createHash("sha256").update(JSON.stringify({ source: input.source_lineage_ref, window: input.window_lineage_ref, frame: input.frame_ref, reviews: input.reviews })).digest("hex").slice(0, 24);
+  const reviews = [...input.reviews].sort((leftReview, rightReview) => leftReview.reviewer_ref.localeCompare(rightReview.reviewer_ref));
+  const digest = createHash("sha256")
+    .update(canonicalJson({
+      skeleton_version: config.skeleton_version,
+      source_lineage_ref: input.source_lineage_ref,
+      window_lineage_ref: input.window_lineage_ref,
+      frame_ref: input.frame_ref,
+      window_ref: input.window_ref,
+      bounding_box: input.bounding_box,
+      reviews,
+    }))
+    .digest("hex")
+    .slice(0, 24);
   return { decision: codes.length ? "review-required" : "accepted", rejection_codes: codes, metrics, evidence_ref: `annotation-evidence-${digest}` };
 }
 
