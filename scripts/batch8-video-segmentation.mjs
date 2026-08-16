@@ -152,13 +152,31 @@ export function evaluateVideoSegmentation(video, config) {
   if (rejection_codes.length) return { decision: "rejected", rejection_codes, windows: [], lineage_ref: null };
   const windows = video.candidate_windows.map((window) => ({
     ...window,
-    lineage_ref: `lineage-${stableHash(`${video.video_ref}:${window.window_ref}:${window.start_timestamp_ms}:${window.end_timestamp_ms}`).slice(0, 24)}`,
+    lineage_ref: `lineage-${stableHash(
+      canonicalJson({
+        video_ref: video.video_ref,
+        capture_decision: video.capture_decision,
+        metadata: video.metadata,
+        timestamps_ms: video.timestamps_ms,
+        groups: video.groups,
+        window,
+      }),
+    ).slice(0, 24)}`,
   }));
   return {
     decision: "accepted",
     rejection_codes: [],
     windows,
-    lineage_ref: `lineage-${stableHash(canonicalJson({ video_ref: video.video_ref, groups: video.groups, windows })).slice(0, 24)}`,
+    lineage_ref: `lineage-${stableHash(
+      canonicalJson({
+        video_ref: video.video_ref,
+        capture_decision: video.capture_decision,
+        metadata: video.metadata,
+        timestamps_ms: video.timestamps_ms,
+        groups: video.groups,
+        windows,
+      }),
+    ).slice(0, 24)}`,
   };
 }
 
