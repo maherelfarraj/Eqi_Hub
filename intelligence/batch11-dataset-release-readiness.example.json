@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "batch": 11,
+  "mode": "offline-dataset-release-readiness",
+  "status": "in-progress",
+  "dataset_version": "dataset-v1",
+  "batch10_export_contract_version": "export-v1",
+  "release_contract_version": "dataset-release-v1",
+  "splits": ["train", "validation", "test", "golden"],
+  "grouping_keys": ["source_video_ref", "horse_group_ref", "rider_group_ref", "arena_group_ref", "camera_group_ref", "recording_session_ref"],
+  "thresholds": { "minimum_rows_per_split": 1, "minimum_visible_fraction": 0.5, "minimum_unique_horse_groups": 4 },
+  "rejection_codes": ["invalid-input", "batch10-lineage-missing", "manifest-hash-mismatch", "duplicate-content", "partition-drift", "coverage-insufficient", "visibility-insufficient", "release-approval-required"],
+  "safety": {
+    "fail_closed": true,
+    "batch10_manifest_pinned": true,
+    "partition_integrity_required": true,
+    "duplicate_content_rejected": true,
+    "human_release_approval_required": true,
+    "production_data_allowed": false,
+    "model_training": false,
+    "model_inference": false,
+    "deployment_changes": false,
+    "database_changes": false,
+    "cohort_changes": false
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "release-synthetic-ready",
+      "expected_decision": "ready",
+      "input": {
+        "batch10_manifest_hash": "GENERATE",
+        "release_approval": { "approved": true, "approver_ref": "approver-synthetic-alpha", "evidence_ref": "approval-evidence-synthetic-alpha" },
+        "rows": [
+          { "annotation_ref": "annotation-synthetic-train", "evidence_ref": "annotation-evidence-a1b2c3d4e5f60718293a4b5c", "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c", "window_lineage_ref": "lineage-a2b3c4d5e6f708192a3b4c5d", "split": "train", "groups": { "source_video_ref": "source-video-synthetic-train", "horse_group_ref": "horse-group-synthetic-train", "rider_group_ref": "rider-group-synthetic-train", "arena_group_ref": "arena-group-synthetic-train", "camera_group_ref": "camera-group-synthetic-train", "recording_session_ref": "recording-session-synthetic-train" }, "content_hash": "1111111111111111111111111111111111111111111111111111111111111111", "visible_keypoints": 20 },
+          { "annotation_ref": "annotation-synthetic-validation", "evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c", "source_lineage_ref": "lineage-b1c2d3e4f5a60718293a4b5c", "window_lineage_ref": "lineage-b2c3d4e5f6a708192b3c4d5e", "split": "validation", "groups": { "source_video_ref": "source-video-synthetic-validation", "horse_group_ref": "horse-group-synthetic-validation", "rider_group_ref": "rider-group-synthetic-validation", "arena_group_ref": "arena-group-synthetic-validation", "camera_group_ref": "camera-group-synthetic-validation", "recording_session_ref": "recording-session-synthetic-validation" }, "content_hash": "2222222222222222222222222222222222222222222222222222222222222222", "visible_keypoints": 19 },
+          { "annotation_ref": "annotation-synthetic-test", "evidence_ref": "adjudication-evidence-c1d2e3f4a5b60718293a4b5c", "source_lineage_ref": "lineage-c1d2e3f4a5b60718293a4b5c", "window_lineage_ref": "lineage-c2d3e4f5a6b708192c3d4e5f", "split": "test", "groups": { "source_video_ref": "source-video-synthetic-test", "horse_group_ref": "horse-group-synthetic-test", "rider_group_ref": "rider-group-synthetic-test", "arena_group_ref": "arena-group-synthetic-test", "camera_group_ref": "camera-group-synthetic-test", "recording_session_ref": "recording-session-synthetic-test" }, "content_hash": "3333333333333333333333333333333333333333333333333333333333333333", "visible_keypoints": 18 },
+          { "annotation_ref": "annotation-synthetic-golden", "evidence_ref": "annotation-evidence-d1e2f3a4b5c60718293a4b5c", "source_lineage_ref": "lineage-d1e2f3a4b5c60718293a4b5c", "window_lineage_ref": "lineage-d2e3f4a5b6c708192d3e4f5a", "split": "golden", "groups": { "source_video_ref": "source-video-synthetic-golden", "horse_group_ref": "horse-group-synthetic-golden", "rider_group_ref": "rider-group-synthetic-golden", "arena_group_ref": "arena-group-synthetic-golden", "camera_group_ref": "camera-group-synthetic-golden", "recording_session_ref": "recording-session-synthetic-golden" }, "content_hash": "4444444444444444444444444444444444444444444444444444444444444444", "visible_keypoints": 21 }
+        ]
+      }
+    },
+    {
+      "fixture_ref": "release-synthetic-approval",
+      "expected_decision": "approval-required",
+      "input": { "source_fixture_ref": "release-synthetic-ready", "mutation": "remove-approval" }
+    },
+    {
+      "fixture_ref": "release-synthetic-duplicate",
+      "expected_decision": "invalid",
+      "input": { "source_fixture_ref": "release-synthetic-ready", "mutation": "duplicate-content" }
+    },
+    {
+      "fixture_ref": "release-synthetic-partition",
+      "expected_decision": "invalid",
+      "input": { "source_fixture_ref": "release-synthetic-ready", "mutation": "partition-drift" }
+    }
+  ],
+  "evidence_ref": "docs/BATCH_11_DATASET_RELEASE_READINESS.md"
+}
