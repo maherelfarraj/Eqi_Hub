@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch8-video-segmentation.schema.json",
+  "title": "EquiVista Batch 8 Offline Video Segmentation and Dataset Lineage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "context", "grouping_keys", "split_ratios", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 },
+    "batch": { "const": 8 },
+    "mode": { "const": "offline-video-segmentation-lineage" },
+    "status": { "const": "accepted" },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_strides_before", "minimum_strides_after"],
+      "properties": {
+        "minimum_strides_before": { "type": "integer", "minimum": 3 },
+        "minimum_strides_after": { "type": "integer", "minimum": 2 }
+      }
+    },
+    "grouping_keys": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "split_ratios": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["train", "validation", "test", "golden"],
+      "properties": {
+        "train": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "validation": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "test": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+        "golden": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 }
+      }
+    },
+    "rejection_codes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "safety": { "type": "object" },
+    "fixtures": { "type": "array", "minItems": 3, "items": { "type": "object" } },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}
