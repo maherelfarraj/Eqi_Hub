@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "batch": 7,
+  "mode": "offline-capture-preflight",
+  "status": "accepted",
+  "thresholds": {
+    "minimum_fps": 30,
+    "recommended_jump_fps": 60,
+    "minimum_width_px": 1280,
+    "minimum_height_px": 720,
+    "minimum_subject_visibility": 0.95,
+    "minimum_blur_score": 80,
+    "minimum_luminance": 35,
+    "maximum_luminance": 220,
+    "maximum_camera_motion": 0.08,
+    "maximum_side_angle_degrees": 20
+  },
+  "required_metadata": [
+    "source_timestamps",
+    "variable_frame_rate",
+    "original_aspect_ratio",
+    "source_resolution"
+  ],
+  "rejection_codes": [
+    "invalid-measurements",
+    "frame-rate-too-low",
+    "resolution-too-low",
+    "horse-not-fully-visible",
+    "rider-not-fully-visible",
+    "severe-blur",
+    "lighting-too-dark",
+    "lighting-too-bright",
+    "unstable-camera",
+    "view-not-side-on",
+    "jump-plane-not-visible",
+    "metadata-not-preserved"
+  ],
+  "warnings": ["reduced-jump-timing-confidence"],
+  "safety": {
+    "fail_closed": true,
+    "user_visible_results": false,
+    "production_data_allowed": false,
+    "expensive_processing_on_rejection": false,
+    "human_review_for_shadow": true
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "capture-flatwork-eligible-001",
+      "exercise": "flatwork",
+      "expected_decision": "eligible"
+    },
+    {
+      "fixture_ref": "capture-jump-shadow-001",
+      "exercise": "jumping",
+      "expected_decision": "shadow-only"
+    },
+    {
+      "fixture_ref": "capture-quality-rejected-001",
+      "exercise": "jumping",
+      "expected_decision": "rejected"
+    }
+  ],
+  "evidence_ref": "docs/BATCH_7_CAPTURE_QUALITY_PREFLIGHT.md"
+}

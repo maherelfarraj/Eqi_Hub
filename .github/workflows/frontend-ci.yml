@@ -10,6 +10,7 @@ on:
       - "scripts/**"
       - "docs/**"
       - "pilot/**"
+      - "intelligence/**"
       - "EQUIVISTA_CANONICAL_ROADMAP.md"
       - ".npmrc"
       - "package.json"
@@ -49,6 +50,6 @@ jobs:
       - name: Test production web server
         run: pnpm --filter @workspace/equus-voyages test:server
       - name: Verify controlled-pilot foundation
-        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6
+        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6 && pnpm verify:batch7 && pnpm test:batch7
       - name: Build
         run: pnpm build
