@@ -1,1 +1,72 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://equivista.net/schemas/batch20-program-closeout.schema.json","title":"EquiVista Batch 20 Offline Program Closeout","type":"object","required":["version","batch","mode","status","attestation_contract_version","closeout_contract_version","approved_batch19_attestation_hash","rejection_codes","safety","fixtures","evidence_ref"]}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch20-program-closeout.schema.json",
+  "title": "EquiVista Batch 20 Offline Program Closeout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "batch",
+    "mode",
+    "status",
+    "attestation_contract_version",
+    "closeout_contract_version",
+    "approved_batch19_attestation_hash",
+    "rejection_codes",
+    "safety",
+    "fixtures",
+    "evidence_ref"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "batch": { "const": 20 },
+    "mode": { "const": "offline-program-closeout" },
+    "status": { "const": "in-progress" },
+    "attestation_contract_version": { "const": "continuity-attestation-v1" },
+    "closeout_contract_version": { "const": "program-closeout-v1" },
+    "approved_batch19_attestation_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "rejection_codes": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "invalid-input",
+          "attestation-unpinned",
+          "evidence-incomplete",
+          "findings-open",
+          "approval-incomplete",
+          "retention-invalid",
+          "release-enabled"
+        ]
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fail_closed",
+        "attestation_pinned",
+        "independent_approval_required",
+        "production_data_allowed",
+        "deployment_authorized",
+        "database_changes",
+        "cohort_changes"
+      ],
+      "properties": {
+        "fail_closed": { "const": true },
+        "attestation_pinned": { "const": true },
+        "independent_approval_required": { "const": true },
+        "production_data_allowed": { "const": false },
+        "deployment_authorized": { "const": false },
+        "database_changes": { "const": false },
+        "cohort_changes": { "const": false }
+      }
+    },
+    "fixtures": { "type": "array", "minItems": 7 },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}

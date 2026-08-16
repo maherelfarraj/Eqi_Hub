@@ -1,1 +1,90 @@
-import assert from"node:assert/strict";import{readFile}from"node:fs/promises";import test from"node:test";import{buildBatch19AttestationHash,evaluateProgramCloseout,validateBatch20Config}from"./batch20-program-closeout.mjs";const c=JSON.parse(await readFile(new URL("../intelligence/batch20-program-closeout.example.json",import.meta.url),"utf8")),s=c.fixtures[0].input,r=()=>structuredClone(s);test("valid config",()=>assert.deepEqual(validateBatch20Config(c),[]));test("closes",()=>assert.equal(evaluateProgramCloseout(r(),c).decision,"closed"));test("no release",()=>assert.equal(evaluateProgramCloseout(r(),c).closeout_manifest.release_authorized,false));test("lineage",()=>assert.equal(buildBatch19AttestationHash(r().batch19_attestation),c.approved_batch19_attestation_hash));test("rejects substitution",()=>{const i=r();i.batch19_attestation.attestation.next_drill_days++;i.batch19_attestation.attestation_hash=buildBatch19AttestationHash(i.batch19_attestation);assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("attestation-unpinned"))});test("unique evidence",()=>{const i=r();i.closeout.evidence_hashes[2]=i.closeout.evidence_hashes[0];assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("evidence-incomplete"))});test("zero findings",()=>{const i=r();i.closeout.unresolved_findings=1;assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("findings-open"))});test("independent approval",()=>{const i=r();i.closeout.approvals[1].approver_ref=i.closeout.approvals[0].approver_ref;assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("approval-incomplete"))});test("retention",()=>{const i=r();i.closeout.retention_days=1;assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("retention-invalid"))});test("archived only",()=>{const i=r();i.closeout.disposition="released";assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("release-enabled"))});test("deterministic",()=>assert.equal(evaluateProgramCloseout(r(),c).closeout_manifest.closeout_hash,evaluateProgramCloseout(r(),c).closeout_manifest.closeout_hash));test("sensitive",()=>{const i=r();i.closeout.api_token="x";assert.ok(evaluateProgramCloseout(i,c).rejection_codes.includes("invalid-input"))});test("safety",()=>{const x=structuredClone(c);x.safety.database_changes=true;x.safety.cohort_changes=true;assert.ok(validateBatch20Config(x).length>=2)})
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+import { buildBatch19AttestationHash, evaluateProgramCloseout, validateBatch20Config } from "./batch20-program-closeout.mjs";
+
+const config = JSON.parse(await readFile(new URL("../intelligence/batch20-program-closeout.example.json", import.meta.url), "utf8"));
+const source = config.fixtures.find((fixture) => fixture.fixture_ref === "closeout-ready").input;
+const input = () => structuredClone(source);
+
+test("accepts the Batch 20 config", () => assert.deepEqual(validateBatch20Config(config), []));
+test("requires documentation evidence", () => {
+  const candidate = structuredClone(config);
+  delete candidate.evidence_ref;
+  assert.ok(validateBatch20Config(candidate).some((error) => error.includes("evidence_ref")));
+});
+test("requires the complete fixture matrix", () => {
+  const candidate = structuredClone(config);
+  candidate.fixtures.pop();
+  assert.ok(validateBatch20Config(candidate).some((error) => error.includes("fixtures")));
+});
+test("closes complete evidence", () => assert.equal(evaluateProgramCloseout(input(), config).decision, "closed"));
+test("keeps release unauthorized", () => assert.equal(evaluateProgramCloseout(input(), config).closeout_manifest.release_authorized, false));
+test("recomputes Batch 19 lineage", () => assert.equal(buildBatch19AttestationHash(input().batch19_attestation), config.approved_batch19_attestation_hash));
+test("rejects a substituted attestation", () => {
+  const candidate = input();
+  candidate.batch19_attestation.attestation.next_drill_days++;
+  candidate.batch19_attestation.attestation_hash = buildBatch19AttestationHash(candidate.batch19_attestation);
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("attestation-unpinned"));
+});
+test("requires unique evidence", () => {
+  const candidate = input();
+  candidate.closeout.evidence_hashes[2] = candidate.closeout.evidence_hashes[0];
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("evidence-incomplete"));
+});
+test("requires zero findings", () => {
+  const candidate = input();
+  candidate.closeout.unresolved_findings = 1;
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("findings-open"));
+});
+test("requires independent approval", () => {
+  const candidate = input();
+  candidate.closeout.approvals[1].approver_ref = candidate.closeout.approvals[0].approver_ref;
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("approval-incomplete"));
+});
+test("requires approval evidence", () => {
+  const candidate = input();
+  delete candidate.closeout.approvals[0].evidence_ref;
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("approval-incomplete"));
+});
+test("fails closed for malformed approvals", () => {
+  const candidate = input();
+  candidate.closeout.approvals = {};
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("approval-incomplete"));
+});
+test("bounds retention", () => {
+  const candidate = input();
+  candidate.closeout.retention_days = 1;
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("retention-invalid"));
+});
+test("allows only archived-not-released", () => {
+  const candidate = input();
+  candidate.closeout.disposition = "released";
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("release-enabled"));
+});
+test("produces a deterministic hash", () => assert.equal(evaluateProgramCloseout(input(), config).closeout_manifest.closeout_hash, evaluateProgramCloseout(input(), config).closeout_manifest.closeout_hash));
+test("hash changes with closeout evidence", () => {
+  const first = evaluateProgramCloseout(input(), config).closeout_manifest.closeout_hash;
+  const candidate = input();
+  candidate.closeout.retention_days = 366;
+  const second = evaluateProgramCloseout(candidate, config).closeout_manifest.closeout_hash;
+  assert.notEqual(first, second);
+});
+test("isolates the emitted manifest", () => {
+  const candidate = input();
+  const result = evaluateProgramCloseout(candidate, config);
+  candidate.closeout.retention_days = 400;
+  assert.equal(result.closeout_manifest.closeout.retention_days, 365);
+});
+test("rejects sensitive fields", () => {
+  const candidate = input();
+  candidate.closeout.api_token = "unsafe";
+  assert.ok(evaluateProgramCloseout(candidate, config).rejection_codes.includes("invalid-input"));
+});
+test("keeps Supabase and cohort changes disabled", () => {
+  const candidate = structuredClone(config);
+  candidate.safety.database_changes = true;
+  candidate.safety.cohort_changes = true;
+  const errors = validateBatch20Config(candidate);
+  assert.ok(errors.some((error) => error.includes("database_changes")) && errors.some((error) => error.includes("cohort_changes")));
+});
