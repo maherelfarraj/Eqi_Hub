@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "batch": 6,
+  "mode": "offline-feasibility",
+  "status": "accepted",
+  "supported_matrix": [
+    { "discipline": "flatwork", "exercise": "walk-trot-canter", "camera_view": "side", "decision": "supported" },
+    { "discipline": "jumping", "exercise": "single-fence", "camera_view": "side", "decision": "shadow-only" },
+    { "discipline": "jumping", "exercise": "course", "camera_view": "variable", "decision": "unsupported" }
+  ],
+  "capture": {
+    "minimum_fps": 30,
+    "recommended_jump_fps": 60,
+    "minimum_height_px": 720,
+    "required_visibility": ["horse", "rider"],
+    "reject_when": ["subject-out-of-frame", "severe-blur", "unstable-camera", "jump-plane-not-visible"]
+  },
+  "findings": [
+    { "category": "rider-alignment", "minimum_confidence": 0.8, "evidence_required": true, "human_review": "required" },
+    { "category": "horse-rhythm", "minimum_confidence": 0.85, "evidence_required": true, "human_review": "required" },
+    { "category": "horse-rider-timing", "minimum_confidence": 0.85, "evidence_required": true, "human_review": "required" }
+  ],
+  "safety": {
+    "medical_diagnosis": "prohibited",
+    "injury_prediction": "prohibited",
+    "veterinary_language": "review-required",
+    "low_confidence_result": "unavailable",
+    "user_visible_results": false
+  },
+  "governance": {
+    "consent_required": true,
+    "guardian_consent_for_minors": true,
+    "dataset_use_opt_in": true,
+    "deletion_supported": true,
+    "retention_policy_required": true,
+    "commercial_license_review": "required",
+    "production_data_allowed": false
+  },
+  "golden_set": {
+    "metadata_only": true,
+    "synthetic_ids_only": true,
+    "untouched_test_partition": true,
+    "split_boundaries": ["video", "horse", "rider", "arena", "session"],
+    "cases": [
+      { "case_ref": "golden-flatwork-001", "expected": "eligible" },
+      { "case_ref": "golden-jump-001", "expected": "shadow-only" },
+      { "case_ref": "golden-quality-reject-001", "expected": "rejected" }
+    ]
+  },
+  "evidence_ref": "docs/BATCH_6_HORSE_RIDER_FEASIBILITY.md"
+}
