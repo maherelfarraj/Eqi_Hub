@@ -1,0 +1,44 @@
+{
+  "version": 1, "batch": 14, "mode": "offline-candidate-governance", "status": "in-progress",
+  "evaluation_contract_version": "experiment-evaluation-v1", "governance_contract_version": "candidate-governance-v1",
+  "approved_batch13_evaluation_hash": "3e065edb279717c702565a916977f2881efeccd32eaa8a6ca3066e2bd19a620b",
+  "rejection_codes": ["invalid-input", "evaluation-unpinned", "model-card-incomplete", "risk-review-incomplete", "reviewer-conflict", "rollback-incomplete", "release-enabled"],
+  "safety": { "fail_closed": true, "batch13_evaluation_pinned": true, "independent_review_required": true, "rollback_required": true, "production_data_allowed": false, "shadow_release": false, "deployment_authorized": false, "user_visible_results": false, "database_changes": false, "cohort_changes": false },
+  "fixtures": [
+    {
+      "fixture_ref": "governance-synthetic-ready", "expected_decision": "ready",
+      "input": {
+        "batch13_evaluation": {
+          "evaluation_contract_version": "experiment-evaluation-v1",
+          "preflight_hash": "53cf5495cf715c66d16fb754a9c5dab5b0c1e3230c250b01b1563781b12d8437",
+          "run": { "run_ref": "run-synthetic-baseline", "execution_mode": "synthetic-dry-run", "seed": 12011, "artifact_hash": "1111111111111111111111111111111111111111111111111111111111111111", "environment_hash": "2222222222222222222222222222222222222222222222222222222222222222", "dependency_lock_hash": "3333333333333333333333333333333333333333333333333333333333333333", "model_selection_splits": ["validation"], "sealed_holdout_splits": ["test", "golden"], "metrics": { "validation": { "pck": 0.88, "mean_error": 0.08, "sample_count": 1 }, "test": { "pck": 0.85, "mean_error": 0.09, "sample_count": 1 }, "golden": { "pck": 0.84, "mean_error": 0.1, "sample_count": 1 } }, "real_training": false, "model_inference": false, "user_visible_results": false },
+          "promotion_authorized": false,
+          "evaluation_hash": "3e065edb279717c702565a916977f2881efeccd32eaa8a6ca3066e2bd19a620b"
+        },
+        "model_card": {
+          "candidate_ref": "candidate-synthetic-baseline", "intended_use": "offline-research-only",
+          "limitations": ["limitation-synthetic-camera-angle", "limitation-synthetic-occlusion", "limitation-synthetic-domain-shift"],
+          "prohibited_uses": ["diagnosis", "injury-prediction", "veterinary-advice", "user-visible-results", "automated-decisions"],
+          "risks": [
+            { "risk_ref": "risk-synthetic-domain-shift", "severity": "high", "mitigation_ref": "mitigation-synthetic-holdout-review" },
+            { "risk_ref": "risk-synthetic-occlusion", "severity": "medium", "mitigation_ref": "mitigation-synthetic-capture-rejection" },
+            { "risk_ref": "risk-synthetic-overconfidence", "severity": "high", "mitigation_ref": "mitigation-synthetic-human-review" }
+          ],
+          "reviews": [
+            { "reviewer_ref": "reviewer-synthetic-ml", "role": "ml-reviewer", "approved": true, "evidence_ref": "review-evidence-synthetic-ml" },
+            { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "approved": true, "evidence_ref": "review-evidence-synthetic-safety" }
+          ],
+          "rollback": { "triggers": ["rollback-trigger-quality-drift", "rollback-trigger-lineage-failure", "rollback-trigger-safety-incident"], "action": "disable-and-quarantine", "owner_role": "safety-reviewer" },
+          "shadow_release": false, "deployment_authorized": false, "user_visible_results": false
+        }
+      }
+    },
+    { "fixture_ref": "governance-synthetic-evaluation", "expected_decision": "invalid", "expected_code": "evaluation-unpinned", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "evaluation" } },
+    { "fixture_ref": "governance-synthetic-card", "expected_decision": "invalid", "expected_code": "model-card-incomplete", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "card" } },
+    { "fixture_ref": "governance-synthetic-risk", "expected_decision": "invalid", "expected_code": "risk-review-incomplete", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "risk" } },
+    { "fixture_ref": "governance-synthetic-review", "expected_decision": "invalid", "expected_code": "reviewer-conflict", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "review" } },
+    { "fixture_ref": "governance-synthetic-rollback", "expected_decision": "invalid", "expected_code": "rollback-incomplete", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "rollback" } },
+    { "fixture_ref": "governance-synthetic-release", "expected_decision": "invalid", "expected_code": "release-enabled", "input": { "source_fixture_ref": "governance-synthetic-ready", "mutation": "release" } }
+  ],
+  "evidence_ref": "docs/BATCH_14_CANDIDATE_GOVERNANCE.md"
+}
