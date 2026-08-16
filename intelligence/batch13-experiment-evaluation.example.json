@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "batch": 13,
+  "mode": "offline-synthetic-experiment-evaluation",
+  "status": "in-progress",
+  "preflight_contract_version": "training-preflight-v1",
+  "evaluation_contract_version": "experiment-evaluation-v1",
+  "approved_batch12_preflight_hash": "53cf5495cf715c66d16fb754a9c5dab5b0c1e3230c250b01b1563781b12d8437",
+  "thresholds": { "minimum_pck": 0.8, "maximum_mean_error": 0.12, "maximum_validation_test_gap": 0.08, "minimum_samples_per_split": 1 },
+  "rejection_codes": ["invalid-input", "preflight-unpinned", "provenance-incomplete", "holdout-leakage", "quality-threshold-failed", "overfit-threshold-failed", "execution-enabled"],
+  "safety": {
+    "fail_closed": true,
+    "batch12_preflight_pinned": true,
+    "holdouts_sealed": true,
+    "artifact_provenance_required": true,
+    "production_data_allowed": false,
+    "real_training": false,
+    "model_inference": false,
+    "user_visible_results": false,
+    "deployment_changes": false,
+    "database_changes": false,
+    "cohort_changes": false
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "evaluation-synthetic-ready",
+      "expected_decision": "ready",
+      "input": {
+        "batch12_preflight": {
+          "experiment_contract_version": "training-preflight-v1",
+          "dataset_release_hash": "d78c5ff3dedb78797f277ec35de345b3b7c803183c5ee8490c0dbee4b39ef3e1",
+          "plan": {
+            "experiment_ref": "experiment-synthetic-baseline",
+            "architecture_ref": "architecture-synthetic-heatmap",
+            "objective": "keypoint-localization",
+            "seed": 12011,
+            "epochs": 20,
+            "batch_size": 8,
+            "learning_rate": 0.001,
+            "augmentations": ["augmentation-horizontal-flip", "augmentation-color-jitter"],
+            "training_splits": ["train"],
+            "validation_splits": ["validation"],
+            "holdout_splits": ["test", "golden"],
+            "resources": { "gpu_hours": 4, "cpu_hours": 8 },
+            "execution_enabled": false,
+            "outbound_network": false
+          },
+          "execution_authorized": false,
+          "reproducibility_hash": "53cf5495cf715c66d16fb754a9c5dab5b0c1e3230c250b01b1563781b12d8437"
+        },
+        "run": {
+          "run_ref": "run-synthetic-baseline",
+          "execution_mode": "synthetic-dry-run",
+          "seed": 12011,
+          "artifact_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+          "dependency_lock_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "model_selection_splits": ["validation"],
+          "sealed_holdout_splits": ["test", "golden"],
+          "metrics": {
+            "validation": { "pck": 0.88, "mean_error": 0.08, "sample_count": 1 },
+            "test": { "pck": 0.85, "mean_error": 0.09, "sample_count": 1 },
+            "golden": { "pck": 0.84, "mean_error": 0.1, "sample_count": 1 }
+          },
+          "real_training": false,
+          "model_inference": false,
+          "user_visible_results": false
+        }
+      }
+    },
+    { "fixture_ref": "evaluation-synthetic-preflight", "expected_decision": "invalid", "expected_code": "preflight-unpinned", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "preflight" } },
+    { "fixture_ref": "evaluation-synthetic-provenance", "expected_decision": "invalid", "expected_code": "provenance-incomplete", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "provenance" } },
+    { "fixture_ref": "evaluation-synthetic-holdout", "expected_decision": "invalid", "expected_code": "holdout-leakage", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "holdout" } },
+    { "fixture_ref": "evaluation-synthetic-quality", "expected_decision": "invalid", "expected_code": "quality-threshold-failed", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "quality" } },
+    { "fixture_ref": "evaluation-synthetic-overfit", "expected_decision": "invalid", "expected_code": "overfit-threshold-failed", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "overfit" } },
+    { "fixture_ref": "evaluation-synthetic-execution", "expected_decision": "invalid", "expected_code": "execution-enabled", "input": { "source_fixture_ref": "evaluation-synthetic-ready", "mutation": "execution" } }
+  ],
+  "evidence_ref": "docs/BATCH_13_EXPERIMENT_EVALUATION.md"
+}
