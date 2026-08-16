@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch9-annotation-quality.schema.json",
+  "title": "EquiVista Batch 9 Offline Horse-Keypoint Annotation Quality",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "skeleton_version", "keypoints", "visibility_states", "thresholds", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 },
+    "batch": { "const": 9 },
+    "mode": { "const": "offline-horse-keypoint-annotation-quality" },
+    "status": { "const": "in-progress" },
+    "skeleton_version": { "const": "horse-23-v1" },
+    "keypoints": { "type": "array", "minItems": 23, "maxItems": 23, "uniqueItems": true, "items": { "type": "string" } },
+    "visibility_states": { "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": { "enum": ["visible", "occluded", "outside-frame", "not-applicable"] } },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_normalized_disagreement", "minimum_state_agreement"],
+      "properties": {
+        "max_normalized_disagreement": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.25 },
+        "minimum_state_agreement": { "type": "number", "minimum": 0.8, "maximum": 1 }
+      }
+    },
+    "rejection_codes": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "safety": { "type": "object" },
+    "fixtures": { "type": "array", "minItems": 3, "items": { "type": "object" } },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}
