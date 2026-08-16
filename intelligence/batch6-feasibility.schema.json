@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch6-feasibility.schema.json",
+  "title": "EquiVista Batch 6 Horse–Rider Feasibility Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "supported_matrix", "capture", "findings", "safety", "governance", "golden_set", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 },
+    "batch": { "const": 6 },
+    "mode": { "const": "offline-feasibility" },
+    "status": { "const": "accepted" },
+    "supported_matrix": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["discipline", "exercise", "camera_view", "decision"],
+        "properties": {
+          "discipline": { "type": "string", "minLength": 1 },
+          "exercise": { "type": "string", "minLength": 1 },
+          "camera_view": { "type": "string", "minLength": 1 },
+          "decision": { "enum": ["supported", "shadow-only", "unsupported"] }
+        }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_fps", "recommended_jump_fps", "minimum_height_px", "required_visibility", "reject_when"],
+      "properties": {
+        "minimum_fps": { "type": "number", "minimum": 24 },
+        "recommended_jump_fps": { "type": "number", "minimum": 60 },
+        "minimum_height_px": { "type": "integer", "minimum": 720 },
+        "required_visibility": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "enum": ["horse", "rider"] } },
+        "reject_when": { "type": "array", "minItems": 4, "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "minimum_confidence", "evidence_required", "human_review"],
+        "properties": {
+          "category": { "type": "string", "minLength": 1 },
+          "minimum_confidence": { "type": "number", "minimum": 0.8, "maximum": 1 },
+          "evidence_required": { "const": true },
+          "human_review": { "const": "required" }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["medical_diagnosis", "injury_prediction", "veterinary_language", "low_confidence_result", "user_visible_results"],
+      "properties": {
+        "medical_diagnosis": { "const": "prohibited" },
+        "injury_prediction": { "const": "prohibited" },
+        "veterinary_language": { "const": "review-required" },
+        "low_confidence_result": { "const": "unavailable" },
+        "user_visible_results": { "const": false }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consent_required", "guardian_consent_for_minors", "dataset_use_opt_in", "deletion_supported", "retention_policy_required", "commercial_license_review", "production_data_allowed"],
+      "properties": {
+        "consent_required": { "const": true },
+        "guardian_consent_for_minors": { "const": true },
+        "dataset_use_opt_in": { "const": true },
+        "deletion_supported": { "const": true },
+        "retention_policy_required": { "const": true },
+        "commercial_license_review": { "const": "required" },
+        "production_data_allowed": { "const": false }
+      }
+    },
+    "golden_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metadata_only", "synthetic_ids_only", "untouched_test_partition", "split_boundaries", "cases"],
+      "properties": {
+        "metadata_only": { "const": true },
+        "synthetic_ids_only": { "const": true },
+        "untouched_test_partition": { "const": true },
+        "split_boundaries": { "type": "array", "minItems": 5, "uniqueItems": true, "items": { "enum": ["video", "horse", "rider", "arena", "session"] } },
+        "cases": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["case_ref", "expected"],
+            "properties": {
+              "case_ref": { "type": "string", "pattern": "^golden-[a-z0-9-]+$" },
+              "expected": { "enum": ["eligible", "shadow-only", "rejected"] }
+            }
+          }
+        }
+      }
+    },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}
