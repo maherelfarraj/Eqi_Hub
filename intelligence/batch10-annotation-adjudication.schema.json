@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch10-annotation-adjudication.schema.json",
+  "title": "EquiVista Batch 10 Offline Annotation Adjudication and Export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "dataset_version", "skeleton_version", "annotation_guide_version", "export_contract_version", "grouping_keys", "splits", "reason_codes", "rejection_codes", "safety", "fixtures", "export_fixtures", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 },
+    "batch": { "const": 10 },
+    "mode": { "const": "offline-annotation-adjudication-export" },
+    "status": { "const": "in-progress" },
+    "dataset_version": { "const": "dataset-v1" },
+    "skeleton_version": { "const": "horse-23-v1" },
+    "annotation_guide_version": { "const": "annotation-guide-v1" },
+    "export_contract_version": { "const": "export-v1" },
+    "grouping_keys": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": { "type": "string" } },
+    "splits": { "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": { "enum": ["train", "validation", "test", "golden"] } },
+    "reason_codes": { "type": "array", "minItems": 3, "uniqueItems": true, "items": { "type": "string", "pattern": "^reason-[a-z0-9-]+$" } },
+    "rejection_codes": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "safety": { "type": "object" },
+    "fixtures": { "type": "array", "minItems": 4, "items": { "type": "object" } },
+    "export_fixtures": { "type": "array", "minItems": 2, "items": { "type": "object" } },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}

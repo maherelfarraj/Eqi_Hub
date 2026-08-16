@@ -1,0 +1,241 @@
+{
+  "version": 1,
+  "batch": 10,
+  "mode": "offline-annotation-adjudication-export",
+  "status": "in-progress",
+  "dataset_version": "dataset-v1",
+  "skeleton_version": "horse-23-v1",
+  "annotation_guide_version": "annotation-guide-v1",
+  "export_contract_version": "export-v1",
+  "grouping_keys": [
+    "source_video_ref",
+    "horse_group_ref",
+    "rider_group_ref",
+    "arena_group_ref",
+    "camera_group_ref",
+    "recording_session_ref"
+  ],
+  "splits": [
+    "train",
+    "validation",
+    "test",
+    "golden"
+  ],
+  "reason_codes": [
+    "reason-limb-identity",
+    "reason-visibility-ambiguity",
+    "reason-coordinate-correction",
+    "reason-quality-exclusion"
+  ],
+  "rejection_codes": [
+    "invalid-input",
+    "lineage-missing",
+    "adjudication-required",
+    "adjudicator-conflict",
+    "correction-invalid",
+    "batch9-rejected",
+    "duplicate-evidence",
+    "partition-drift"
+  ],
+  "safety": {
+    "fail_closed": true,
+    "immutable_lineage": true,
+    "independent_adjudicator": true,
+    "batch8_partition_pinned": true,
+    "batch9_evidence_required": true,
+    "production_data_allowed": false,
+    "user_visible_results": false,
+    "model_training": false,
+    "model_inference": false,
+    "database_changes": false
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "adjudication-accepted-pass-through",
+      "expected_decision": "exportable",
+      "input": {
+        "annotation_ref": "annotation-synthetic-primary",
+        "annotation_evidence_ref": "annotation-evidence-a1b2c3d4e5f60718293a4b5c",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "batch9_decision": "accepted",
+        "original_reviewer_refs": [
+          "reviewer-synthetic-alpha",
+          "reviewer-synthetic-beta"
+        ],
+        "adjudication": null
+      }
+    },
+    {
+      "fixture_ref": "adjudication-unresolved-review",
+      "expected_decision": "review-required",
+      "input": {
+        "annotation_ref": "annotation-synthetic-unresolved",
+        "annotation_evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "batch9_decision": "review-required",
+        "original_reviewer_refs": [
+          "reviewer-synthetic-alpha",
+          "reviewer-synthetic-beta"
+        ],
+        "adjudication": null
+      }
+    },
+    {
+      "fixture_ref": "adjudication-rejected-batch9",
+      "expected_decision": "excluded",
+      "input": {
+        "annotation_ref": "annotation-synthetic-rejected",
+        "annotation_evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "batch9_decision": "rejected",
+        "original_reviewer_refs": [
+          "reviewer-synthetic-alpha",
+          "reviewer-synthetic-beta"
+        ],
+        "adjudication": null
+      }
+    },
+    {
+      "fixture_ref": "adjudication-invalid-correction",
+      "expected_decision": "invalid",
+      "input": {
+        "annotation_ref": "annotation-synthetic-correction",
+        "annotation_evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "batch9_decision": "review-required",
+        "original_reviewer_refs": [
+          "reviewer-synthetic-alpha",
+          "reviewer-synthetic-beta"
+        ],
+        "adjudication": {
+          "adjudicator_ref": "adjudicator-synthetic-gamma",
+          "outcome": "correct",
+          "reason_code": "reason-limb-identity",
+          "correction": {
+            "correction_ref": "correction-synthetic-primary",
+            "skeleton_version": "horse-23-v1",
+            "keypoint_count": 23,
+            "corrected_content_hash": "not-a-hash",
+            "bounding_box": {
+              "x_min": 0.05,
+              "y_min": 0.08,
+              "x_max": 0.9,
+              "y_max": 0.82
+            }
+          }
+        }
+      }
+    }
+  ],
+  "export_fixtures": [
+    {
+      "fixture_ref": "export-synthetic-valid",
+      "expected_decision": "exportable",
+      "items": [
+        {
+          "annotation": {
+            "annotation_ref": "annotation-synthetic-primary",
+            "annotation_evidence_ref": "annotation-evidence-a1b2c3d4e5f60718293a4b5c",
+            "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+            "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+            "batch9_decision": "accepted",
+            "original_reviewer_refs": [
+              "reviewer-synthetic-alpha",
+              "reviewer-synthetic-beta"
+            ],
+            "adjudication": null
+          },
+          "split": "train",
+          "groups": {
+            "source_video_ref": "source-video-primary",
+            "horse_group_ref": "horse-group-alpha",
+            "rider_group_ref": "rider-group-alpha",
+            "arena_group_ref": "arena-group-indoor",
+            "camera_group_ref": "camera-group-side",
+            "recording_session_ref": "recording-session-one"
+          }
+        },
+        {
+          "annotation": {
+            "annotation_ref": "annotation-synthetic-secondary",
+            "annotation_evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c",
+            "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+            "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+            "batch9_decision": "accepted",
+            "original_reviewer_refs": [
+              "reviewer-synthetic-alpha",
+              "reviewer-synthetic-beta"
+            ],
+            "adjudication": null
+          },
+          "split": "train",
+          "groups": {
+            "source_video_ref": "source-video-secondary",
+            "horse_group_ref": "horse-group-alpha",
+            "rider_group_ref": "rider-group-beta",
+            "arena_group_ref": "arena-group-indoor",
+            "camera_group_ref": "camera-group-side",
+            "recording_session_ref": "recording-session-two"
+          }
+        }
+      ]
+    },
+    {
+      "fixture_ref": "export-synthetic-partition-drift",
+      "expected_decision": "invalid",
+      "items": [
+        {
+          "annotation": {
+            "annotation_ref": "annotation-synthetic-primary",
+            "annotation_evidence_ref": "annotation-evidence-a1b2c3d4e5f60718293a4b5c",
+            "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+            "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+            "batch9_decision": "accepted",
+            "original_reviewer_refs": [
+              "reviewer-synthetic-alpha",
+              "reviewer-synthetic-beta"
+            ],
+            "adjudication": null
+          },
+          "split": "train",
+          "groups": {
+            "source_video_ref": "source-video-primary",
+            "horse_group_ref": "horse-group-alpha",
+            "rider_group_ref": "rider-group-alpha",
+            "arena_group_ref": "arena-group-indoor",
+            "camera_group_ref": "camera-group-side",
+            "recording_session_ref": "recording-session-one"
+          }
+        },
+        {
+          "annotation": {
+            "annotation_ref": "annotation-synthetic-secondary",
+            "annotation_evidence_ref": "annotation-evidence-b1c2d3e4f5a60718293a4b5c",
+            "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+            "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+            "batch9_decision": "accepted",
+            "original_reviewer_refs": [
+              "reviewer-synthetic-alpha",
+              "reviewer-synthetic-beta"
+            ],
+            "adjudication": null
+          },
+          "split": "test",
+          "groups": {
+            "source_video_ref": "source-video-secondary",
+            "horse_group_ref": "horse-group-alpha",
+            "rider_group_ref": "rider-group-beta",
+            "arena_group_ref": "arena-group-indoor",
+            "camera_group_ref": "camera-group-side",
+            "recording_session_ref": "recording-session-two"
+          }
+        }
+      ]
+    }
+  ],
+  "evidence_ref": "docs/BATCH_10_ANNOTATION_ADJUDICATION.md"
+}
