@@ -16,6 +16,8 @@ without promoting an artifact.
 - use validation only for selection and keep test and golden sealed;
 - enforce minimum keypoint-correctness, maximum mean error, sample coverage,
   and validation-to-test gap thresholds;
+- bound configured thresholds so the quality gate cannot be weakened into a
+  pass-through;
 - emit immutable evaluation evidence while keeping promotion unauthorized.
 
 ## Safety boundary
