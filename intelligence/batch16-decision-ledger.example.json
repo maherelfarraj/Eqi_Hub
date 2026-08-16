@@ -1,0 +1,39 @@
+{
+  "version": 1, "batch": 16, "mode": "offline-decision-ledger", "status": "in-progress",
+  "readiness_contract_version": "release-readiness-v1", "decision_contract_version": "go-no-go-ledger-v1",
+  "approved_batch15_readiness_hash": "eb836236c5a6bcda449b35360f0589d974c902127345ce40ab76069985118898",
+  "rejection_codes": ["invalid-input", "readiness-unpinned", "quorum-incomplete", "veto-active", "validity-invalid", "evidence-incomplete", "release-enabled"],
+  "safety": { "fail_closed": true, "readiness_pinned": true, "independent_quorum_required": true, "veto_binding": true, "expiry_required": true, "production_data_allowed": false, "protected_access_allowed": false, "deployment_authorized": false, "canary_enabled": false, "user_traffic": false, "database_changes": false, "cohort_changes": false },
+  "fixtures": [
+    {
+      "fixture_ref": "decision-synthetic-ready", "expected_decision": "review-complete",
+      "input": {
+        "batch15_readiness": {
+          "readiness_contract_version": "release-readiness-v1", "governance_hash": "11e10928d7f8282cc0f5c53dab474f41730501fb848183dac43138d520f784be",
+          "readiness_plan": {
+            "change_ref": "change-synthetic-release-rehearsal",
+            "approvals": [{ "reviewer_ref": "reviewer-synthetic-release", "role": "release-manager", "approved": true, "evidence_ref": "approval-evidence-synthetic-release" }, { "reviewer_ref": "reviewer-synthetic-security", "role": "security-reviewer", "approved": true, "evidence_ref": "approval-evidence-synthetic-security" }, { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "approved": true, "evidence_ref": "approval-evidence-synthetic-safety" }],
+            "monitoring": { "signals": ["signal-synthetic-quality-drift", "signal-synthetic-lineage-failure", "signal-synthetic-safety-incident"], "fail_closed": true, "production_endpoints": false, "escalation_role": "safety-reviewer" },
+            "rollback_rehearsal": { "execution_mode": "table-top", "scenarios": ["scenario-synthetic-quality-drift", "scenario-synthetic-lineage-failure", "scenario-synthetic-safety-incident"], "passed": true, "owner_role": "release-manager" },
+            "canary_enabled": false, "deployment_authorized": false, "user_traffic": false, "change_window_booked": false
+          },
+          "release_authorized": false, "readiness_hash": "eb836236c5a6bcda449b35360f0589d974c902127345ce40ab76069985118898"
+        },
+        "decision_record": {
+          "decision_ref": "decision-synthetic-review",
+          "votes": [{ "reviewer_ref": "reviewer-synthetic-release", "role": "release-manager", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-release" }, { "reviewer_ref": "reviewer-synthetic-security", "role": "security-reviewer", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-security" }, { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-safety" }],
+          "reviewed_at": "2026-08-16T08:00:00Z", "expires_at": "2026-08-17T08:00:00Z",
+          "evidence_refs": ["ledger-evidence-synthetic-readiness", "ledger-evidence-synthetic-monitoring", "ledger-evidence-synthetic-rollback"],
+          "deployment_authorized": false, "canary_enabled": false, "user_traffic": false
+        }
+      }
+    },
+    { "fixture_ref": "decision-synthetic-readiness", "expected_decision": "invalid", "expected_code": "readiness-unpinned", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "readiness" } },
+    { "fixture_ref": "decision-synthetic-quorum", "expected_decision": "invalid", "expected_code": "quorum-incomplete", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "quorum" } },
+    { "fixture_ref": "decision-synthetic-veto", "expected_decision": "blocked", "expected_code": "veto-active", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "veto" } },
+    { "fixture_ref": "decision-synthetic-expiry", "expected_decision": "invalid", "expected_code": "validity-invalid", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "expiry" } },
+    { "fixture_ref": "decision-synthetic-evidence", "expected_decision": "invalid", "expected_code": "evidence-incomplete", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "evidence" } },
+    { "fixture_ref": "decision-synthetic-release", "expected_decision": "invalid", "expected_code": "release-enabled", "input": { "source_fixture_ref": "decision-synthetic-ready", "mutation": "release" } }
+  ],
+  "evidence_ref": "docs/BATCH_16_DECISION_LEDGER.md"
+}

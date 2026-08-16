@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://equivista.net/schemas/batch16-decision-ledger.schema.json",
+  "title": "EquiVista Batch 16 Offline Decision Ledger", "type": "object", "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "readiness_contract_version", "decision_contract_version", "approved_batch15_readiness_hash", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": { "version": { "const": 1 }, "batch": { "const": 16 }, "mode": { "const": "offline-decision-ledger" }, "status": { "const": "in-progress" }, "readiness_contract_version": { "const": "release-readiness-v1" }, "decision_contract_version": { "const": "go-no-go-ledger-v1" }, "approved_batch15_readiness_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" }, "fixtures": { "type": "array", "minItems": 6 }, "evidence_ref": { "type": "string", "pattern": "^docs/" } }
+}
