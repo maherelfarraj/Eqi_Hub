@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "batch": 12,
+  "mode": "offline-training-experiment-preflight",
+  "status": "in-progress",
+  "release_contract_version": "dataset-release-v1",
+  "experiment_contract_version": "training-preflight-v1",
+  "approved_batch11_release_hash": "d78c5ff3dedb78797f277ec35de345b3b7c803183c5ee8490c0dbee4b39ef3e1",
+  "resource_limits": { "maximum_gpu_hours": 8, "maximum_cpu_hours": 24, "maximum_epochs": 50 },
+  "rejection_codes": ["invalid-input", "release-unpinned", "split-leakage", "nondeterministic-plan", "resource-limit-exceeded", "execution-enabled"],
+  "safety": {
+    "fail_closed": true,
+    "batch11_release_pinned": true,
+    "split_isolation_required": true,
+    "deterministic_reproducibility_required": true,
+    "production_data_allowed": false,
+    "training_execution": false,
+    "model_inference": false,
+    "outbound_network": false,
+    "deployment_changes": false,
+    "database_changes": false,
+    "cohort_changes": false
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "preflight-synthetic-ready",
+      "expected_decision": "ready",
+      "input": {
+        "batch11_release": {
+          "dataset_version": "dataset-v1",
+          "release_contract_version": "dataset-release-v1",
+          "batch10_manifest_hash": "5c06bbc0451f647b4bcb10c42c54aa2ade5ecae9bd1cb2ebacce21c0beebe58d",
+          "statistics": { "row_count": 4, "split_counts": { "train": 1, "validation": 1, "test": 1, "golden": 1 }, "unique_horse_groups": 4, "visible_fraction": 1 },
+          "training_authorized": false,
+          "approver_ref": "approver-synthetic-alpha",
+          "approval_evidence_ref": "approval-evidence-synthetic-alpha",
+          "release_manifest_hash": "d78c5ff3dedb78797f277ec35de345b3b7c803183c5ee8490c0dbee4b39ef3e1"
+        },
+        "plan": {
+          "experiment_ref": "experiment-synthetic-baseline",
+          "architecture_ref": "architecture-synthetic-heatmap",
+          "objective": "keypoint-localization",
+          "seed": 12011,
+          "epochs": 20,
+          "batch_size": 8,
+          "learning_rate": 0.001,
+          "augmentations": ["augmentation-horizontal-flip", "augmentation-color-jitter"],
+          "training_splits": ["train"],
+          "validation_splits": ["validation"],
+          "holdout_splits": ["test", "golden"],
+          "resources": { "gpu_hours": 4, "cpu_hours": 8 },
+          "execution_enabled": false,
+          "outbound_network": false
+        }
+      }
+    },
+    { "fixture_ref": "preflight-synthetic-release", "expected_decision": "invalid", "expected_code": "release-unpinned", "input": { "source_fixture_ref": "preflight-synthetic-ready", "mutation": "release-hash" } },
+    { "fixture_ref": "preflight-synthetic-split", "expected_decision": "invalid", "expected_code": "split-leakage", "input": { "source_fixture_ref": "preflight-synthetic-ready", "mutation": "split-leakage" } },
+    { "fixture_ref": "preflight-synthetic-seed", "expected_decision": "invalid", "expected_code": "nondeterministic-plan", "input": { "source_fixture_ref": "preflight-synthetic-ready", "mutation": "nondeterministic" } },
+    { "fixture_ref": "preflight-synthetic-resource", "expected_decision": "invalid", "expected_code": "resource-limit-exceeded", "input": { "source_fixture_ref": "preflight-synthetic-ready", "mutation": "resource-limit" } },
+    { "fixture_ref": "preflight-synthetic-execution", "expected_decision": "invalid", "expected_code": "execution-enabled", "input": { "source_fixture_ref": "preflight-synthetic-ready", "mutation": "execution" } }
+  ],
+  "evidence_ref": "docs/BATCH_12_TRAINING_PREFLIGHT.md"
+}
