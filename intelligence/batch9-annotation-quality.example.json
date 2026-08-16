@@ -1,0 +1,833 @@
+{
+  "version": 1,
+  "batch": 9,
+  "mode": "offline-horse-keypoint-annotation-quality",
+  "status": "in-progress",
+  "skeleton_version": "horse-23-v1",
+  "keypoints": [
+    "poll",
+    "withers",
+    "croup",
+    "near-shoulder",
+    "near-elbow",
+    "near-knee",
+    "near-front-fetlock",
+    "near-front-hoof",
+    "far-shoulder",
+    "far-elbow",
+    "far-knee",
+    "far-front-fetlock",
+    "far-front-hoof",
+    "near-hip-origin",
+    "near-stifle",
+    "near-hock",
+    "near-rear-fetlock",
+    "near-rear-hoof",
+    "far-hip-origin",
+    "far-stifle",
+    "far-hock",
+    "far-rear-fetlock",
+    "far-rear-hoof"
+  ],
+  "visibility_states": [
+    "visible",
+    "occluded",
+    "outside-frame",
+    "not-applicable"
+  ],
+  "thresholds": {
+    "max_normalized_disagreement": 0.04,
+    "minimum_state_agreement": 0.9
+  },
+  "rejection_codes": [
+    "invalid-input",
+    "lineage-missing",
+    "incomplete-skeleton",
+    "single-review",
+    "agreement-threshold",
+    "state-ambiguity"
+  ],
+  "safety": {
+    "fail_closed": true,
+    "double_review_required": true,
+    "batch8_lineage_required": true,
+    "near_far_from_camera_view": true,
+    "production_data_allowed": false,
+    "user_visible_results": false,
+    "model_training": false,
+    "model_inference": false,
+    "database_changes": false
+  },
+  "fixtures": [
+    {
+      "fixture_ref": "annotation-accepted-close-reviewers",
+      "expected_decision": "accepted",
+      "input": {
+        "frame_ref": "frame-synthetic-accepted",
+        "window_ref": "window-synthetic-accepted",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "bounding_box": {
+          "x_min": 0.05,
+          "y_min": 0.08,
+          "x_max": 0.9,
+          "y_max": 0.82
+        },
+        "reviews": [
+          {
+            "reviewer_ref": "reviewer-synthetic-alpha",
+            "keypoints": [
+              {
+                "name": "poll",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.15
+              },
+              {
+                "name": "withers",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.15
+              },
+              {
+                "name": "croup",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.15
+              },
+              {
+                "name": "near-shoulder",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.15
+              },
+              {
+                "name": "near-elbow",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.15
+              },
+              {
+                "name": "near-knee",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-fetlock",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-hoof",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.15
+              },
+              {
+                "name": "far-shoulder",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.4
+              },
+              {
+                "name": "far-elbow",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.4
+              },
+              {
+                "name": "far-knee",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-fetlock",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-hoof",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.4
+              },
+              {
+                "name": "near-hip-origin",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.4
+              },
+              {
+                "name": "near-stifle",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.4
+              },
+              {
+                "name": "near-hock",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.4
+              },
+              {
+                "name": "near-rear-fetlock",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.65
+              },
+              {
+                "name": "near-rear-hoof",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.65
+              },
+              {
+                "name": "far-hip-origin",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.65
+              },
+              {
+                "name": "far-stifle",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.65
+              },
+              {
+                "name": "far-hock",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-fetlock",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-hoof",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.65
+              }
+            ]
+          },
+          {
+            "reviewer_ref": "reviewer-synthetic-beta",
+            "keypoints": [
+              {
+                "name": "poll",
+                "state": "visible",
+                "x": 0.11,
+                "y": 0.16
+              },
+              {
+                "name": "withers",
+                "state": "visible",
+                "x": 0.21,
+                "y": 0.16
+              },
+              {
+                "name": "croup",
+                "state": "visible",
+                "x": 0.31,
+                "y": 0.16
+              },
+              {
+                "name": "near-shoulder",
+                "state": "visible",
+                "x": 0.41,
+                "y": 0.16
+              },
+              {
+                "name": "near-elbow",
+                "state": "visible",
+                "x": 0.51,
+                "y": 0.16
+              },
+              {
+                "name": "near-knee",
+                "state": "visible",
+                "x": 0.61,
+                "y": 0.16
+              },
+              {
+                "name": "near-front-fetlock",
+                "state": "visible",
+                "x": 0.71,
+                "y": 0.16
+              },
+              {
+                "name": "near-front-hoof",
+                "state": "visible",
+                "x": 0.81,
+                "y": 0.16
+              },
+              {
+                "name": "far-shoulder",
+                "state": "visible",
+                "x": 0.11,
+                "y": 0.41
+              },
+              {
+                "name": "far-elbow",
+                "state": "visible",
+                "x": 0.21,
+                "y": 0.41
+              },
+              {
+                "name": "far-knee",
+                "state": "visible",
+                "x": 0.31,
+                "y": 0.41
+              },
+              {
+                "name": "far-front-fetlock",
+                "state": "visible",
+                "x": 0.41,
+                "y": 0.41
+              },
+              {
+                "name": "far-front-hoof",
+                "state": "visible",
+                "x": 0.51,
+                "y": 0.41
+              },
+              {
+                "name": "near-hip-origin",
+                "state": "visible",
+                "x": 0.61,
+                "y": 0.41
+              },
+              {
+                "name": "near-stifle",
+                "state": "visible",
+                "x": 0.71,
+                "y": 0.41
+              },
+              {
+                "name": "near-hock",
+                "state": "visible",
+                "x": 0.81,
+                "y": 0.41
+              },
+              {
+                "name": "near-rear-fetlock",
+                "state": "visible",
+                "x": 0.11,
+                "y": 0.66
+              },
+              {
+                "name": "near-rear-hoof",
+                "state": "visible",
+                "x": 0.21,
+                "y": 0.66
+              },
+              {
+                "name": "far-hip-origin",
+                "state": "visible",
+                "x": 0.31,
+                "y": 0.66
+              },
+              {
+                "name": "far-stifle",
+                "state": "visible",
+                "x": 0.41,
+                "y": 0.66
+              },
+              {
+                "name": "far-hock",
+                "state": "visible",
+                "x": 0.51,
+                "y": 0.66
+              },
+              {
+                "name": "far-rear-fetlock",
+                "state": "visible",
+                "x": 0.61,
+                "y": 0.66
+              },
+              {
+                "name": "far-rear-hoof",
+                "state": "visible",
+                "x": 0.71,
+                "y": 0.66
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_ref": "annotation-review-required-disagreement",
+      "expected_decision": "review-required",
+      "input": {
+        "frame_ref": "frame-synthetic-review",
+        "window_ref": "window-synthetic-review",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "bounding_box": {
+          "x_min": 0.05,
+          "y_min": 0.08,
+          "x_max": 0.9,
+          "y_max": 0.82
+        },
+        "reviews": [
+          {
+            "reviewer_ref": "reviewer-synthetic-gamma",
+            "keypoints": [
+              {
+                "name": "poll",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.15
+              },
+              {
+                "name": "withers",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.15
+              },
+              {
+                "name": "croup",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.15
+              },
+              {
+                "name": "near-shoulder",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.15
+              },
+              {
+                "name": "near-elbow",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.15
+              },
+              {
+                "name": "near-knee",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-fetlock",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-hoof",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.15
+              },
+              {
+                "name": "far-shoulder",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.4
+              },
+              {
+                "name": "far-elbow",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.4
+              },
+              {
+                "name": "far-knee",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-fetlock",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-hoof",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.4
+              },
+              {
+                "name": "near-hip-origin",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.4
+              },
+              {
+                "name": "near-stifle",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.4
+              },
+              {
+                "name": "near-hock",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.4
+              },
+              {
+                "name": "near-rear-fetlock",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.65
+              },
+              {
+                "name": "near-rear-hoof",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.65
+              },
+              {
+                "name": "far-hip-origin",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.65
+              },
+              {
+                "name": "far-stifle",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.65
+              },
+              {
+                "name": "far-hock",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-fetlock",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-hoof",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.65
+              }
+            ]
+          },
+          {
+            "reviewer_ref": "reviewer-synthetic-delta",
+            "keypoints": [
+              {
+                "name": "poll",
+                "state": "visible",
+                "x": 0.18,
+                "y": 0.23
+              },
+              {
+                "name": "withers",
+                "state": "visible",
+                "x": 0.28,
+                "y": 0.23
+              },
+              {
+                "name": "croup",
+                "state": "visible",
+                "x": 0.38,
+                "y": 0.23
+              },
+              {
+                "name": "near-shoulder",
+                "state": "visible",
+                "x": 0.48,
+                "y": 0.23
+              },
+              {
+                "name": "near-elbow",
+                "state": "visible",
+                "x": 0.58,
+                "y": 0.23
+              },
+              {
+                "name": "near-knee",
+                "state": "visible",
+                "x": 0.68,
+                "y": 0.23
+              },
+              {
+                "name": "near-front-fetlock",
+                "state": "visible",
+                "x": 0.78,
+                "y": 0.23
+              },
+              {
+                "name": "near-front-hoof",
+                "state": "visible",
+                "x": 0.88,
+                "y": 0.23
+              },
+              {
+                "name": "far-shoulder",
+                "state": "visible",
+                "x": 0.18,
+                "y": 0.48
+              },
+              {
+                "name": "far-elbow",
+                "state": "visible",
+                "x": 0.28,
+                "y": 0.48
+              },
+              {
+                "name": "far-knee",
+                "state": "visible",
+                "x": 0.38,
+                "y": 0.48
+              },
+              {
+                "name": "far-front-fetlock",
+                "state": "visible",
+                "x": 0.48,
+                "y": 0.48
+              },
+              {
+                "name": "far-front-hoof",
+                "state": "visible",
+                "x": 0.58,
+                "y": 0.48
+              },
+              {
+                "name": "near-hip-origin",
+                "state": "visible",
+                "x": 0.68,
+                "y": 0.48
+              },
+              {
+                "name": "near-stifle",
+                "state": "visible",
+                "x": 0.78,
+                "y": 0.48
+              },
+              {
+                "name": "near-hock",
+                "state": "visible",
+                "x": 0.88,
+                "y": 0.48
+              },
+              {
+                "name": "near-rear-fetlock",
+                "state": "visible",
+                "x": 0.18,
+                "y": 0.73
+              },
+              {
+                "name": "near-rear-hoof",
+                "state": "visible",
+                "x": 0.28,
+                "y": 0.73
+              },
+              {
+                "name": "far-hip-origin",
+                "state": "visible",
+                "x": 0.38,
+                "y": 0.73
+              },
+              {
+                "name": "far-stifle",
+                "state": "visible",
+                "x": 0.48,
+                "y": 0.73
+              },
+              {
+                "name": "far-hock",
+                "state": "visible",
+                "x": 0.58,
+                "y": 0.73
+              },
+              {
+                "name": "far-rear-fetlock",
+                "state": "visible",
+                "x": 0.68,
+                "y": 0.73
+              },
+              {
+                "name": "far-rear-hoof",
+                "state": "visible",
+                "x": 0.78,
+                "y": 0.73
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fixture_ref": "annotation-rejected-single-review",
+      "expected_decision": "rejected",
+      "input": {
+        "frame_ref": "frame-synthetic-rejected",
+        "window_ref": "window-synthetic-rejected",
+        "source_lineage_ref": "lineage-a1b2c3d4e5f60718293a4b5c",
+        "window_lineage_ref": "lineage-c5b4a39281706f5e4d3c2b1a",
+        "bounding_box": {
+          "x_min": 0.05,
+          "y_min": 0.08,
+          "x_max": 0.9,
+          "y_max": 0.82
+        },
+        "reviews": [
+          {
+            "reviewer_ref": "reviewer-synthetic-epsilon",
+            "keypoints": [
+              {
+                "name": "poll",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.15
+              },
+              {
+                "name": "withers",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.15
+              },
+              {
+                "name": "croup",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.15
+              },
+              {
+                "name": "near-shoulder",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.15
+              },
+              {
+                "name": "near-elbow",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.15
+              },
+              {
+                "name": "near-knee",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-fetlock",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.15
+              },
+              {
+                "name": "near-front-hoof",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.15
+              },
+              {
+                "name": "far-shoulder",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.4
+              },
+              {
+                "name": "far-elbow",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.4
+              },
+              {
+                "name": "far-knee",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-fetlock",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.4
+              },
+              {
+                "name": "far-front-hoof",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.4
+              },
+              {
+                "name": "near-hip-origin",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.4
+              },
+              {
+                "name": "near-stifle",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.4
+              },
+              {
+                "name": "near-hock",
+                "state": "visible",
+                "x": 0.8,
+                "y": 0.4
+              },
+              {
+                "name": "near-rear-fetlock",
+                "state": "visible",
+                "x": 0.1,
+                "y": 0.65
+              },
+              {
+                "name": "near-rear-hoof",
+                "state": "visible",
+                "x": 0.2,
+                "y": 0.65
+              },
+              {
+                "name": "far-hip-origin",
+                "state": "visible",
+                "x": 0.3,
+                "y": 0.65
+              },
+              {
+                "name": "far-stifle",
+                "state": "visible",
+                "x": 0.4,
+                "y": 0.65
+              },
+              {
+                "name": "far-hock",
+                "state": "visible",
+                "x": 0.5,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-fetlock",
+                "state": "visible",
+                "x": 0.6,
+                "y": 0.65
+              },
+              {
+                "name": "far-rear-hoof",
+                "state": "visible",
+                "x": 0.7,
+                "y": 0.65
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "evidence_ref": "docs/BATCH_9_ANNOTATION_QUALITY.md"
+}
