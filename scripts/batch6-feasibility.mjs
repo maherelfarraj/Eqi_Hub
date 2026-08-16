@@ -55,11 +55,19 @@ export function validateBatch6Feasibility(manifest) {
     if (!Number.isFinite(capture.minimum_fps) || capture.minimum_fps < 24) errors.push("capture.minimum_fps must be at least 24");
     if (!Number.isFinite(capture.recommended_jump_fps) || capture.recommended_jump_fps < 60) errors.push("capture.recommended_jump_fps must be at least 60");
     if (!Number.isFinite(capture.minimum_height_px) || capture.minimum_height_px < 720) errors.push("capture.minimum_height_px must be at least 720");
-    for (const subject of ["horse", "rider"]) {
-      if (!capture.required_visibility?.includes(subject)) errors.push(`capture.required_visibility must include ${subject}`);
+    if (!Array.isArray(capture.required_visibility)) {
+      errors.push("capture.required_visibility must be an array");
+    } else {
+      for (const subject of ["horse", "rider"]) {
+        if (!capture.required_visibility.includes(subject)) errors.push(`capture.required_visibility must include ${subject}`);
+      }
     }
-    for (const reason of ["subject-out-of-frame", "severe-blur", "unstable-camera", "jump-plane-not-visible"]) {
-      if (!capture.reject_when?.includes(reason)) errors.push(`capture.reject_when must include ${reason}`);
+    if (!Array.isArray(capture.reject_when)) {
+      errors.push("capture.reject_when must be an array");
+    } else {
+      for (const reason of ["subject-out-of-frame", "severe-blur", "unstable-camera", "jump-plane-not-visible"]) {
+        if (!capture.reject_when.includes(reason)) errors.push(`capture.reject_when must include ${reason}`);
+      }
     }
   }
 
@@ -91,14 +99,22 @@ export function validateBatch6Feasibility(manifest) {
   exact(golden.metadata_only, true, "golden_set.metadata_only", errors);
   exact(golden.synthetic_ids_only, true, "golden_set.synthetic_ids_only", errors);
   exact(golden.untouched_test_partition, true, "golden_set.untouched_test_partition", errors);
-  for (const boundary of REQUIRED_SPLIT_BOUNDARIES) {
-    if (!golden.split_boundaries?.includes(boundary)) errors.push(`golden_set.split_boundaries must include ${boundary}`);
+  if (!Array.isArray(golden.split_boundaries)) {
+    errors.push("golden_set.split_boundaries must be an array");
+  } else {
+    for (const boundary of REQUIRED_SPLIT_BOUNDARIES) {
+      if (!golden.split_boundaries.includes(boundary)) errors.push(`golden_set.split_boundaries must include ${boundary}`);
+    }
   }
   if (!Array.isArray(golden.cases) || golden.cases.length < 3) errors.push("golden_set.cases must contain at least three synthetic cases");
   else {
     const refs = new Set();
     for (const [index, entry] of golden.cases.entries()) {
-      if (!object(entry) || !/^golden-[a-z0-9-]+$/.test(entry.case_ref ?? "")) errors.push(`golden_set.cases[${index}].case_ref must be a synthetic golden reference`);
+      if (!object(entry)) {
+        errors.push(`golden_set.cases[${index}] must be an object`);
+        continue;
+      }
+      if (!/^golden-[a-z0-9-]+$/.test(entry.case_ref ?? "")) errors.push(`golden_set.cases[${index}].case_ref must be a synthetic golden reference`);
       if (refs.has(entry.case_ref)) errors.push(`golden_set.cases[${index}].case_ref must be unique`);
       refs.add(entry.case_ref);
       if (!["eligible", "shadow-only", "rejected"].includes(entry.expected)) errors.push(`golden_set.cases[${index}].expected is invalid`);

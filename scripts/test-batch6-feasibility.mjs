@@ -40,6 +40,15 @@ test("requires fail-closed capture rejection reasons", () => {
   assert.ok(validateBatch6Feasibility(manifest).some((error) => error.includes("subject-out-of-frame")));
 });
 
+test("rejects malformed capture collections without string coercion", () => {
+  const manifest = copy();
+  manifest.capture.required_visibility = "horse and rider";
+  manifest.capture.reject_when = "subject-out-of-frame severe-blur unstable-camera jump-plane-not-visible";
+  const errors = validateBatch6Feasibility(manifest);
+  assert.ok(errors.some((error) => error.includes("required_visibility must be an array")));
+  assert.ok(errors.some((error) => error.includes("reject_when must be an array")));
+});
+
 test("keeps production data and production results disabled", () => {
   const manifest = copy();
   manifest.governance.production_data_allowed = true;
@@ -59,4 +68,14 @@ test("requires isolated golden-set split boundaries", () => {
   const manifest = copy();
   manifest.golden_set.split_boundaries = ["video"];
   assert.ok(validateBatch6Feasibility(manifest).some((error) => error.includes("horse")));
+});
+
+test("returns validation errors for malformed golden-set entries", () => {
+  const manifest = copy();
+  manifest.golden_set.split_boundaries = "video horse rider arena session";
+  manifest.golden_set.cases[0] = null;
+  assert.doesNotThrow(() => validateBatch6Feasibility(manifest));
+  const errors = validateBatch6Feasibility(manifest);
+  assert.ok(errors.some((error) => error.includes("split_boundaries must be an array")));
+  assert.ok(errors.some((error) => error.includes("cases[0] must be an object")));
 });
