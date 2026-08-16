@@ -50,6 +50,6 @@ jobs:
       - name: Test production web server
         run: pnpm --filter @workspace/equus-voyages test:server
       - name: Verify controlled-pilot foundation
-        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6 && pnpm verify:batch7 && pnpm test:batch7 && pnpm verify:batch8 && pnpm test:batch8 && pnpm verify:batch9 && pnpm test:batch9 && pnpm verify:batch10 && pnpm test:batch10 && pnpm verify:batch11 && pnpm test:batch11 && pnpm verify:batch12 && pnpm test:batch12 && pnpm verify:batch13 && pnpm test:batch13 && pnpm verify:batch14 && pnpm test:batch14 && pnpm verify:batch15 && pnpm test:batch15 && pnpm verify:batch16 && pnpm test:batch16 && pnpm verify:batch17 && pnpm test:batch17 && pnpm verify:batch18 && pnpm test:batch18
+        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6 && pnpm verify:batch7 && pnpm test:batch7 && pnpm verify:batch8 && pnpm test:batch8 && pnpm verify:batch9 && pnpm test:batch9 && pnpm verify:batch10 && pnpm test:batch10 && pnpm verify:batch11 && pnpm test:batch11 && pnpm verify:batch12 && pnpm test:batch12 && pnpm verify:batch13 && pnpm test:batch13 && pnpm verify:batch14 && pnpm test:batch14 && pnpm verify:batch15 && pnpm test:batch15 && pnpm verify:batch16 && pnpm test:batch16 && pnpm verify:batch17 && pnpm test:batch17 && pnpm verify:batch18 && pnpm test:batch18 && pnpm verify:batch19 && pnpm test:batch19
       - name: Build
         run: pnpm build
