@@ -20,6 +20,22 @@ test("canonicalizes object key order before hashing lineage", () => {
   reordered.groups = Object.fromEntries(Object.entries(reordered.groups).reverse());
   assert.equal(evaluateVideoSegmentation(reordered, config).lineage_ref, evaluateVideoSegmentation(good, config).lineage_ref);
 });
+test("changes lineage when validated timing evidence changes", () => {
+  const changed = structuredClone(good);
+  changed.candidate_windows[0].takeoff_timestamp_ms += 100;
+  const baseline = evaluateVideoSegmentation(good, config);
+  const result = evaluateVideoSegmentation(changed, config);
+  assert.notEqual(result.lineage_ref, baseline.lineage_ref);
+  assert.notEqual(result.windows[0].lineage_ref, baseline.windows[0].lineage_ref);
+});
+test("changes lineage when preserved source metadata changes", () => {
+  const changed = structuredClone(good);
+  changed.timestamps_ms.splice(2, 0, 750);
+  const baseline = evaluateVideoSegmentation(good, config);
+  const result = evaluateVideoSegmentation(changed, config);
+  assert.notEqual(result.lineage_ref, baseline.lineage_ref);
+  assert.notEqual(result.windows[0].lineage_ref, baseline.windows[0].lineage_ref);
+});
 test("keeps related horse clips in the same split", () => {
   const result = planDatasetSplits(structuredClone(accepted), config);
   assert.equal(result.decision, "accepted");
