@@ -1,0 +1,40 @@
+{
+  "version": 1, "batch": 15, "mode": "offline-release-readiness", "status": "in-progress",
+  "governance_contract_version": "candidate-governance-v1", "readiness_contract_version": "release-readiness-v1",
+  "approved_batch14_governance_hash": "11e10928d7f8282cc0f5c53dab474f41730501fb848183dac43138d520f784be",
+  "rejection_codes": ["invalid-input", "governance-unpinned", "approvals-incomplete", "monitoring-incomplete", "rollback-rehearsal-incomplete", "release-enabled"],
+  "safety": { "fail_closed": true, "batch14_governance_pinned": true, "independent_approvals_required": true, "rollback_rehearsal_required": true, "production_data_allowed": false, "protected_access_allowed": false, "production_endpoints": false, "canary_enabled": false, "deployment_authorized": false, "user_traffic": false, "database_changes": false, "cohort_changes": false },
+  "fixtures": [
+    {
+      "fixture_ref": "readiness-synthetic-ready", "expected_decision": "ready-for-review",
+      "input": {
+        "batch14_governance": {
+          "governance_contract_version": "candidate-governance-v1", "evaluation_hash": "3e065edb279717c702565a916977f2881efeccd32eaa8a6ca3066e2bd19a620b",
+          "model_card": {
+            "candidate_ref": "candidate-synthetic-baseline", "intended_use": "offline-research-only",
+            "limitations": ["limitation-synthetic-camera-angle", "limitation-synthetic-occlusion", "limitation-synthetic-domain-shift"],
+            "prohibited_uses": ["diagnosis", "injury-prediction", "veterinary-advice", "user-visible-results", "automated-decisions"],
+            "risks": [{ "risk_ref": "risk-synthetic-domain-shift", "severity": "high", "mitigation_ref": "mitigation-synthetic-holdout-review" }, { "risk_ref": "risk-synthetic-occlusion", "severity": "medium", "mitigation_ref": "mitigation-synthetic-capture-rejection" }, { "risk_ref": "risk-synthetic-overconfidence", "severity": "high", "mitigation_ref": "mitigation-synthetic-human-review" }],
+            "reviews": [{ "reviewer_ref": "reviewer-synthetic-ml", "role": "ml-reviewer", "approved": true, "evidence_ref": "review-evidence-synthetic-ml" }, { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "approved": true, "evidence_ref": "review-evidence-synthetic-safety" }],
+            "rollback": { "triggers": ["rollback-trigger-quality-drift", "rollback-trigger-lineage-failure", "rollback-trigger-safety-incident"], "action": "disable-and-quarantine", "owner_role": "safety-reviewer" },
+            "shadow_release": false, "deployment_authorized": false, "user_visible_results": false
+          },
+          "release_authorized": false, "governance_hash": "11e10928d7f8282cc0f5c53dab474f41730501fb848183dac43138d520f784be"
+        },
+        "readiness_plan": {
+          "change_ref": "change-synthetic-release-rehearsal",
+          "approvals": [{ "reviewer_ref": "reviewer-synthetic-release", "role": "release-manager", "approved": true, "evidence_ref": "approval-evidence-synthetic-release" }, { "reviewer_ref": "reviewer-synthetic-security", "role": "security-reviewer", "approved": true, "evidence_ref": "approval-evidence-synthetic-security" }, { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "approved": true, "evidence_ref": "approval-evidence-synthetic-safety" }],
+          "monitoring": { "signals": ["signal-synthetic-quality-drift", "signal-synthetic-lineage-failure", "signal-synthetic-safety-incident"], "fail_closed": true, "production_endpoints": false, "escalation_role": "safety-reviewer" },
+          "rollback_rehearsal": { "execution_mode": "table-top", "scenarios": ["scenario-synthetic-quality-drift", "scenario-synthetic-lineage-failure", "scenario-synthetic-safety-incident"], "passed": true, "owner_role": "release-manager" },
+          "canary_enabled": false, "deployment_authorized": false, "user_traffic": false, "change_window_booked": false
+        }
+      }
+    },
+    { "fixture_ref": "readiness-synthetic-governance", "expected_decision": "invalid", "expected_code": "governance-unpinned", "input": { "source_fixture_ref": "readiness-synthetic-ready", "mutation": "governance" } },
+    { "fixture_ref": "readiness-synthetic-approval", "expected_decision": "invalid", "expected_code": "approvals-incomplete", "input": { "source_fixture_ref": "readiness-synthetic-ready", "mutation": "approval" } },
+    { "fixture_ref": "readiness-synthetic-monitoring", "expected_decision": "invalid", "expected_code": "monitoring-incomplete", "input": { "source_fixture_ref": "readiness-synthetic-ready", "mutation": "monitoring" } },
+    { "fixture_ref": "readiness-synthetic-rollback", "expected_decision": "invalid", "expected_code": "rollback-rehearsal-incomplete", "input": { "source_fixture_ref": "readiness-synthetic-ready", "mutation": "rollback" } },
+    { "fixture_ref": "readiness-synthetic-release", "expected_decision": "invalid", "expected_code": "release-enabled", "input": { "source_fixture_ref": "readiness-synthetic-ready", "mutation": "release" } }
+  ],
+  "evidence_ref": "docs/BATCH_15_RELEASE_READINESS.md"
+}

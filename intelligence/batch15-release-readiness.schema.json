@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://equivista.net/schemas/batch15-release-readiness.schema.json",
+  "title": "EquiVista Batch 15 Offline Release Readiness", "type": "object", "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "governance_contract_version", "readiness_contract_version", "approved_batch14_governance_hash", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": { "version": { "const": 1 }, "batch": { "const": 15 }, "mode": { "const": "offline-release-readiness" }, "status": { "const": "in-progress" }, "governance_contract_version": { "const": "candidate-governance-v1" }, "readiness_contract_version": { "const": "release-readiness-v1" }, "approved_batch14_governance_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" }, "fixtures": { "type": "array", "minItems": 6 }, "evidence_ref": { "type": "string", "pattern": "^docs/" } }
+}
