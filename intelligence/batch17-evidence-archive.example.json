@@ -1,0 +1,39 @@
+{
+  "version": 1, "batch": 17, "mode": "offline-evidence-archive", "status": "in-progress",
+  "decision_contract_version": "go-no-go-ledger-v1", "archive_contract_version": "evidence-archive-v1",
+  "approved_batch16_decision_hash": "5be8fb2ccf3b615a09599e45e54b7aa42c85f7a20cd7a24543f276faed17d666",
+  "rejection_codes": ["invalid-input", "decision-unpinned", "bundle-incomplete", "custody-incomplete", "verification-failed", "retention-invalid", "mutation-enabled"],
+  "safety": { "fail_closed": true, "decision_pinned": true, "independent_custody_required": true, "verification_required": true, "append_only": true, "production_data_allowed": false, "protected_access_allowed": false, "external_upload": false, "deletion_enabled": false, "deployment_authorized": false, "database_changes": false, "cohort_changes": false },
+  "fixtures": [
+    {
+      "fixture_ref": "archive-synthetic-ready", "expected_decision": "sealed",
+      "input": {
+        "batch16_decision": {
+          "decision_contract_version": "go-no-go-ledger-v1", "readiness_hash": "eb836236c5a6bcda449b35360f0589d974c902127345ce40ab76069985118898",
+          "decision_record": {
+            "decision_ref": "decision-synthetic-review",
+            "votes": [{ "reviewer_ref": "reviewer-synthetic-release", "role": "release-manager", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-release" }, { "reviewer_ref": "reviewer-synthetic-security", "role": "security-reviewer", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-security" }, { "reviewer_ref": "reviewer-synthetic-safety", "role": "safety-reviewer", "vote": "approve", "evidence_ref": "decision-evidence-synthetic-safety" }],
+            "reviewed_at": "2026-08-16T08:00:00Z", "expires_at": "2026-08-17T08:00:00Z",
+            "evidence_refs": ["ledger-evidence-synthetic-readiness", "ledger-evidence-synthetic-monitoring", "ledger-evidence-synthetic-rollback"],
+            "deployment_authorized": false, "canary_enabled": false, "user_traffic": false
+          },
+          "release_authorized": false, "decision_hash": "5be8fb2ccf3b615a09599e45e54b7aa42c85f7a20cd7a24543f276faed17d666"
+        },
+        "archive_plan": {
+          "archive_ref": "archive-synthetic-decision-evidence", "format": "deterministic-json-v1",
+          "content_hashes": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222", "3333333333333333333333333333333333333333333333333333333333333333"],
+          "custodians": [{ "custodian_ref": "custodian-synthetic-records", "role": "records-manager", "accepted": true, "evidence_ref": "custody-evidence-synthetic-records" }, { "custodian_ref": "custodian-synthetic-safety", "role": "safety-reviewer", "accepted": true, "evidence_ref": "custody-evidence-synthetic-safety" }],
+          "verifications": [{ "receipt_ref": "verification-receipt-synthetic-primary", "method": "sha256-recompute", "passed": true }, { "receipt_ref": "verification-receipt-synthetic-independent", "method": "sha256-recompute", "passed": true }],
+          "retention_days": 365, "append_only": true, "external_upload": false, "deletion_enabled": false, "deployment_authorized": false, "user_traffic": false
+        }
+      }
+    },
+    { "fixture_ref": "archive-synthetic-decision", "expected_decision": "invalid", "expected_code": "decision-unpinned", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "decision" } },
+    { "fixture_ref": "archive-synthetic-bundle", "expected_decision": "invalid", "expected_code": "bundle-incomplete", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "bundle" } },
+    { "fixture_ref": "archive-synthetic-custody", "expected_decision": "invalid", "expected_code": "custody-incomplete", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "custody" } },
+    { "fixture_ref": "archive-synthetic-verification", "expected_decision": "invalid", "expected_code": "verification-failed", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "verification" } },
+    { "fixture_ref": "archive-synthetic-retention", "expected_decision": "invalid", "expected_code": "retention-invalid", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "retention" } },
+    { "fixture_ref": "archive-synthetic-mutation", "expected_decision": "invalid", "expected_code": "mutation-enabled", "input": { "source_fixture_ref": "archive-synthetic-ready", "mutation": "mutation" } }
+  ],
+  "evidence_ref": "docs/BATCH_17_EVIDENCE_ARCHIVE.md"
+}

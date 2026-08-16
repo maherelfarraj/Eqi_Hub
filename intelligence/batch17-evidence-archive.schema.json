@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://equivista.net/schemas/batch17-evidence-archive.schema.json",
+  "title": "EquiVista Batch 17 Offline Evidence Archive", "type": "object", "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "decision_contract_version", "archive_contract_version", "approved_batch16_decision_hash", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": { "version": { "const": 1 }, "batch": { "const": 17 }, "mode": { "const": "offline-evidence-archive" }, "status": { "const": "in-progress" }, "decision_contract_version": { "const": "go-no-go-ledger-v1" }, "archive_contract_version": { "const": "evidence-archive-v1" }, "approved_batch16_decision_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" }, "fixtures": { "type": "array", "minItems": 6 }, "evidence_ref": { "type": "string", "pattern": "^docs/" } }
+}
