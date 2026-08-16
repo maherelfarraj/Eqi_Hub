@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch13-experiment-evaluation.schema.json",
+  "title": "EquiVista Batch 13 Offline Synthetic Experiment Evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "preflight_contract_version", "evaluation_contract_version", "approved_batch12_preflight_hash", "thresholds", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 }, "batch": { "const": 13 }, "mode": { "const": "offline-synthetic-experiment-evaluation" }, "status": { "const": "in-progress" },
+    "preflight_contract_version": { "const": "training-preflight-v1" }, "evaluation_contract_version": { "const": "experiment-evaluation-v1" },
+    "approved_batch12_preflight_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "thresholds": { "type": "object" },
+    "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" }, "fixtures": { "type": "array", "minItems": 6 },
+    "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}
