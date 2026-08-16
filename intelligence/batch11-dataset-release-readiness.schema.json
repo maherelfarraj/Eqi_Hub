@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch11-dataset-release-readiness.schema.json",
+  "title": "EquiVista Batch 11 Offline Dataset Release Readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "batch", "mode", "status", "dataset_version", "batch10_export_contract_version", "release_contract_version", "splits", "grouping_keys", "thresholds", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "properties": {
+    "version": { "const": 1 }, "batch": { "const": 11 }, "mode": { "const": "offline-dataset-release-readiness" }, "status": { "const": "in-progress" },
+    "dataset_version": { "const": "dataset-v1" }, "batch10_export_contract_version": { "const": "export-v1" }, "release_contract_version": { "const": "dataset-release-v1" },
+    "splits": { "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true }, "grouping_keys": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true },
+    "thresholds": { "type": "object" }, "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" },
+    "fixtures": { "type": "array", "minItems": 4 }, "evidence_ref": { "type": "string", "pattern": "^docs/" }
+  }
+}

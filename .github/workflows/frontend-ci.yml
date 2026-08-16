@@ -50,6 +50,6 @@ jobs:
       - name: Test production web server
         run: pnpm --filter @workspace/equus-voyages test:server
       - name: Verify controlled-pilot foundation
-        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6 && pnpm verify:batch7 && pnpm test:batch7 && pnpm verify:batch8 && pnpm test:batch8 && pnpm verify:batch9 && pnpm test:batch9 && pnpm verify:batch10 && pnpm test:batch10
+        run: pnpm verify:pilot && pnpm test:pilot && pnpm verify:batch6 && pnpm test:batch6 && pnpm verify:batch7 && pnpm test:batch7 && pnpm verify:batch8 && pnpm test:batch8 && pnpm verify:batch9 && pnpm test:batch9 && pnpm verify:batch10 && pnpm test:batch10 && pnpm verify:batch11 && pnpm test:batch11
       - name: Build
         run: pnpm build
