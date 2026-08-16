@@ -27,6 +27,17 @@ test("rejects malformed measurements without throwing", () => {
   assert.doesNotThrow(() => evaluateCaptureQuality({ ...good, fps: "60" }, config));
   assert.deepEqual(evaluateCaptureQuality({ ...good, fps: "60" }, config).rejection_codes, ["invalid-measurements"]);
 });
+test("rejects impossible normalized measurements", () => {
+  for (const measurements of [
+    { ...good, horse_visibility: 1.1 },
+    { ...good, rider_visibility: -0.1 },
+    { ...good, camera_motion: -0.1 },
+    { ...good, luminance: 300 },
+    { ...good, width_px: 1920.5 },
+  ]) {
+    assert.deepEqual(evaluateCaptureQuality(measurements, config).rejection_codes, ["invalid-measurements"]);
+  }
+});
 test("rejects unsafe production and user-visible configuration", () => {
   const unsafe = structuredClone(config);
   unsafe.safety.production_data_allowed = true;

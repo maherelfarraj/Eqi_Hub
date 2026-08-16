@@ -24,6 +24,20 @@ function finite(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
 
+function validMeasurements(measurements) {
+  return (
+    finite(measurements.fps) && measurements.fps > 0 &&
+    Number.isInteger(measurements.width_px) && measurements.width_px > 0 &&
+    Number.isInteger(measurements.height_px) && measurements.height_px > 0 &&
+    finite(measurements.horse_visibility) && measurements.horse_visibility >= 0 && measurements.horse_visibility <= 1 &&
+    finite(measurements.rider_visibility) && measurements.rider_visibility >= 0 && measurements.rider_visibility <= 1 &&
+    finite(measurements.blur_score) && measurements.blur_score >= 0 &&
+    finite(measurements.luminance) && measurements.luminance >= 0 && measurements.luminance <= 255 &&
+    finite(measurements.camera_motion) && measurements.camera_motion >= 0 && measurements.camera_motion <= 1 &&
+    finite(measurements.side_angle_degrees) && Math.abs(measurements.side_angle_degrees) <= 180
+  );
+}
+
 function rejectSensitiveKeys(value, path, errors) {
   if (Array.isArray(value)) {
     value.forEach((entry, index) => rejectSensitiveKeys(entry, `${path}[${index}]`, errors));
@@ -101,8 +115,7 @@ export function evaluateCaptureQuality(measurements, config) {
   if (validateBatch7Config(config).length) return { decision: "rejected", rejection_codes: ["invalid-measurements"], warnings: [] };
   if (!object(measurements) || !EXERCISES.has(measurements.exercise)) return { decision: "rejected", rejection_codes: ["invalid-measurements"], warnings: [] };
 
-  const numeric = ["fps", "width_px", "height_px", "horse_visibility", "rider_visibility", "blur_score", "luminance", "camera_motion", "side_angle_degrees"];
-  if (numeric.some((key) => !finite(measurements[key]))) return { decision: "rejected", rejection_codes: ["invalid-measurements"], warnings: [] };
+  if (!validMeasurements(measurements)) return { decision: "rejected", rejection_codes: ["invalid-measurements"], warnings: [] };
 
   const t = config.thresholds;
   const rejection_codes = [];
