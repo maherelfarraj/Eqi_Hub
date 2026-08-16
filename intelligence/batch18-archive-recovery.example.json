@@ -1,0 +1,39 @@
+{
+  "version": 1, "batch": 18, "mode": "offline-archive-recovery", "status": "in-progress",
+  "archive_contract_version": "evidence-archive-v1", "recovery_contract_version": "archive-recovery-v1",
+  "approved_batch17_archive_hash": "691071505b91bd3b25646e13c7133164f59ead5d107b9015c4456fd26257b7cb",
+  "rejection_codes": ["invalid-input", "archive-unpinned", "scope-mismatch", "operator-conflict", "recovery-incomplete", "time-budget-exceeded", "mutation-enabled"],
+  "safety": { "fail_closed": true, "archive_pinned": true, "independent_operators_required": true, "hash_verification_required": true, "production_data_allowed": false, "protected_access_allowed": false, "external_download": false, "destructive_restore": false, "writeback": false, "deployment_authorized": false, "database_changes": false, "cohort_changes": false },
+  "fixtures": [
+    {
+      "fixture_ref": "recovery-synthetic-ready", "expected_decision": "recovered",
+      "input": {
+        "batch17_archive": {
+          "archive_contract_version": "evidence-archive-v1", "decision_hash": "5be8fb2ccf3b615a09599e45e54b7aa42c85f7a20cd7a24543f276faed17d666",
+          "archive_plan": {
+            "archive_ref": "archive-synthetic-decision-evidence", "format": "deterministic-json-v1",
+            "content_hashes": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222", "3333333333333333333333333333333333333333333333333333333333333333"],
+            "custodians": [{ "custodian_ref": "custodian-synthetic-records", "role": "records-manager", "accepted": true, "evidence_ref": "custody-evidence-synthetic-records" }, { "custodian_ref": "custodian-synthetic-safety", "role": "safety-reviewer", "accepted": true, "evidence_ref": "custody-evidence-synthetic-safety" }],
+            "verifications": [{ "receipt_ref": "verification-receipt-synthetic-primary", "method": "sha256-recompute", "passed": true }, { "receipt_ref": "verification-receipt-synthetic-independent", "method": "sha256-recompute", "passed": true }],
+            "retention_days": 365, "append_only": true, "external_upload": false, "deletion_enabled": false, "deployment_authorized": false, "user_traffic": false
+          },
+          "release_authorized": false, "archive_hash": "691071505b91bd3b25646e13c7133164f59ead5d107b9015c4456fd26257b7cb"
+        },
+        "recovery_plan": {
+          "drill_ref": "drill-synthetic-archive-recovery", "mode": "offline-tabletop",
+          "requested_hashes": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222", "3333333333333333333333333333333333333333333333333333333333333333"],
+          "operators": [{ "operator_ref": "operator-synthetic-records", "role": "records-manager", "approved": true, "evidence_ref": "operator-evidence-synthetic-records" }, { "operator_ref": "operator-synthetic-audit", "role": "audit-reviewer", "approved": true, "evidence_ref": "operator-evidence-synthetic-audit" }],
+          "recovered_objects": [{ "content_hash": "1111111111111111111111111111111111111111111111111111111111111111", "recomputed_hash": "1111111111111111111111111111111111111111111111111111111111111111", "method": "sha256-recompute", "verified": true }, { "content_hash": "2222222222222222222222222222222222222222222222222222222222222222", "recomputed_hash": "2222222222222222222222222222222222222222222222222222222222222222", "method": "sha256-recompute", "verified": true }, { "content_hash": "3333333333333333333333333333333333333333333333333333333333333333", "recomputed_hash": "3333333333333333333333333333333333333333333333333333333333333333", "method": "sha256-recompute", "verified": true }],
+          "duration_minutes": 30, "external_download": false, "destructive_restore": false, "writeback": false, "production_mount": false, "deployment_authorized": false
+        }
+      }
+    },
+    { "fixture_ref": "recovery-synthetic-archive", "expected_decision": "invalid", "expected_code": "archive-unpinned", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "archive" } },
+    { "fixture_ref": "recovery-synthetic-scope", "expected_decision": "invalid", "expected_code": "scope-mismatch", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "scope" } },
+    { "fixture_ref": "recovery-synthetic-operator", "expected_decision": "invalid", "expected_code": "operator-conflict", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "operator" } },
+    { "fixture_ref": "recovery-synthetic-object", "expected_decision": "invalid", "expected_code": "recovery-incomplete", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "recovery" } },
+    { "fixture_ref": "recovery-synthetic-time", "expected_decision": "invalid", "expected_code": "time-budget-exceeded", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "time" } },
+    { "fixture_ref": "recovery-synthetic-mutation", "expected_decision": "invalid", "expected_code": "mutation-enabled", "input": { "source_fixture_ref": "recovery-synthetic-ready", "mutation": "mutation" } }
+  ],
+  "evidence_ref": "docs/BATCH_18_ARCHIVE_RECOVERY.md"
+}
