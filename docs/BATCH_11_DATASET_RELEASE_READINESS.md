@@ -11,7 +11,8 @@ human approval evidence before producing a versioned release manifest.
 
 ## Contract
 
-- recompute and verify the complete Batch 10 manifest hash;
+- accept the complete ordered Batch 10 manifest and recompute its exact hash;
+- validate its version pins, ordered 23-point content, and row lineage;
 - retain the four Batch 8 partitions and all six grouping boundaries;
 - reject duplicate annotation references and duplicate content hashes;
 - require minimum per-split, horse-group, and visible-keypoint coverage;
