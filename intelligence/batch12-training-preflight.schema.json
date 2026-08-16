@@ -4,10 +4,11 @@
   "title": "EquiVista Batch 12 Offline Training Experiment Preflight",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "batch", "mode", "status", "release_contract_version", "experiment_contract_version", "resource_limits", "rejection_codes", "safety", "fixtures", "evidence_ref"],
+  "required": ["version", "batch", "mode", "status", "release_contract_version", "experiment_contract_version", "approved_batch11_release_hash", "resource_limits", "rejection_codes", "safety", "fixtures", "evidence_ref"],
   "properties": {
     "version": { "const": 1 }, "batch": { "const": 12 }, "mode": { "const": "offline-training-experiment-preflight" }, "status": { "const": "in-progress" },
     "release_contract_version": { "const": "dataset-release-v1" }, "experiment_contract_version": { "const": "training-preflight-v1" },
+    "approved_batch11_release_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "resource_limits": { "type": "object" }, "rejection_codes": { "type": "array", "uniqueItems": true }, "safety": { "type": "object" },
     "fixtures": { "type": "array", "minItems": 5 }, "evidence_ref": { "type": "string", "pattern": "^docs/" }
   }

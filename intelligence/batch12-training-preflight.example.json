@@ -5,6 +5,7 @@
   "status": "in-progress",
   "release_contract_version": "dataset-release-v1",
   "experiment_contract_version": "training-preflight-v1",
+  "approved_batch11_release_hash": "d78c5ff3dedb78797f277ec35de345b3b7c803183c5ee8490c0dbee4b39ef3e1",
   "resource_limits": { "maximum_gpu_hours": 8, "maximum_cpu_hours": 24, "maximum_epochs": 50 },
   "rejection_codes": ["invalid-input", "release-unpinned", "split-leakage", "nondeterministic-plan", "resource-limit-exceeded", "execution-enabled"],
   "safety": {

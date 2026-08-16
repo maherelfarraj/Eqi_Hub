@@ -29,6 +29,7 @@ export function validateBatch12Config(config) {
   if (!object(config)) return ["config must be an object"];
   if (config.version !== 1 || config.batch !== 12 || config.mode !== "offline-training-experiment-preflight" || config.status !== "in-progress") errors.push("Batch 12 identity is invalid");
   if (config.release_contract_version !== "dataset-release-v1" || config.experiment_contract_version !== "training-preflight-v1") errors.push("contract versions are invalid");
+  if (!hex(config.approved_batch11_release_hash)) errors.push("approved_batch11_release_hash must pin an approved release");
   if (!Array.isArray(config.rejection_codes)) errors.push("rejection_codes must be an array"); else REQUIRED_CODES.forEach((code) => { if (!config.rejection_codes.includes(code)) errors.push(`rejection_codes must include ${code}`); });
   const limits = config.resource_limits;
   if (!object(limits) || !finite(limits.maximum_gpu_hours) || limits.maximum_gpu_hours <= 0 || !finite(limits.maximum_cpu_hours) || limits.maximum_cpu_hours <= 0 || !Number.isInteger(limits.maximum_epochs) || limits.maximum_epochs < 1) errors.push("resource_limits are invalid");
@@ -63,7 +64,7 @@ export function evaluateTrainingPreflight(input, config) {
   inspectSensitive(input, "input", sensitiveErrors);
   if (sensitiveErrors.length) return { decision: "invalid", rejection_codes: ["invalid-input"], preflight_manifest: null };
   const codes = [];
-  if (!validRelease(input.batch11_release)) codes.push("release-unpinned");
+  if (!validRelease(input.batch11_release) || input.batch11_release.release_manifest_hash !== config.approved_batch11_release_hash) codes.push("release-unpinned");
   const plan = input.plan;
   if (!validPlan(plan)) codes.push("nondeterministic-plan");
   const splitSets = [plan.training_splits, plan.validation_splits, plan.holdout_splits];

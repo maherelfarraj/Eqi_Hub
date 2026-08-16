@@ -10,7 +10,8 @@ experiment could run later without executing training now.
 
 ## Contract
 
-- recompute and pin the complete approved Batch 11 release manifest;
+- recompute the complete Batch 11 manifest and compare it with an independently
+  configured approved-release hash;
 - reserve `train` for optimization and `validation` for selection;
 - keep `test` and `golden` isolated as holdouts;
 - pin architecture, objective, seed, epochs, batch size, learning rate,
