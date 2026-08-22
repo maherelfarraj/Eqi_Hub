@@ -117,6 +117,26 @@ timeout followed by successful requests, one rolled-back setup query error, and
 one Guardian access denial observed before the test-data role correction. None
 remained an open production issue.
 
-Temporary-account retirement is intentionally recorded separately after
-action-time confirmation. Until that confirmation is received, this review does
-not claim that relationships, sessions, memberships, or Auth users were removed.
+## Controlled cohort retirement
+
+Action-time cleanup was authorized and completed with audit-preserving
+retirement:
+
+- two Guardian relationships were revoked;
+- three Coach assignment rows were ended, including the already-inactive failed
+  acceptance-account assignment;
+- all nine scoped memberships were suspended and the two remaining Auth session
+  rows were revoked before account retirement;
+- five scoped Auth identities were permanently deleted;
+- four Guardian/Rider Auth identities were retained because hard deletion would
+  require removing 12 append-only Guardian access audit events;
+- those four retained identities are banned through 2126, have suspended
+  memberships, have zero active session rows, and retain only inactive,
+  revoked Guardian relationship records;
+- the 12 Guardian access audit events were preserved;
+- no Coach assignment remains for the nine-account cleanup scope; and
+- the excluded older diagnostic cohorts remained unchanged.
+
+This audit-preserving disposition completes the controlled-cohort retirement.
+The retained tombstone identities cannot authenticate or regain organization
+access without an explicit future administrative reversal.
