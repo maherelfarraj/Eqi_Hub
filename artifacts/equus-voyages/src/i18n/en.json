@@ -173,6 +173,41 @@
         "stable_manager": "Stable manager",
         "accountant": "Accountant",
         "competition_manager": "Competition manager"
+      },
+      "onboarding": {
+        "eyebrow": "Production onboarding",
+        "title": "Invite your academy team",
+        "description": "Validate up to 100 people before creating expiring, one-time invitations. No account or membership is created until the invited person signs in and accepts.",
+        "template": "Download CSV template",
+        "batchName": "Batch name",
+        "expiry": "Invitation expiry (days)",
+        "chooseCsv": "Choose onboarding CSV",
+        "rowsLoaded": "{{count}} rows loaded",
+        "validationFailed": "Fix these validation issues before continuing",
+        "row": "Row",
+        "previewPassed": "Dry run passed for {{count}} people; {{existing}} already have EquiVista accounts.",
+        "dryRun": "Run dry check",
+        "createInvitations": "Create invitations",
+        "downloaded": "Invitation file downloaded.",
+        "secretWarning": "This is the only copy of the one-time invitation links. Store it securely and share each row only with its intended person.",
+        "downloadAgain": "Download this file again",
+        "history": "Onboarding batches",
+        "batchCounts": "{{total}} total · {{pending}} pending · {{accepted}} accepted · {{revoked}} closed",
+        "closeBatch": "Close batch and revoke pending links",
+        "noBatches": "No onboarding batches have been created.",
+        "statuses": {
+          "active": "Active",
+          "closed": "Closed",
+          "cancelled": "Cancelled"
+        },
+        "authNotice": "This invitation is tied to one email address. Sign in or create the matching account to continue.",
+        "acceptTitle": "Accept academy invitation",
+        "acceptDescription": "Your signed-in email must match the invitation. Accepting activates only the roles authorized by the academy.",
+        "acceptedTitle": "Academy access activated",
+        "acceptedDescription": "Your organization membership and authorized roles are ready.",
+        "invalidInvite": "This invitation link is malformed, expired, revoked, or has already been used.",
+        "accept": "Accept invitation",
+        "continue": "Continue to dashboard"
       }
     },
     "dashboard": {

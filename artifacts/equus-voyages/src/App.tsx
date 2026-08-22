@@ -23,6 +23,9 @@ const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const MembershipPage = lazy(() => import("@/pages/MembershipPage"));
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 const OrganizationPage = lazy(() => import("@/pages/OrganizationPage"));
+const OnboardingInvitePage = lazy(
+  () => import("@/pages/OnboardingInvitePage"),
+);
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
@@ -77,6 +80,7 @@ function SuspendedPage({
 function AppRoutes() {
   const { user, ready } = useAuth();
   const { i18n } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     const language = i18n.resolvedLanguage ?? i18n.language;
@@ -111,9 +115,19 @@ function AppRoutes() {
     );
   }
 
+  const invitationToken = new URLSearchParams(location.search).get("invite");
+
   return (
     <Routes>
       <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
+      <Route
+        path="/onboarding/accept"
+        element={
+          <SuspendedPage fullScreen>
+            <OnboardingInvitePage />
+          </SuspendedPage>
+        }
+      />
       <Route
         path="/legal/:document"
         element={
@@ -261,7 +275,19 @@ function AppRoutes() {
           </SuspendedPage>
         }
       />
-      <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/auth"
+        element={
+          <Navigate
+            to={
+              invitationToken
+                ? `/onboarding/accept?invite=${encodeURIComponent(invitationToken)}`
+                : "/dashboard"
+            }
+            replace
+          />
+        }
+      />
     </Routes>
   );
 }
