@@ -36,12 +36,25 @@ test("rejects an email ownership bypass", () => {
   );
 });
 
+test("rejects academy_admin in the batch role allowlist", () => {
+  const unsafe = migration.replace(
+    "where role <> all(array[\n        'coach'",
+    "where role <> all(array[\n        'academy_admin', 'coach'",
+  );
+  assert.ok(
+    validateBatch21AcademyOnboarding(unsafe, rollback).includes(
+      "batch onboarding must not grant academy_admin",
+    ),
+  );
+});
+
 test("acceptance covers isolation, one-time use, and secret-free audit", () => {
   for (const guard of [
     "rider previewed academy onboarding",
     "academy admin crossed tenant boundary",
     "direct invitation table read was allowed",
     "wrong email claimed invitation",
+    "tampered profile email claimed invitation",
     "invitation token was reusable",
     "pending invitation survived batch closure",
     "onboarding audit leaked email or token",

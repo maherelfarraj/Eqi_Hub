@@ -90,6 +90,8 @@ function AppRoutes() {
 
   if (!ready) return <RouteSkeleton fullScreen />;
 
+  const invitationToken = new URLSearchParams(location.search).get("invite");
+
   if (!user) {
     return (
       <Routes>
@@ -110,12 +112,23 @@ function AppRoutes() {
             </SuspendedPage>
           }
         />
+        <Route
+          path="/onboarding/accept"
+          element={
+            <Navigate
+              to={
+                invitationToken
+                  ? `/auth?invite=${encodeURIComponent(invitationToken)}`
+                  : "/auth"
+              }
+              replace
+            />
+          }
+        />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     );
   }
-
-  const invitationToken = new URLSearchParams(location.search).get("invite");
 
   return (
     <Routes>

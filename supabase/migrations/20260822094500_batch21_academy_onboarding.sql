@@ -9,7 +9,9 @@ begin
      or to_regclass('public.organization_memberships') is null
      or to_regclass('public.organization_member_roles') is null
      or to_regclass('public.audit_events') is null
-     or to_regprocedure('private.phase_0b2_is_organization_manager(uuid)') is null then
+     or to_regprocedure('private.phase_0b2_is_organization_manager(uuid)') is null
+     or to_regprocedure('extensions.gen_random_bytes(integer)') is null
+     or to_regprocedure('extensions.digest(text,text)') is null then
     raise exception 'Batch 21 preflight failed: organization operations are not present';
   end if;
 
@@ -154,7 +156,7 @@ begin
     raise insufficient_privilege using message = 'Organization administrator access required';
   end if;
 
-  if jsonb_typeof(p_entries) <> 'array' then
+  if p_entries is null or jsonb_typeof(p_entries) <> 'array' then
     return jsonb_build_object(
       'valid', false,
       'rowCount', 0,
@@ -301,11 +303,15 @@ begin
     raise insufficient_privilege using message = 'Authentication required';
   end if;
 
-  if p_expires_in_days < 1 or p_expires_in_days > 30 then
+  if p_expires_in_days is null
+     or p_expires_in_days < 1
+     or p_expires_in_days > 30 then
     raise check_violation using message = 'Invitation expiry must be between 1 and 30 days';
   end if;
 
-  if length(btrim(p_name)) < 2 or length(btrim(p_name)) > 120 then
+  if p_name is null
+     or length(btrim(p_name)) < 2
+     or length(btrim(p_name)) > 120 then
     raise check_violation using message = 'Batch name must contain 2 to 120 characters';
   end if;
 
@@ -477,7 +483,7 @@ set search_path = ''
 as $function$
 declare
   actor_id uuid := (select auth.uid());
-  actor_email text;
+  actor_email text := lower(btrim(coalesce((select auth.jwt() ->> 'email'), '')));
   target public.academy_onboarding_invitations%rowtype;
   claimed_membership_id uuid;
   requested_role text;
@@ -489,8 +495,10 @@ begin
     raise invalid_parameter_value using message = 'Invitation is invalid or expired';
   end if;
 
-  select lower(email) into actor_email from public.profiles where id = actor_id;
-  if actor_email is null then
+  if actor_email = '' then
+    raise insufficient_privilege using message = 'A verified Auth email is required';
+  end if;
+  if not exists (select 1 from public.profiles where id = actor_id) then
     raise no_data_found using message = 'A completed EquiVista profile is required';
   end if;
 

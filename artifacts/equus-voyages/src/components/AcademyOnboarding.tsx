@@ -55,6 +55,7 @@ export function AcademyOnboarding({ organizationId }: { organizationId: string }
     const file = event.target.files?.[0];
     if (!file) return;
     const result = parseAcademyOnboardingCsv(await file.text());
+    event.target.value = "";
     setEntries(result.entries);
     setLocalErrors(result.errors);
     setPreview(null);
@@ -143,7 +144,8 @@ export function AcademyOnboarding({ organizationId }: { organizationId: string }
                 className={fieldClass}
                 value={expiresInDays}
                 onChange={(event) => {
-                  setExpiresInDays(Number(event.target.value));
+                  const parsed = Number.parseInt(event.target.value, 10);
+                  setExpiresInDays(Number.isNaN(parsed) ? 0 : parsed);
                   setPreview(null);
                 }}
               />
@@ -217,6 +219,7 @@ export function AcademyOnboarding({ organizationId }: { organizationId: string }
                 actions.working ||
                 !preview?.valid ||
                 name.trim().length < 2 ||
+                !Number.isInteger(expiresInDays) ||
                 expiresInDays < 1 ||
                 expiresInDays > 30
               }

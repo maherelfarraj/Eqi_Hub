@@ -20,7 +20,10 @@ const [organization, onboarding, auth, app, hook, english, arabic] =
   ]);
 
 test("academy onboarding is restricted to organization managers", () => {
-  assert.match(organization, /\{canManage \? \([\s\S]*?<AcademyOnboarding/);
+  assert.match(
+    organization,
+    /\{canManage \? \(\s*<AcademyOnboarding organizationId=\{activeOrganization\.id\} \/>\s*\) : null\}/,
+  );
   assert.match(onboarding, /preview\(organizationId, entries\)/);
   assert.match(hook, /preview_academy_onboarding/);
   assert.match(hook, /create_academy_onboarding_batch/);
@@ -36,6 +39,7 @@ test("invitation creation requires a successful dry run", () => {
 test("authentication preserves the one-time invitation claim", () => {
   assert.match(auth, /\/onboarding\/accept\?invite=/);
   assert.match(app, /path="\/onboarding\/accept"/);
+  assert.match(app, /`\/auth\?invite=\$\{encodeURIComponent\(invitationToken\)\}`/);
   assert.match(hook, /claim_academy_onboarding_invitation/);
 });
 
@@ -50,10 +54,18 @@ test("onboarding copy is complete in English and Arabic", () => {
     "secretWarning",
     "acceptTitle",
     "invalidInvite",
+    "rowsLoaded_one",
+    "rowsLoaded_other",
+    "previewPassed_one",
+    "previewPassed_other",
   ]) {
     assert.equal(typeof en[key], "string");
     assert.equal(typeof ar[key], "string");
     assert.ok(en[key].length > 0);
     assert.ok(ar[key].length > 0);
+  }
+  for (const suffix of ["zero", "one", "two", "few", "many", "other"]) {
+    assert.equal(typeof ar[`rowsLoaded_${suffix}`], "string");
+    assert.equal(typeof ar[`previewPassed_${suffix}`], "string");
   }
 });

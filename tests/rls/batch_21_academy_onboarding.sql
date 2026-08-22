@@ -94,6 +94,15 @@ select * from public.create_academy_onboarding_batch(
 
 reset role;
 select set_config('request.jwt.claim.sub', 'b2100000-0000-0000-0000-000000000004', true);
+select set_config(
+  'request.jwt.claims',
+  json_build_object(
+    'sub', 'b2100000-0000-0000-0000-000000000004',
+    'role', 'authenticated',
+    'email', 'wrong-b21@example.test'
+  )::text,
+  true
+);
 set local role authenticated;
 do $wrong_email$
 begin
@@ -108,7 +117,43 @@ end
 $wrong_email$;
 
 reset role;
+update public.profiles
+set email = 'invitee-b21@example.test'
+where id = 'b2100000-0000-0000-0000-000000000004';
+select set_config('request.jwt.claim.sub', 'b2100000-0000-0000-0000-000000000004', true);
+select set_config(
+  'request.jwt.claims',
+  json_build_object(
+    'sub', 'b2100000-0000-0000-0000-000000000004',
+    'role', 'authenticated',
+    'email', 'wrong-b21@example.test'
+  )::text,
+  true
+);
+set local role authenticated;
+do $tampered_profile_email$
+begin
+  begin
+    perform public.claim_academy_onboarding_invitation(
+      (select invite_token from batch21_tokens where email = 'invitee-b21@example.test')
+    );
+    raise exception 'tampered profile email claimed invitation';
+  exception when insufficient_privilege then null;
+  end;
+end
+$tampered_profile_email$;
+
+reset role;
 select set_config('request.jwt.claim.sub', 'b2100000-0000-0000-0000-000000000003', true);
+select set_config(
+  'request.jwt.claims',
+  json_build_object(
+    'sub', 'b2100000-0000-0000-0000-000000000003',
+    'role', 'authenticated',
+    'email', 'invitee-b21@example.test'
+  )::text,
+  true
+);
 set local role authenticated;
 select public.claim_academy_onboarding_invitation(
   (select invite_token from batch21_tokens where email = 'invitee-b21@example.test')

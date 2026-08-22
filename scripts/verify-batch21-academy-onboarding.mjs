@@ -97,6 +97,7 @@ export function validateBatch21AcademyOnboarding(migration, rollback) {
     )?.[0] ?? "";
   for (const [guard, message] of [
     [/extensions\.digest\(p_invite_token, 'sha256'\)/i, "tokens must be hashed"],
+    [/auth\.jwt\(\)\s*->>\s*'email'/i, "claim must use the signed Auth email claim"],
     [/actor_email <> target\.email/i, "claim must match invited email"],
     [/invitation\.expires_at > now\(\)/i, "claim must enforce expiry"],
     [/batch\.status = 'active'/i, "claim must require active batch"],
@@ -105,6 +106,8 @@ export function validateBatch21AcademyOnboarding(migration, rollback) {
   ]) {
     if (!guard.test(claimBlock)) errors.push(message);
   }
+  if (/select\s+lower\(email\)\s+into\s+actor_email\s+from\s+public\.profiles/i.test(claimBlock))
+    errors.push("claim must not authorize against user-editable profile email");
 
   const createBlock =
     migration.match(
@@ -115,7 +118,7 @@ export function validateBatch21AcademyOnboarding(migration, rollback) {
 
   if (!/jsonb_array_length\(p_entries\) < 1 or jsonb_array_length\(p_entries\) > 100/i.test(migration))
     errors.push("batch size must be bounded to 100");
-  if (!/p_expires_in_days < 1 or p_expires_in_days > 30/i.test(migration))
+  if (!/p_expires_in_days is null[\s\S]*?p_expires_in_days < 1[\s\S]*?p_expires_in_days > 30/i.test(migration))
     errors.push("invitation expiry must be bounded");
   if (!/academy_onboarding_invitations_pending_email_idx[\s\S]*?where status = 'pending'/i.test(migration))
     errors.push("pending invitations require an email uniqueness guard");
@@ -126,12 +129,22 @@ export function validateBatch21AcademyOnboarding(migration, rollback) {
   if (!/This migration creates no organizations, users, memberships, or invitations/i.test(migration))
     errors.push("migration must declare its zero-data behavior");
 
-  const roleValidationBlock =
+  const roleAllowlist =
     migration.match(
-      /One or more roles are not eligible for batch onboarding[\s\S]*?end if;/i,
-    )?.[0] ?? "";
-  if (/academy_admin/i.test(roleValidationBlock))
+      /select 1 from unnest\(entry_roles\) as role\s+where role <> all\(array\[([\s\S]*?)\]::text\[\]\)/i,
+    )?.[1] ?? "";
+  if (!roleAllowlist)
+    errors.push("missing batch-onboarding role allowlist");
+  if (/['\"]academy_admin['\"]/i.test(roleAllowlist))
     errors.push("batch onboarding must not grant academy_admin");
+
+  for (const dependency of [
+    "extensions.gen_random_bytes(integer)",
+    "extensions.digest(text,text)",
+  ]) {
+    if (!migration.includes(`to_regprocedure('${dependency}')`))
+      errors.push(`missing Batch 21 preflight dependency: ${dependency}`);
+  }
 
   return errors;
 }

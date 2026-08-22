@@ -50,3 +50,20 @@ test("template round-trips and generated exports contain one-time links", () => 
   );
   assert.match(csv, /https:\/\/www\.equivista\.net\/auth\?invite=a{64}/);
 });
+
+test("neutralizes spreadsheet formulas in exported invitation data", () => {
+  const csv = academyInvitationExportCsv(
+    [
+      {
+        email: "=cmd@example.com",
+        fullName: "+malicious",
+        roles: ["rider"],
+        inviteToken: "b".repeat(64),
+        expiresAt: "2026-08-29T00:00:00Z",
+      },
+    ],
+    "https://www.equivista.net",
+  );
+
+  assert.match(csv, /\n'=cmd@example\.com,'\+malicious,rider,/);
+});

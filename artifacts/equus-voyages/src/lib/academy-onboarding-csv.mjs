@@ -52,7 +52,10 @@ function parseCsvRows(source) {
 
 function escapeCsv(value) {
   const text = String(value ?? "");
-  return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+  const spreadsheetSafe = /^[\t\r\n ]*[=+\-@]/.test(text) ? `'${text}` : text;
+  return /[",\r\n]/.test(spreadsheetSafe)
+    ? `"${spreadsheetSafe.replaceAll('"', '""')}"`
+    : spreadsheetSafe;
 }
 
 export function parseAcademyOnboardingCsv(source) {
