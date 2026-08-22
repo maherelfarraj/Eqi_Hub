@@ -40,6 +40,8 @@ export default function AuthPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const isRecoveryRoute = location.pathname.endsWith("/update-password");
+  const inviteToken = new URLSearchParams(location.search).get("invite") ?? "";
+  const hasInvitation = /^[a-f0-9]{64}$/.test(inviteToken);
 
   const [view, setView] = useState<AuthView>(
     isRecoveryRoute ? "updatePassword" : "signIn",
@@ -133,7 +135,12 @@ export default function AuthPage() {
       return;
     }
 
-    navigate("/dashboard", { replace: true });
+    navigate(
+      hasInvitation
+        ? `/onboarding/accept?invite=${encodeURIComponent(inviteToken)}`
+        : "/dashboard",
+      { replace: true },
+    );
   };
 
   const handleSignUp = async (event: FormEvent<HTMLFormElement>) => {
@@ -157,7 +164,12 @@ export default function AuthPage() {
     if (Object.values(nextErrors).some(Boolean)) return;
 
     setLoading(true);
-    const result = await signUp(email.trim(), password, fullName.trim());
+    const result = await signUp(
+      email.trim(),
+      password,
+      fullName.trim(),
+      hasInvitation ? inviteToken : undefined,
+    );
     setLoading(false);
 
     if (result.error) {
@@ -255,6 +267,12 @@ export default function AuthPage() {
         </div>
 
         <section className="rounded-2xl border border-cream-200 bg-white p-6 shadow-sm sm:p-8">
+          {hasInvitation && (view === "signIn" || view === "signUp") ? (
+            <div className="mb-5 flex items-start gap-3 rounded-xl border border-primary-500/20 bg-primary-50 p-3 text-sm text-primary-700" role="status">
+              <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <span>{t("organization.onboarding.authNotice")}</span>
+            </div>
+          ) : null}
           {(view === "signIn" || view === "signUp") && (
             <div
               className="mb-7 grid grid-cols-2 rounded-xl bg-cream-100 p-1"

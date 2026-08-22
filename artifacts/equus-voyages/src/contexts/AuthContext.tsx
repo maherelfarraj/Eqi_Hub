@@ -58,6 +58,7 @@ interface AuthContextType {
     email: string,
     password: string,
     fullName: string,
+    inviteToken?: string,
   ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
@@ -284,13 +285,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    inviteToken?: string,
+  ) => {
+    const redirectPath = inviteToken
+      ? `auth?invite=${encodeURIComponent(inviteToken)}`
+      : "auth";
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: authRedirectUrl("auth"),
+        emailRedirectTo: authRedirectUrl(redirectPath),
       },
     });
     return { error: error?.message ?? null };

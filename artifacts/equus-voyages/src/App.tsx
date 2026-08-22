@@ -23,6 +23,9 @@ const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const MembershipPage = lazy(() => import("@/pages/MembershipPage"));
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 const OrganizationPage = lazy(() => import("@/pages/OrganizationPage"));
+const OnboardingInvitePage = lazy(
+  () => import("@/pages/OnboardingInvitePage"),
+);
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
@@ -77,6 +80,7 @@ function SuspendedPage({
 function AppRoutes() {
   const { user, ready } = useAuth();
   const { i18n } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     const language = i18n.resolvedLanguage ?? i18n.language;
@@ -85,6 +89,8 @@ function AppRoutes() {
   }, [i18n.language, i18n.resolvedLanguage]);
 
   if (!ready) return <RouteSkeleton fullScreen />;
+
+  const invitationToken = new URLSearchParams(location.search).get("invite");
 
   if (!user) {
     return (
@@ -106,6 +112,19 @@ function AppRoutes() {
             </SuspendedPage>
           }
         />
+        <Route
+          path="/onboarding/accept"
+          element={
+            <Navigate
+              to={
+                invitationToken
+                  ? `/auth?invite=${encodeURIComponent(invitationToken)}`
+                  : "/auth"
+              }
+              replace
+            />
+          }
+        />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     );
@@ -114,6 +133,14 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/legal" element={<Navigate to="/legal/terms" replace />} />
+      <Route
+        path="/onboarding/accept"
+        element={
+          <SuspendedPage fullScreen>
+            <OnboardingInvitePage />
+          </SuspendedPage>
+        }
+      />
       <Route
         path="/legal/:document"
         element={
@@ -261,7 +288,19 @@ function AppRoutes() {
           </SuspendedPage>
         }
       />
-      <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/auth"
+        element={
+          <Navigate
+            to={
+              invitationToken
+                ? `/onboarding/accept?invite=${encodeURIComponent(invitationToken)}`
+                : "/dashboard"
+            }
+            replace
+          />
+        }
+      />
     </Routes>
   );
 }

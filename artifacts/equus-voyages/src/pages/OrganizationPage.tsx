@@ -22,6 +22,7 @@ import {
   StatusBadge,
   SurfaceCard,
 } from "@/components/EquiVistaUI";
+import { AcademyOnboarding } from "@/components/AcademyOnboarding";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   type OrganizationMember,
@@ -229,8 +230,9 @@ export default function OrganizationPage() {
       ) : null}
 
       {activeOrganization ? (
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <SurfaceCard className="p-6">
+        <>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <SurfaceCard className="p-6">
             <div className="flex items-start justify-between gap-4">
               <span className="flex size-12 items-center justify-center rounded-full bg-primary-50 text-primary-600">
                 <Building2 className="size-6" aria-hidden="true" />
@@ -269,9 +271,9 @@ export default function OrganizationPage() {
                 </span>
               ) : null}
             </div>
-          </SurfaceCard>
+            </SurfaceCard>
 
-          <SurfaceCard className="overflow-hidden">
+            <SurfaceCard className="overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-cream-200 px-6 py-5">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary-600">
@@ -342,8 +344,12 @@ export default function OrganizationPage() {
                 compact
               />
             )}
-          </SurfaceCard>
-        </div>
+            </SurfaceCard>
+          </div>
+          {canManage ? (
+            <AcademyOnboarding organizationId={activeOrganization.id} />
+          ) : null}
+        </>
       ) : (
         <SurfaceCard className="mt-6">
           <EmptyState
