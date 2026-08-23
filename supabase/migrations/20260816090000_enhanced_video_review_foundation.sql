@@ -643,7 +643,7 @@ on public.video_review_sessions for select to authenticated
 using (
   private.can_manage_video_review(organization_id, rider_id)
   or (
-    private.video_review_audience_visible(public.video_review_sessions)
+    private.video_review_audience_visible(video_review_sessions)
     and private.can_read_approved_video_review(organization_id, rider_id)
   )
 );

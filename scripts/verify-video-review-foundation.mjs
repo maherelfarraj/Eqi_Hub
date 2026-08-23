@@ -92,6 +92,7 @@ export function validateVideoReviewFoundation({
     [/private\.can_guardian_access_rider/, "guardian reads must use verified-link access"],
     [/private\.can_read_approved_video_review/, "rider/guardian output must be approval-gated"],
     [/private\.video_review_audience_visible\(session\)/, "audience reads must require a coach-approved session"],
+    [/private\.video_review_audience_visible\(video_review_sessions\)/, "session SELECT policy must pass its row context"],
     [/video review rider must have an active rider membership in this organization/, "rider context must be tenant-scoped"],
     [/video review horse must belong to this organization/, "horse context must be tenant-scoped"],
     [/video review lesson must belong to this organization, rider, and horse context/, "lesson context must be tenant-scoped"],

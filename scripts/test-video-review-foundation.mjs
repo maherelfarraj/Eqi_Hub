@@ -36,6 +36,17 @@ assert.deepEqual(validateVideoReviewFoundation(fixture), []);
 assert.match(
   validateVideoReviewFoundation({
     ...fixture,
+    migration: migration.replace(
+      "private.video_review_audience_visible(video_review_sessions)",
+      "private.video_review_audience_visible(public.video_review_sessions)",
+    ),
+  }).join("\n"),
+  /session SELECT policy must pass its row context/,
+);
+
+assert.match(
+  validateVideoReviewFoundation({
+    ...fixture,
     migration: migration.replaceAll(
       "private.video_review_audience_visible(session)",
       "true",
