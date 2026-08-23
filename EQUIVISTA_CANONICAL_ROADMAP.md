@@ -59,9 +59,9 @@ This is EquiVista's coach-led rider-development engine. Every video is a tenant-
 | --- | --- | --- |
 | 1 — Video foundation | Mobile/coach/linked-parent and competition uploads; review sessions; original/private file, streaming derivative, thumbnail/key-frame timeline, slow motion; coach tagging, annotations, approval, and approved sharing. | Tenant/RLS and API checks; explicit video/AI consent and withdrawal history; private-by-default storage; no public links; audit upload/view/download/delete/share; riders/guardians see coach-approved output only. |
 | 2 — Coach-reviewed analysis draft | Timestamped approach, take-off, jump, landing, between-fence, fault, course-map, stride/rhythm, and position observations with confidence labels. | FFmpeg/OpenCV and MediaPipe/basic scoring first; coach accepts, edits, or rejects every item; all uncertain or welfare-like signals route as non-diagnostic review alerts. |
-| 3 — Development intelligence | Coach scorecards; side-by-side comparison; rider/horse trend views; annual-plan objectives; Foundation Grades 1–10 and Show Jumping Levels 1–5 evidence. | Promotion and safety gates remain coach-confirmed; differentiate rider-wide trends from horse-specific context; preserve approved evidence and edit history. |
-| 4 — Competition intelligence | Competition-round debriefs, entries/results, external judge comments, readiness checklists, and training-versus-competition comparison. | Coach-approved reporting; no automatic readiness or eligibility decision. |
-| 5 — Academy intelligence | Coach calibration, approved reference library, programme-effectiveness reporting, anonymised academy trend heatmaps, and governed benchmark analytics. | Aggregate/de-identified analytics only; no exposure of internal notes, safeguarding data, or other riders' information. |
+| 3 — Development intelligence | Coach scorecards; side-by-side comparison; rider/horse trend views; annual-plan objectives; Foundation Grades 1–10 and Show Jumping Levels 1–5 evidence. | Consume **only coach-approved or coach-edited** observations; exclude draft and rejected items. Promotion and safety gates remain coach-confirmed; differentiate rider-wide trends from horse-specific context; preserve approved evidence and edit history. |
+| 4 — Competition intelligence | Competition-round debriefs, entries/results, external judge comments, readiness checklists, and training-versus-competition comparison. | Use **only coach-approved or coach-edited** observations; no automatic readiness or eligibility decision. |
+| 5 — Academy intelligence | Coach calibration, approved reference library, programme-effectiveness reporting, anonymised academy trend heatmaps, and governed benchmark analytics. | Consume **only coach-approved or coach-edited** observations. Aggregate/de-identified analytics only; enforce a configurable minimum cohort of **5**, suppress or aggregate smaller cells, and prohibit heatmap drill-down to source records. No exposure of internal notes, safeguarding data, or other riders' information. |
 
 **Release 1 build order:** video data model and private storage policies; role-scoped upload and playback; review sessions and coach frame annotations; approval/share workflow; immutable audit trail and retention/deletion controls. It is the foundation for later Python metrics/Plotly trends, YOLOv8 equine/fence detection, DeepLabCut research, and optional WebRTC/live review, all behind separate acceptance gates.
 
@@ -69,7 +69,7 @@ This is EquiVista's coach-led rider-development engine. Every video is a tenant-
 
 | Capability                      | Status          | Required product work                                                                    |
 | ------------------------------- | --------------- | ---------------------------------------------------------------------------------------- |
-| Horse operations                | Partial         | Lifecycle, ownership, profiles, rider suitability, assignment, availability, booking controls, operational UX, and cost reporting. |
+| Horse operations                | Partial         | Persist and enforce ownership category: **academy**, **personal**, or **guest**. Category controls lifecycle owner, permitted rider/coach assignments, availability, booking rules, facility approval, restrictions, and cost reporting. |
 | Stable operations               | Planned         | Daily care tasks, grooming, turnout, feeding, water, bedding, shift handovers, assigned stable staff, and task evidence. |
 | Horse welfare                   | Foundation only | Vet and soundness records, diagnosis/treatment, vaccinations, dental, farrier, medication, rehabilitation, incidents, reminders, and reports. |
 | Workload, recovery, and restrictions | Planned     | Daily/weekly workload, lesson intensity, jumping rounds, recovery, mandatory rest, injury/vet/quarantine holds, and overwork alerts. |
@@ -207,8 +207,10 @@ This is EquiVista's coach-led rider-development engine. Every video is a tenant-
 5. Deliver optional on-demand flatwork, polework, gymnastics, and controlled
    small-course assignments using a versioned exercise library and coach safety
    envelopes rather than unrestricted LLM instructions.
-6. Support academy, personal, and guest horses with rider–horse compatibility,
-   workload, document, restriction, facility-approval, and supervision gates.
+6. Support academy, personal, and guest horses through a persisted ownership
+   category contract enforced consistently across lifecycle, rider–horse
+   compatibility, assignments, availability, booking controls, documents,
+   restrictions, facility approval, supervision gates, and cost reporting.
 7. Deliver the under-18 Guardian View Portal with read-only progress,
    configurable approvals, weekly summaries, multi-guardian relationships, and
    automatic access review at adulthood.
