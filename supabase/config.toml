@@ -35,3 +35,8 @@ allowed_mime_types = ["video/mp4", "video/quicktime", "video/webm"]
 public = false
 file_size_limit = "500MiB"
 allowed_mime_types = ["video/mp4", "video/quicktime", "video/webm"]
+
+[storage.buckets."video-reviews"]
+public = false
+file_size_limit = "500MiB"
+allowed_mime_types = ["video/mp4", "video/quicktime", "video/webm"]

@@ -21,14 +21,23 @@ test("active organization persona gives academy admin precedence", () => {
   );
 });
 
-test("guardian navigation and direct routes stay inside the view-only portal", () => {
+test("guardian navigation allows the private video review list and its single-session detail route", () => {
   assert.match(
     persona,
-    /guardianNavigationPaths = new Set\(\["\/guardian", "\/safety", "\/settings"\]\)/,
+    /guardianNavigationPaths = new Set\(\[\s*"\/guardian",\s*"\/safety",\s*"\/video-review",\s*"\/settings",\s*\]\)/,
+  );
+  assert.ok(
+    persona.includes(
+      "const guardianVideoReviewDetailPath = /^\\/video-review\\/[^/]+$/;",
+    ),
   );
   assert.match(
     persona,
-    /return guardianNavigationPaths\.has\(pathname\) \? null : "\/guardian"/,
+    /return isGuardianPortalPath\(pathname\) \? null : "\/guardian"/,
+  );
+  assert.match(
+    persona,
+    /guardianVideoReviewDetailPath\.test\(pathname\)/,
   );
   assert.match(
     shell,

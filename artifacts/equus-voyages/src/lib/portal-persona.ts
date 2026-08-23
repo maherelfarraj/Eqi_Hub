@@ -1,8 +1,14 @@
 export type PortalPersona = "guardian" | "academy_admin" | "default";
 
-const guardianNavigationPaths = new Set(["/guardian", "/safety", "/settings"]);
+const guardianNavigationPaths = new Set([
+  "/guardian",
+  "/safety",
+  "/video-review",
+  "/settings",
+]);
 const academyAdminNavigationPaths = new Set([
   "/dashboard",
+  "/video-review",
   "/lessons",
   "/horses",
   "/safety",
@@ -10,6 +16,14 @@ const academyAdminNavigationPaths = new Set([
   "/organization",
   "/settings",
 ]);
+const guardianVideoReviewDetailPath = /^\/video-review\/[^/]+$/;
+
+function isGuardianPortalPath(pathname: string): boolean {
+  return (
+    guardianNavigationPaths.has(pathname) ||
+    guardianVideoReviewDetailPath.test(pathname)
+  );
+}
 
 export function resolvePortalPersona(
   activeOrganizationRoles: readonly string[] = [],
@@ -28,7 +42,7 @@ export function isNavigationPathVisible(
   path: string,
   hasGuardianRole: boolean,
 ): boolean {
-  if (persona === "guardian") return guardianNavigationPaths.has(path);
+  if (persona === "guardian") return isGuardianPortalPath(path);
   if (persona === "academy_admin") {
     return academyAdminNavigationPaths.has(path);
   }
@@ -41,5 +55,5 @@ export function portalRedirect(
   pathname: string,
 ): string | null {
   if (persona !== "guardian") return null;
-  return guardianNavigationPaths.has(pathname) ? null : "/guardian";
+  return isGuardianPortalPath(pathname) ? null : "/guardian";
 }

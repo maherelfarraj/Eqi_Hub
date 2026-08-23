@@ -38,6 +38,7 @@ const navigation = [
   { path: "/guardian", labelKey: "nav.guardianView", icon: ShieldCheck },
   { path: "/safety", labelKey: "nav.safety", icon: FileSignature },
   { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
+  { path: "/video-review", labelKey: "nav.videoReview", icon: Video },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
