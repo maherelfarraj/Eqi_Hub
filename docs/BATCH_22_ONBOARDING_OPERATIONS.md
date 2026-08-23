@@ -24,6 +24,9 @@ not send email, create a delivery job, or retain the plaintext token.
 - Replacement links use 256 bits of randomness and store only SHA-256 hashes.
 - Replacement reasons use a fixed allowlist so free-form personal data cannot be
   copied into the audit log.
+- The replacement timestamp remains after an operator profile is deleted; its
+  nullable actor reference becomes `System`. Batch creators remain protected by
+  the existing non-null history-preserving relationship.
 - Batch 22 creates no organizations, accounts, memberships, invitations, email,
   or production records.
 
@@ -53,11 +56,12 @@ not send email, create a delivery job, or retain the plaintext token.
 9. Apply the Batch 22 rollback, verify Batch 21 data and APIs remain intact, then
    reapply and repeat the acceptance suite.
 
-## Production hold point
+## Production release controls
 
-This branch and its draft pull request do not apply migrations, deploy the
-frontend, create invitations, send email, or mutate production. Production
-deployment requires separate action-time authorization after review and staging.
+Apply the schema changes through the version-controlled Git integration only.
+Schedule the short metadata-locking migration during a low-traffic window and
+monitor it until complete. No invitation, account, membership, or email delivery
+is created by either migration.
 
 ## Development verification — 2026-08-23
 

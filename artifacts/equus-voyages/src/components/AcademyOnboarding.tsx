@@ -182,39 +182,45 @@ export function AcademyOnboarding({
         </OutlineButton>
       </div>
 
-      <div className="grid gap-4 border-b border-cream-200 bg-cream-50/40 px-6 py-5 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          icon={UserPlus}
-          label={t("organization.onboarding.metrics.pending")}
-          value={metrics.data?.pendingInvitations ?? 0}
-          detail={t("organization.onboarding.metrics.activeBatches", {
-            count: metrics.data?.activeBatches ?? 0,
-          })}
-        />
-        <MetricCard
-          icon={Clock3}
-          label={t("organization.onboarding.metrics.expiring")}
-          value={metrics.data?.expiringIn24Hours ?? 0}
-          detail={t("organization.onboarding.metrics.expiringWeek", {
-            count: metrics.data?.expiringIn7Days ?? 0,
-          })}
-        />
-        <MetricCard
-          icon={ShieldCheck}
-          label={t("organization.onboarding.metrics.acceptance")}
-          value={`${metrics.data?.acceptanceRate ?? 0}%`}
-          detail={t("organization.onboarding.metrics.accepted", {
-            count: metrics.data?.acceptedInvitations ?? 0,
-          })}
-        />
-        <MetricCard
-          icon={RefreshCw}
-          label={t("organization.onboarding.metrics.replacements")}
-          value={metrics.data?.replacementLinksGenerated ?? 0}
-          detail={t("organization.onboarding.metrics.expired", {
-            count: metrics.data?.expiredInvitations ?? 0,
-          })}
-        />
+      <div className="border-b border-cream-200 bg-cream-50/40 px-6 py-5">
+        {metrics.error ? (
+          <ErrorState message={metrics.error} />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              icon={UserPlus}
+              label={t("organization.onboarding.metrics.pending")}
+              value={metrics.data?.pendingInvitations ?? 0}
+              detail={t("organization.onboarding.metrics.activeBatches", {
+                count: metrics.data?.activeBatches ?? 0,
+              })}
+            />
+            <MetricCard
+              icon={Clock3}
+              label={t("organization.onboarding.metrics.expiring")}
+              value={metrics.data?.expiringIn24Hours ?? 0}
+              detail={t("organization.onboarding.metrics.expiringWeek", {
+                count: metrics.data?.expiringIn7Days ?? 0,
+              })}
+            />
+            <MetricCard
+              icon={ShieldCheck}
+              label={t("organization.onboarding.metrics.acceptance")}
+              value={`${metrics.data?.acceptanceRate ?? 0}%`}
+              detail={t("organization.onboarding.metrics.accepted", {
+                count: metrics.data?.acceptedInvitations ?? 0,
+              })}
+            />
+            <MetricCard
+              icon={RefreshCw}
+              label={t("organization.onboarding.metrics.replacements")}
+              value={metrics.data?.replacementLinksGenerated ?? 0}
+              detail={t("organization.onboarding.metrics.expired", {
+                count: metrics.data?.expiredInvitations ?? 0,
+              })}
+            />
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
@@ -493,7 +499,11 @@ export function AcademyOnboarding({
                     <button
                       type="button"
                       onClick={() => reissueInvitation(invitation.id)}
-                      disabled={actions.working || invitation.reissueCount >= 5}
+                      disabled={
+                        actions.working ||
+                        invitations.loading ||
+                        invitation.reissueCount >= 5
+                      }
                       className="inline-flex items-center gap-2 text-sm font-semibold text-primary-700 disabled:opacity-50"
                     >
                       <RefreshCw className="size-4" aria-hidden="true" />
@@ -502,7 +512,7 @@ export function AcademyOnboarding({
                     <button
                       type="button"
                       onClick={() => revokeInvitation(invitation.id)}
-                      disabled={actions.working}
+                      disabled={actions.working || invitations.loading}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-error-700 disabled:opacity-50"
                     >
                       <XCircle className="size-4" aria-hidden="true" />

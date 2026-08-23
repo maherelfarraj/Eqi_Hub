@@ -5,11 +5,18 @@ import test from "node:test";
 import { validateBatch22OnboardingOperations } from "./verify-batch22-onboarding-operations.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const [migration, rollback, acceptance] = await Promise.all([
+const [migration, hardening, rollback, acceptance] = await Promise.all([
   readFile(
     resolve(
       root,
       "supabase/migrations/20260823090000_batch22_onboarding_operations.sql",
+    ),
+    "utf8",
+  ),
+  readFile(
+    resolve(
+      root,
+      "supabase/migrations/20260823100000_batch22_onboarding_operations_hardening.sql",
     ),
     "utf8",
   ),
@@ -70,4 +77,16 @@ test("acceptance covers isolation, rotation, cooldown, and secret-free audit", (
   ]) {
     assert.match(acceptance, new RegExp(guard));
   }
+});
+
+test("follow-up migration preserves replacement history without blocking profile retirement", () => {
+  assert.match(hardening, /on delete set null/i);
+  assert.match(
+    hardening,
+    /reissue_count > 0 and last_reissued_at is not null/i,
+  );
+  assert.doesNotMatch(
+    hardening,
+    /insert into (?:auth\.)?users|insert into public\.academy_onboarding/i,
+  );
 });

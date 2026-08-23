@@ -77,6 +77,7 @@ end
 $rider_denials$;
 
 reset role;
+select set_config('request.jwt.claims', '', true);
 select set_config('request.jwt.claim.sub', 'b2200000-0000-0000-0000-000000000001', true);
 set local role authenticated;
 
@@ -172,9 +173,17 @@ begin
   ) then
     raise exception 'replacement audit activity was missing';
   end if;
+  if not exists (
+    select 1 from public.audit_events
+    where organization_id = 'b2210000-0000-0000-0000-000000000001'
+      and action = 'onboarding.invitation_reissued'
+  ) then
+    raise exception 'replacement audit was not visible';
+  end if;
   if exists (
     select 1 from public.audit_events
-    where action = 'onboarding.invitation_reissued'
+    where organization_id = 'b2210000-0000-0000-0000-000000000001'
+      and action = 'onboarding.invitation_reissued'
       and (
         coalesce(after_data::text, '') like '%@example.test%'
         or coalesce(after_data::text, '') ~ '[a-f0-9]{64}'

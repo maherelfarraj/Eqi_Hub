@@ -128,7 +128,11 @@ export function validateBatch22OnboardingOperations(migration, rollback) {
       /'onboarding\.invitation_reissued',[\s\S]*?jsonb_build_object\(([\s\S]*?)\)\s*\n\s*\);/i,
     )?.[1] ?? "";
   if (!auditPayload) errors.push("replacement audit payload is missing");
-  if (/invite_token|replacement_token|'email'/i.test(auditPayload))
+  if (
+    /invite_token|replacement_token|(?:^|[^a-z_])email(?:$|[^a-z_])|\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/i.test(
+      auditPayload,
+    )
+  )
     errors.push("replacement audit must not contain email or token material");
 
   if (
@@ -145,8 +149,14 @@ export function validateBatch22OnboardingOperations(migration, rollback) {
   )
     errors.push("activity feed must include the onboarding lifecycle");
   if (
-    !/drop function if exists public\.get_academy_onboarding_metrics/i.test(
-      rollback,
+    ![
+      "get_academy_onboarding_metrics",
+      "get_academy_onboarding_activity",
+      "reissue_academy_onboarding_invitation",
+    ].every((name) =>
+      new RegExp(`drop function if exists public\\.${name}`, "i").test(
+        rollback,
+      ),
     )
   )
     errors.push("rollback must remove Batch 22 public operations");

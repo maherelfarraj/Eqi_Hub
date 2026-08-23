@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { QueryState } from "./types";
 
@@ -105,27 +105,35 @@ export async function resolveAccessibleRiderIds(
 export function useQuery<T>(
   fn: () => Promise<T>,
   deps: unknown[] = [],
+  options: { resetOnChange?: boolean } = {},
 ): QueryState<T> & { refetch: () => void } {
   const [data, setData] = useState<T>(null as T);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestSequence = useRef(0);
+  const resetOnChange = options.resetOnChange === true;
 
-  const run = useCallback(async () => {
+  const run = useCallback(async (resetPrevious = false) => {
+    const requestId = ++requestSequence.current;
     setLoading(true);
     setError(null);
+    if (resetPrevious) setData(null as T);
     try {
-      setData(await fn());
+      const nextData = await fn();
+      if (requestId === requestSequence.current) setData(nextData);
     } catch (e: any) {
-      setError(e?.message ?? "Something went wrong");
+      if (requestId === requestSequence.current) {
+        setError(e?.message ?? "Something went wrong");
+      }
     } finally {
-      setLoading(false);
+      if (requestId === requestSequence.current) setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   useEffect(() => {
-    run();
-  }, [run]);
+    run(resetOnChange);
+  }, [run, resetOnChange]);
   return { data, loading, error, refetch: run };
 }
 
