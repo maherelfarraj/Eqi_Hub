@@ -125,6 +125,14 @@ const expectedBuckets = new Map([
       mimeTypes: ["video/mp4", "video/quicktime", "video/webm"],
     },
   ],
+  [
+    "video-reviews",
+    {
+      public: false,
+      fileSizeLimit: "500MiB",
+      mimeTypes: ["video/mp4", "video/quicktime", "video/webm"],
+    },
+  ],
 ]);
 
 if (!configText.includes('[storage]\nfile_size_limit = "500MiB"')) {
@@ -159,9 +167,9 @@ for (const [index, match] of headers.entries()) {
   });
 }
 
-if (buckets.size !== inventory.counts.storage_buckets) {
+if (buckets.size !== expectedBuckets.size) {
   throw new Error(
-    `Expected ${inventory.counts.storage_buckets} buckets, found ${buckets.size}`,
+    `Expected ${expectedBuckets.size} declared buckets, found ${buckets.size}`,
   );
 }
 

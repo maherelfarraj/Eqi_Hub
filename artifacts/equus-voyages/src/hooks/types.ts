@@ -295,6 +295,97 @@ export interface UploadVideoInput {
   sessionDate: string;
 }
 
+// ---- Private video review (foundation only; no automated analysis) ----
+export type VideoReviewConsentStatus =
+  | "pending"
+  | "granted"
+  | "withdrawn"
+  | "not_required";
+export type VideoReviewStatus =
+  | "draft"
+  | "ready_for_review"
+  | "reviewed"
+  | "coach_approved"
+  | "archived";
+export type VideoReviewRetentionState =
+  | "active"
+  | "retention_due"
+  | "deletion_requested"
+  | "deleted";
+export type VideoReviewClipStatus =
+  | "uploaded"
+  | "derivatives_ready"
+  | "failed"
+  | "deleted";
+export type VideoReviewAnnotationType =
+  | "tag"
+  | "text"
+  | "voice"
+  | "drawing"
+  | "frame";
+
+export interface VideoReviewSession {
+  id: string;
+  organizationId: string;
+  riderId: string;
+  riderName: string | null;
+  horseName: string | null;
+  coachName: string | null;
+  title: string;
+  lessonId: string | null;
+  trainingObjective: string | null;
+  competitionReference: string | null;
+  consentStatus: VideoReviewConsentStatus;
+  reviewStatus: VideoReviewStatus;
+  retentionState: VideoReviewRetentionState;
+  retentionDeleteAfter: string | null;
+  coachApprovedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VideoReviewClip {
+  id: string;
+  sessionId: string;
+  originalFilename: string;
+  originalContentType: string;
+  originalSizeBytes: number;
+  durationMs: number | null;
+  processingStatus: VideoReviewClipStatus;
+  streamingReady: boolean;
+  thumbnailReady: boolean;
+  keyframeTimeline: Array<{ atMs?: number; label?: string }>;
+  slowMotionRates: number[];
+  createdAt: string;
+}
+
+export interface VideoReviewAnnotation {
+  id: string;
+  clipId: string;
+  type: VideoReviewAnnotationType;
+  visibility: "coach_only" | "approved_audience";
+  timecodeMs: number | null;
+  payload: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface VideoReviewActivity {
+  id: string;
+  clipId: string | null;
+  action: "upload" | "view" | "download" | "edit" | "approve" | "share" | "delete";
+  occurredAt: string;
+}
+
+export interface CreateVideoReviewSessionInput {
+  riderId: string;
+  coachId: string;
+  horseId?: string | null;
+  title: string;
+  lessonId?: string | null;
+  trainingObjective?: string;
+  competitionReference?: string;
+}
+
 // ---- Lessons ----
 export interface Lesson {
   id: string;

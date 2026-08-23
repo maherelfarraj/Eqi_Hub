@@ -30,6 +30,7 @@ const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const VideoReviewPage = lazy(() => import("@/pages/VideoReviewPage"));
 
 function RouteSkeleton({ fullScreen = false }: { fullScreen?: boolean }) {
   const { t } = useTranslation();
@@ -187,6 +188,22 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <AnalysisPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/video-review"
+          element={
+            <SuspendedPage>
+              <VideoReviewPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/video-review/:id"
+          element={
+            <SuspendedPage>
+              <VideoReviewPage />
             </SuspendedPage>
           }
         />

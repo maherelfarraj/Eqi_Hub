@@ -1,0 +1,1 @@
+- [Private video review approval boundary](video-review-approval-boundary.md) — audience output is invalidated whenever clips or audience-visible annotations change.
