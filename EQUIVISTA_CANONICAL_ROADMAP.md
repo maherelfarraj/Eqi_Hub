@@ -51,12 +51,31 @@ The percentages are planning estimates, not a count of migrations or pull reques
 | Advanced coaching insights and longitudinal recommendations            | Planned         | Convert accepted frame-linked findings into safe corrections, exercises, trends, and human-reviewed recommendations. |
 | AI operations console, evaluation, cost, and model-quality monitoring  | Foundation only | Build operator UI, alerts, evaluation datasets, and budgets.           |
 
+### Enhanced Video Intelligence delivery specification
+
+This is EquiVista's coach-led rider-development engine. Every video is a tenant-scoped, private record linked by IDs to academy, rider, horse, coach, lesson/training objective or competition entry, level/exercise, and capture context. AI creates a confidence-labelled **draft** only; it cannot diagnose welfare or soundness, clear a rider, approve a height change, award a badge, or replace coach judgement.
+
+| Release | Scope | Mandatory controls |
+| --- | --- | --- |
+| 1 — Video foundation | Mobile/coach/linked-parent and competition uploads; review sessions; original/private file, streaming derivative, thumbnail/key-frame timeline, slow motion; coach tagging, annotations, approval, and approved sharing. | Tenant/RLS and API checks; explicit video/AI consent and withdrawal history; private-by-default storage; no public links; audit upload/view/download/delete/share; riders/guardians see coach-approved output only. |
+| 2 — Coach-reviewed analysis draft | Timestamped approach, take-off, jump, landing, between-fence, fault, course-map, stride/rhythm, and position observations with confidence labels. | FFmpeg/OpenCV and MediaPipe/basic scoring first; coach accepts, edits, or rejects every item; all uncertain or welfare-like signals route as non-diagnostic review alerts. |
+| 3 — Development intelligence | Coach scorecards; side-by-side comparison; rider/horse trend views; annual-plan objectives; Foundation Grades 1–10 and Show Jumping Levels 1–5 evidence. | Consume **only coach-approved or coach-edited** observations; exclude draft and rejected items. Promotion and safety gates remain coach-confirmed; differentiate rider-wide trends from horse-specific context; preserve approved evidence and edit history. |
+| 4 — Competition intelligence | Competition-round debriefs, entries/results, external judge comments, readiness checklists, and training-versus-competition comparison. | Use **only coach-approved or coach-edited** observations; no automatic readiness or eligibility decision. |
+| 5 — Academy intelligence | Coach calibration, approved reference library, programme-effectiveness reporting, anonymised academy trend heatmaps, and governed benchmark analytics. | Consume **only coach-approved or coach-edited** observations. Aggregate/de-identified analytics only; enforce a configurable minimum cohort of **5**, suppress or aggregate smaller cells, and prohibit heatmap drill-down to source records. No exposure of internal notes, safeguarding data, or other riders' information. |
+
+**Release 1 build order:** video data model and private storage policies; role-scoped upload and playback; review sessions and coach frame annotations; approval/share workflow; immutable audit trail and retention/deletion controls. It is the foundation for later Python metrics/Plotly trends, YOLOv8 equine/fence detection, DeepLabCut research, and optional WebRTC/live review, all behind separate acceptance gates.
+
 ## Track C — Academy operations
 
 | Capability                      | Status          | Required product work                                                                    |
 | ------------------------------- | --------------- | ---------------------------------------------------------------------------------------- |
-| Horse operations                | Partial         | Lifecycle, assignment, availability, ownership, and operational UX.                      |
-| Horse welfare                   | Foundation only | Health records, vaccinations, farrier, medication, incidents, reminders, and reports.    |
+| Horse operations                | Partial         | Persist and enforce ownership category: **academy**, **personal**, or **guest**. Category controls lifecycle owner, permitted rider/coach assignments, availability, booking rules, facility approval, restrictions, and cost reporting. |
+| Stable operations               | Planned         | Daily care tasks, grooming, turnout, feeding, water, bedding, shift handovers, assigned stable staff, and task evidence. |
+| Horse welfare                   | Foundation only | Vet and soundness records, diagnosis/treatment, vaccinations, dental, farrier, medication, rehabilitation, incidents, reminders, and reports. |
+| Workload, recovery, and restrictions | Planned     | Daily/weekly workload, lesson intensity, jumping rounds, recovery, mandatory rest, injury/vet/quarantine holds, and overwork alerts. |
+| Feed, tack, and stable inventory | Planned        | Horse feed plans, stock and reorder alerts, supplements, equipment register, fitting, maintenance, damage, and safety inspections. |
+| Competition and transport readiness | Planned     | Travel documents, vaccination checks, transport, grooming, tack, feed, assigned groom, recovery, and post-event health checks. |
+| Stable and horse operations dashboard | Planned   | Horse-at-risk, workload, welfare, booking-block, care-log, vet/farrier, inventory, task, and cost alerts by academy. |
 | Rider pathway                   | Foundation only | Deliver coach-validated lesson reports, structured competencies, evidence-backed progress, goals, rider reflections, achievement approval, and level advancement. |
 | Lesson scheduling               | Partial         | Resource availability, recurring schedules, conflicts, cancellations, and notifications. |
 | Lesson booking and attendance   | Foundation only | Self-service booking, waitlists, check-in, absence handling, then coach-approved lesson closeout and training output. |
@@ -188,8 +207,10 @@ The percentages are planning estimates, not a count of migrations or pull reques
 5. Deliver optional on-demand flatwork, polework, gymnastics, and controlled
    small-course assignments using a versioned exercise library and coach safety
    envelopes rather than unrestricted LLM instructions.
-6. Support academy, personal, and guest horses with rider–horse compatibility,
-   workload, document, restriction, facility-approval, and supervision gates.
+6. Support academy, personal, and guest horses through a persisted ownership
+   category contract enforced consistently across lifecycle, rider–horse
+   compatibility, assignments, availability, booking controls, documents,
+   restrictions, facility approval, supervision gates, and cost reporting.
 7. Deliver the under-18 Guardian View Portal with read-only progress,
    configurable approvals, weekly summaries, multi-guardian relationships, and
    automatic access review at adulthood.
@@ -199,6 +220,10 @@ The percentages are planning estimates, not a count of migrations or pull reques
 9. Add optional assignment packs, AI analysis, coach review, horse assessment,
    facility/equipment booking, and supervised-session entitlements only after
    Phase 2 commercial and legal acceptance.
+10. Deliver Stable & Horse Management: horse lifecycle and ownership, care and
+    stable-task workflows, health/vet/farrier records, workload/recovery rules,
+    availability and booking lockouts, feed/tack inventory, competition readiness,
+    horse-cost reporting, and role-scoped operational dashboards.
 
 ### Phase 4 — Finance and procurement suite
 
