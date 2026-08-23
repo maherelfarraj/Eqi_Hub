@@ -203,6 +203,43 @@
         "batchCounts": "{{total}} إجمالي · {{pending}} معلقة · {{accepted}} مقبولة · {{revoked}} مغلقة",
         "closeBatch": "إغلاق الدفعة وإلغاء الروابط المعلقة",
         "noBatches": "لم يتم إنشاء دفعات تهيئة بعد.",
+        "viewInvitations": "عرض الدعوات",
+        "invitationMonitor": "مراقبة دورة حياة الدعوات",
+        "selectBatch": "اختر دفعة لمراجعة حالات الدعوات وضوابطها.",
+        "replacementCount": "تم إنشاء {{count}} روابط بديلة",
+        "replacementCount_zero": "لم يتم إنشاء روابط بديلة",
+        "replacementCount_one": "تم إنشاء رابط بديل واحد",
+        "replacementCount_two": "تم إنشاء رابطين بديلين",
+        "replacementCount_few": "تم إنشاء {{count}} روابط بديلة",
+        "replacementCount_many": "تم إنشاء {{count}} رابطاً بديلاً",
+        "replacementCount_other": "تم إنشاء {{count}} رابط بديل",
+        "generateReplacement": "إنشاء رابط بديل",
+        "revokeInvitation": "إلغاء الدعوة",
+        "auditActivity": "سجل تدقيق التهيئة",
+        "noActivity": "لم يتم تسجيل أي نشاط تهيئة.",
+        "metrics": {
+          "pending": "الدعوات المعلقة",
+          "activeBatches": "{{count}} دفعات نشطة",
+          "expiring": "تنتهي خلال 24 ساعة",
+          "expiringWeek": "{{count}} تنتهي خلال 7 أيام",
+          "acceptance": "معدل القبول",
+          "accepted": "{{count}} دعوات مقبولة",
+          "replacements": "الروابط البديلة",
+          "expired": "{{count}} دعوات منتهية"
+        },
+        "invitationStatuses": {
+          "pending": "معلقة",
+          "accepted": "مقبولة",
+          "revoked": "ملغاة",
+          "expired": "منتهية"
+        },
+        "actions": {
+          "onboarding_batch_created": "تم إنشاء دفعة تهيئة",
+          "onboarding_invitation_accepted": "تم قبول الدعوة",
+          "onboarding_invitation_revoked": "تم إلغاء الدعوة",
+          "onboarding_batch_closed": "تم إغلاق دفعة التهيئة",
+          "onboarding_invitation_reissued": "تم إنشاء دعوة بديلة"
+        },
         "statuses": {
           "active": "نشطة",
           "closed": "مغلقة",
