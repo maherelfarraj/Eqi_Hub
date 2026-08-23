@@ -199,6 +199,39 @@
         "batchCounts": "{{total}} total · {{pending}} pending · {{accepted}} accepted · {{revoked}} closed",
         "closeBatch": "Close batch and revoke pending links",
         "noBatches": "No onboarding batches have been created.",
+        "viewInvitations": "View invitations",
+        "invitationMonitor": "Invitation lifecycle monitor",
+        "selectBatch": "Select a batch to review its invitation status and controls.",
+        "replacementCount": "{{count}} replacement links generated",
+        "replacementCount_one": "{{count}} replacement link generated",
+        "replacementCount_other": "{{count}} replacement links generated",
+        "generateReplacement": "Generate replacement link",
+        "revokeInvitation": "Revoke invitation",
+        "auditActivity": "Onboarding audit activity",
+        "noActivity": "No onboarding activity has been recorded.",
+        "metrics": {
+          "pending": "Pending invitations",
+          "activeBatches": "{{count}} active batches",
+          "expiring": "Expiring in 24 hours",
+          "expiringWeek": "{{count}} expire within 7 days",
+          "acceptance": "Acceptance rate",
+          "accepted": "{{count}} accepted invitations",
+          "replacements": "Replacement links",
+          "expired": "{{count}} expired invitations"
+        },
+        "invitationStatuses": {
+          "pending": "Pending",
+          "accepted": "Accepted",
+          "revoked": "Revoked",
+          "expired": "Expired"
+        },
+        "actions": {
+          "onboarding_batch_created": "Onboarding batch created",
+          "onboarding_invitation_accepted": "Invitation accepted",
+          "onboarding_invitation_revoked": "Invitation revoked",
+          "onboarding_batch_closed": "Onboarding batch closed",
+          "onboarding_invitation_reissued": "Replacement invitation generated"
+        },
         "statuses": {
           "active": "Active",
           "closed": "Closed",
