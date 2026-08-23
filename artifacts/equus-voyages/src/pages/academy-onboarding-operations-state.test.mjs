@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [component, hook, english, arabic] = await Promise.all([
+const [component, hook, sharedHook, english, arabic] = await Promise.all([
   readFile(
     new URL("../components/AcademyOnboarding.tsx", import.meta.url),
     "utf8",
@@ -11,6 +11,7 @@ const [component, hook, english, arabic] = await Promise.all([
     new URL("../hooks/use-academy-onboarding.ts", import.meta.url),
     "utf8",
   ),
+  readFile(new URL("../hooks/_shared.ts", import.meta.url), "utf8"),
   readFile(new URL("../i18n/en.json", import.meta.url), "utf8"),
   readFile(new URL("../i18n/ar.json", import.meta.url), "utf8"),
 ]);
@@ -26,8 +27,11 @@ test("Batch 22 exposes metrics, lifecycle monitoring, and audit activity", () =>
     assert.match(hook, new RegExp(rpc));
   }
   assert.match(component, /metrics\.data\?\.pendingInvitations/);
+  assert.match(component, /metrics\.error \? \(\s*<ErrorState/);
   assert.match(component, /invitationStatuses\.\$\{invitation\.status\}/);
   assert.match(component, /auditActivity/);
+  assert.match(hook, /resetOnChange: true/);
+  assert.match(sharedHook, /requestId === requestSequence\.current/);
 });
 
 test("replacement links are one-time downloads and are not sent by the frontend", () => {

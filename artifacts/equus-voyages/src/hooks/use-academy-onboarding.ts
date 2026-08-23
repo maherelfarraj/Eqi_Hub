@@ -164,27 +164,31 @@ export function useAcademyOnboardingInvitations(
   organizationId: string | undefined,
   batchId: string | undefined,
 ) {
-  return useQuery<AcademyOnboardingInvitation[]>(async () => {
-    if (!organizationId || !batchId) return [];
-    const { data, error } = await supabase.rpc(
-      "get_academy_onboarding_invitations",
-      { p_organization_id: organizationId, p_batch_id: batchId },
-    );
-    if (error) throw error;
+  return useQuery<AcademyOnboardingInvitation[]>(
+    async () => {
+      if (!organizationId || !batchId) return [];
+      const { data, error } = await supabase.rpc(
+        "get_academy_onboarding_invitations",
+        { p_organization_id: organizationId, p_batch_id: batchId },
+      );
+      if (error) throw error;
 
-    return ((data ?? []) as InvitationOperationsRow[]).map((invitation) => ({
-      id: invitation.id,
-      email: invitation.email,
-      fullName: invitation.full_name,
-      roles: invitation.roles,
-      status: invitation.status,
-      expiresAt: invitation.expires_at,
-      acceptedAt: invitation.accepted_at,
-      createdAt: invitation.created_at,
-      reissueCount: Number(invitation.reissue_count),
-      lastReissuedAt: invitation.last_reissued_at,
-    }));
-  }, [organizationId, batchId]);
+      return ((data ?? []) as InvitationOperationsRow[]).map((invitation) => ({
+        id: invitation.id,
+        email: invitation.email,
+        fullName: invitation.full_name,
+        roles: invitation.roles,
+        status: invitation.status,
+        expiresAt: invitation.expires_at,
+        acceptedAt: invitation.accepted_at,
+        createdAt: invitation.created_at,
+        reissueCount: Number(invitation.reissue_count),
+        lastReissuedAt: invitation.last_reissued_at,
+      }));
+    },
+    [organizationId, batchId],
+    { resetOnChange: true },
+  );
 }
 
 export function useAcademyOnboardingMetrics(
