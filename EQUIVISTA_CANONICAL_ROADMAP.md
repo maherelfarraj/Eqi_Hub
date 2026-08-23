@@ -55,8 +55,13 @@ The percentages are planning estimates, not a count of migrations or pull reques
 
 | Capability                      | Status          | Required product work                                                                    |
 | ------------------------------- | --------------- | ---------------------------------------------------------------------------------------- |
-| Horse operations                | Partial         | Lifecycle, assignment, availability, ownership, and operational UX.                      |
-| Horse welfare                   | Foundation only | Health records, vaccinations, farrier, medication, incidents, reminders, and reports.    |
+| Horse operations                | Partial         | Lifecycle, ownership, profiles, rider suitability, assignment, availability, booking controls, operational UX, and cost reporting. |
+| Stable operations               | Planned         | Daily care tasks, grooming, turnout, feeding, water, bedding, shift handovers, assigned stable staff, and task evidence. |
+| Horse welfare                   | Foundation only | Vet and soundness records, diagnosis/treatment, vaccinations, dental, farrier, medication, rehabilitation, incidents, reminders, and reports. |
+| Workload, recovery, and restrictions | Planned     | Daily/weekly workload, lesson intensity, jumping rounds, recovery, mandatory rest, injury/vet/quarantine holds, and overwork alerts. |
+| Feed, tack, and stable inventory | Planned        | Horse feed plans, stock and reorder alerts, supplements, equipment register, fitting, maintenance, damage, and safety inspections. |
+| Competition and transport readiness | Planned     | Travel documents, vaccination checks, transport, grooming, tack, feed, assigned groom, recovery, and post-event health checks. |
+| Stable and horse operations dashboard | Planned   | Horse-at-risk, workload, welfare, booking-block, care-log, vet/farrier, inventory, task, and cost alerts by academy. |
 | Rider pathway                   | Foundation only | Deliver coach-validated lesson reports, structured competencies, evidence-backed progress, goals, rider reflections, achievement approval, and level advancement. |
 | Lesson scheduling               | Partial         | Resource availability, recurring schedules, conflicts, cancellations, and notifications. |
 | Lesson booking and attendance   | Foundation only | Self-service booking, waitlists, check-in, absence handling, then coach-approved lesson closeout and training output. |
@@ -199,6 +204,10 @@ The percentages are planning estimates, not a count of migrations or pull reques
 9. Add optional assignment packs, AI analysis, coach review, horse assessment,
    facility/equipment booking, and supervised-session entitlements only after
    Phase 2 commercial and legal acceptance.
+10. Deliver Stable & Horse Management: horse lifecycle and ownership, care and
+    stable-task workflows, health/vet/farrier records, workload/recovery rules,
+    availability and booking lockouts, feed/tack inventory, competition readiness,
+    horse-cost reporting, and role-scoped operational dashboards.
 
 ### Phase 4 — Finance and procurement suite
 
