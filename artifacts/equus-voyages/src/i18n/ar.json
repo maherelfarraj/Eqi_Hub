@@ -70,6 +70,7 @@
       "videoReview": "مراجعة الفيديو",
       "lessons": "الدروس",
       "horses": "الخيول",
+      "stableOperations": "عمليات الإسطبل",
       "membership": "العضوية",
       "payments": "المدفوعات",
       "billing": "الفواتير",
@@ -1148,6 +1149,44 @@
       "working": "جارٍ التنفيذ...",
       "retry": "إعادة المحاولة",
       "close": "إغلاق"
+    },
+    "stableOperations": {
+      "eyebrow": "عمليات الإسطبل",
+      "title": "معاينة عمليات المنشأة",
+      "description": "هذه معاينة للقراءة فقط لواجهة عمليات الإسطبل القادمة. لا يمكن تنفيذ أي إجراءات حية.",
+      "riderMessage": "وحدة عمليات الإسطبل قيد التطوير حالياً. ستتلقى إشعارات آمنة ومعتمدة حول توفر الخيول عند إطلاق الميزة.",
+      "metrics": {
+        "activeHorses": "الخيول النشطة",
+        "welfareHolds": "الإيقافات الصحية",
+        "workload": "عبء العمل الأسبوعي",
+        "pendingTasks": "المهام المعلقة"
+      },
+      "metricDetails": {
+        "activeInStable": "في الإسطبل الحالي",
+        "veterinaryReview": "بانتظار مراجعة بيطرية",
+        "lessonsScheduled": "دروس مجدولة",
+        "careActions": "إجراءات رعاية روتينية"
+      },
+      "horseList": {
+        "title": "معاينة قائمة الخيول",
+        "description": "معاينة لقائمة الخيول التشغيلية، تعرض الحالة المشتقة والفرسان المعينين.",
+        "searchPlaceholder": "ابحث عن الخيول بالاسم...",
+        "noHorses": "لم يتم العثور على خيول في المنظمة الحالية.",
+        "riderCount": "فارس مرتبط",
+        "riderCount_plural": "{{count}} فرسان مرتبطين",
+        "riderCount_zero": "لا يوجد فرسان مرتبطين",
+        "riderCount_one": "فارس مرتبط واحد",
+        "riderCount_two": "فارسان مرتبطان",
+        "riderCount_few": "{{count}} فرسان مرتبطين",
+        "riderCount_many": "{{count}} فارساً مرتبطاً",
+        "riderCount_other": "{{count}} فارس مرتبط"
+      },
+      "status": {
+        "available": "متاح",
+        "resting": "في راحة",
+        "welfareHold": "إيقاف صحي",
+        "unavailable": "غير متاح"
+      }
     }
   }
 }
