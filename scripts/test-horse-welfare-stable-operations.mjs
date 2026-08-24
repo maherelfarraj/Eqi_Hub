@@ -48,6 +48,26 @@ has(
   /grant execute on function public\.get_horse_welfare_workspace/,
   "Staff records must be accessed through guarded RPCs",
 );
+const clinicalScheduleSignature =
+  "uuid, uuid, uuid, text, text, text, text, text, text, text, text, timestamptz, text, text, text, text, text";
+assert.ok(
+  files.migration.includes(
+    `revoke all on function public.upsert_horse_clinical_schedule(${clinicalScheduleSignature}) from public, anon;`,
+  ),
+  "Clinical schedule revoke must use the exact declared RPC signature",
+);
+assert.ok(
+  files.migration.includes(
+    `grant execute on function public.upsert_horse_clinical_schedule(${clinicalScheduleSignature}) to authenticated;`,
+  ),
+  "Clinical schedule grant must use the exact declared RPC signature",
+);
+assert.ok(
+  files.rollback.includes(
+    `drop function if exists public.upsert_horse_clinical_schedule(${clinicalScheduleSignature});`,
+  ),
+  "Clinical schedule rollback must use the exact declared RPC signature",
+);
 has(
   "migration",
   /feed_name_en[\s\S]*feed_name_ar[\s\S]*instructions_en[\s\S]*instructions_ar/,

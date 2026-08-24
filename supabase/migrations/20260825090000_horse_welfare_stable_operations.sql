@@ -1306,7 +1306,7 @@ grant execute on function public.get_horse_welfare_workspace(uuid) to authentica
 grant execute on function public.upsert_horse_welfare_profile(uuid, uuid, text, text, integer, numeric, text, text, text, boolean) to authenticated;
 grant execute on function public.upsert_horse_feeding_plan(uuid, uuid, uuid, text, text, text, text, text, smallint, text, text, date, date, text) to authenticated;
 grant execute on function public.upsert_horse_daily_care_log(uuid, uuid, date, boolean, boolean, boolean, boolean, boolean, text, text, text) to authenticated;
-grant execute on function public.upsert_horse_clinical_schedule(uuid, uuid, uuid, text, text, text, text, text, text, text, timestamptz, text, text, text, text, text) to authenticated;
+grant execute on function public.upsert_horse_clinical_schedule(uuid, uuid, uuid, text, text, text, text, text, text, text, text, timestamptz, text, text, text, text, text) to authenticated;
 grant execute on function public.record_horse_welfare_observation(uuid, uuid, text, text, text, text, text, text, timestamptz, text) to authenticated;
 grant execute on function public.resolve_horse_welfare_observation(uuid, uuid, text) to authenticated;
 grant execute on function public.upsert_horse_emergency_protocol(uuid, uuid, text, text, text, text, text, text, text, text, text, boolean) to authenticated;
