@@ -973,7 +973,10 @@ begin
     raise exception 'All five coach scorecard domains are required before approval' using errcode = '23514';
   end if;
   update public.video_release_2_review_revisions
-  set status = 'superseded', superseded_at = now()
+  set status = 'superseded',
+      superseded_at = now(),
+      approved_by = null,
+      approved_at = null
   where session_id = v_session.id and status = 'approved';
   update public.video_release_2_review_revisions
   set status = 'approved', approved_by = auth.uid(), approved_at = now()

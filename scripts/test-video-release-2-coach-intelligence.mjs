@@ -168,6 +168,11 @@ mustContain(
 );
 mustContain(
   migration,
+  /set status = 'superseded',[\s\S]*approved_by = null,[\s\S]*approved_at = null/,
+  "superseding a prior approval must clear approval fields before changing status",
+);
+mustContain(
+  migration,
   /get_video_release_2_approved_feedback[\s\S]*Approved feedback is only available to enrolled adult riders/,
   "approved-feedback RPC must deny parents and non-pilot users",
 );
