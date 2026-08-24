@@ -94,6 +94,7 @@ export function validateStableHorseOperationsFoundation({
     [/array\['academy_admin', 'coach'\]/, "private operational access must be limited to academy admins and coaches"],
     [/create function private\.audit_horse_operation_change/, "append-only audit writer is required"],
     [/insert into public\.audit_events/, "generic audit events must be written"],
+    [/v_entity_id := v_horse_id;\s+v_horse_id := null;/, "horse deletion cascade audit must retain identity without a deleting horse foreign key"],
     [/horse_operation_audit_staff_select/, "audit client access must be select-only"],
     [/grant select on public\.horse_operation_audit_events to authenticated;/, "audit table must not grant client mutations"],
     [/revoke all on function private\.audit_horse_operation_change\(\) from public, anon, authenticated, service_role;/, "audit writer must be internal only"],

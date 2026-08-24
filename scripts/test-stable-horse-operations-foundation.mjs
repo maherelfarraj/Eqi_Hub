@@ -80,6 +80,13 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace("v_entity_id := v_horse_id;\n    v_horse_id := null;", "cascade audit keeps deleting horse foreign key"),
+  }).join("\n"),
+  /cascade audit must retain identity without a deleting horse foreign key/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace("limited horse availability requires staff confirmation", "limited assignment bypassed"),
   }).join("\n"),
   /limited assignments must require staff confirmation/,

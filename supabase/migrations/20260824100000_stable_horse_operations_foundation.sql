@@ -409,6 +409,14 @@ begin
   v_organization_id := coalesce((v_after ->> 'organization_id')::uuid, (v_before ->> 'organization_id')::uuid);
   v_horse_id := nullif(coalesce(v_after ->> 'horse_id', v_before ->> 'horse_id'), '')::uuid;
   v_entity_id := coalesce((v_after ->> 'id')::uuid, (v_before ->> 'id')::uuid, v_horse_id);
+  -- Canonical horse deletion cascades to profiles. Preserve the former horse
+  -- identity in the event while avoiding a foreign key to the deleting row.
+  if tg_table_name = 'horse_operation_profiles'
+    and tg_op = 'DELETE'
+    and pg_trigger_depth() > 1 then
+    v_entity_id := v_horse_id;
+    v_horse_id := null;
+  end if;
 
   insert into public.horse_operation_audit_events (
     organization_id, horse_id, entity_type, entity_id, action, actor_user_id, before_data, after_data
