@@ -33,6 +33,8 @@ import {
   resolvePortalPersona,
 } from "@/lib/portal-persona";
 
+import { useVideoRelease2Access } from "@/hooks/use-video-release-2";
+
 const navigation = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { path: "/progress", labelKey: "nav.progress", icon: ChartNoAxesCombined },
@@ -40,6 +42,7 @@ const navigation = [
   { path: "/safety", labelKey: "nav.safety", icon: FileSignature },
   { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
   { path: "/video-review", labelKey: "nav.videoReview", icon: Video },
+  { path: "/video-intelligence", labelKey: "nav.videoIntelligence", icon: Video },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
   { path: "/stable-operations", labelKey: "nav.stableOperations", icon: Warehouse },
@@ -62,6 +65,7 @@ export default function AppShell() {
   const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
   const portalPersona = resolvePortalPersona(activeOrganization?.roles);
   const redirectPath = portalRedirect(portalPersona, location.pathname);
+  const videoRelease2Access = useVideoRelease2Access();
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -146,6 +150,8 @@ export default function AppShell() {
                   hasRole("academy_admin") ||
                   hasRole("stable_manager") ||
                   hasRole("platform_admin")) &&
+                (path !== "/video-intelligence" ||
+                  Boolean(videoRelease2Access.data?.canManage || videoRelease2Access.data?.canViewApproved)) &&
                 isNavigationPathVisible(
                   portalPersona,
                   path,
