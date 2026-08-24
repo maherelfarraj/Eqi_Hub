@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
@@ -23,6 +23,22 @@ function run(command, args, input) {
   if (result.status !== 0) throw new Error(`${command} failed.\n${result.stdout ?? ""}\n${result.stderr ?? ""}`);
   return result.stdout;
 }
+
+function runAsync(command, args, input) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd: root });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (status) => resolve({ status, stdout, stderr }));
+    if (input) child.stdin.end(input);
+    else child.stdin.end();
+  });
+}
+
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 try {
   run(initdb, ["--no-locale", "--encoding=UTF8", "--username=postgres", "-D", dataDirectory]);
@@ -72,6 +88,72 @@ try {
     end;
     $$;
   `);
+  run(psql, connection, `
+    insert into public.academy_staff_profiles (
+      id, organization_id, user_id, staff_type, display_name_en, display_name_ar, active, created_by, updated_by
+    ) values (
+      '50000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
+      '30000000-0000-0000-0000-000000000001', 'coach', 'Concurrent Coach', 'مدرب متزامن', true,
+      '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+    insert into public.academy_resources (
+      id, organization_id, resource_type, name_en, name_ar, capacity, active, created_by, updated_by
+    ) values (
+      '60000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
+      'arena', 'Concurrent Arena', 'ساحة متزامنة', 10, true,
+      '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+  `);
+
+  const concurrentShift = runAsync(psql, [...connection, "-c", `
+    begin;
+    insert into public.academy_staff_shifts (
+      id, organization_id, staff_profile_id, status, starts_at, ends_at, duties_en, duties_ar, created_by, updated_by
+    ) values (
+      '70000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
+      '50000000-0000-0000-0000-000000000001', 'scheduled', '2030-01-01T09:00:00Z', '2030-01-01T11:00:00Z',
+      'Concurrent shift one', 'المناوبة الأولى', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+    select pg_sleep(1);
+    commit;
+  `]);
+  await wait(150);
+  const overlappingShift = runAsync(psql, [...connection, "-c", `
+    insert into public.academy_staff_shifts (
+      id, organization_id, staff_profile_id, status, starts_at, ends_at, duties_en, duties_ar, created_by, updated_by
+    ) values (
+      '70000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001',
+      '50000000-0000-0000-0000-000000000001', 'scheduled', '2030-01-01T10:00:00Z', '2030-01-01T12:00:00Z',
+      'Concurrent shift two', 'المناوبة الثانية', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+  `]);
+  const shiftResults = await Promise.all([concurrentShift, overlappingShift]);
+  assert.equal(shiftResults.filter((result) => result.status === 0).length, 1, "Concurrent overlapping staff shifts must accept exactly one insert.");
+
+  const concurrentBooking = runAsync(psql, [...connection, "-c", `
+    begin;
+    insert into public.academy_resource_bookings (
+      id, organization_id, resource_id, status, starts_at, ends_at, purpose_en, purpose_ar, created_by, updated_by
+    ) values (
+      '80000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001',
+      '60000000-0000-0000-0000-000000000001', 'confirmed', '2030-01-02T09:00:00Z', '2030-01-02T11:00:00Z',
+      'Concurrent booking one', 'الحجز الأول', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+    select pg_sleep(1);
+    commit;
+  `]);
+  await wait(150);
+  const overlappingBooking = runAsync(psql, [...connection, "-c", `
+    insert into public.academy_resource_bookings (
+      id, organization_id, resource_id, status, starts_at, ends_at, purpose_en, purpose_ar, created_by, updated_by
+    ) values (
+      '80000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001',
+      '60000000-0000-0000-0000-000000000001', 'confirmed', '2030-01-02T10:00:00Z', '2030-01-02T12:00:00Z',
+      'Concurrent booking two', 'الحجز الثاني', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'
+    );
+  `]);
+  const bookingResults = await Promise.all([concurrentBooking, overlappingBooking]);
+  assert.equal(bookingResults.filter((result) => result.status === 0).length, 1, "Concurrent overlapping resource bookings must accept exactly one insert.");
   console.log("Academy Operations migration applied successfully to an isolated temporary PostgreSQL instance.");
 } finally {
   if (started) spawnSync(pgCtl, ["-D", dataDirectory, "-m", "immediate", "stop"], { encoding: "utf8" });

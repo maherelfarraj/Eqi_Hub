@@ -3,6 +3,8 @@
 -- No payment processing, disbursement, tax calculation, or Rider/Guardian access.
 begin;
 
+create extension if not exists btree_gist;
+
 create table public.academy_operations_feature_flags (
   organization_id uuid primary key references public.organizations(id) on delete cascade,
   enabled boolean not null default false,
@@ -170,6 +172,24 @@ create table public.academy_resource_bookings (
   check (char_length(btrim(purpose_en)) between 3 and 2000),
   check (char_length(btrim(purpose_ar)) between 3 and 2000)
 );
+
+alter table public.academy_staff_shifts
+  add constraint academy_staff_shifts_no_overlapping_active_ranges
+  exclude using gist (
+    organization_id with =,
+    staff_profile_id with =,
+    tstzrange(starts_at, ends_at, '[)') with &&
+  )
+  where (status <> 'cancelled');
+
+alter table public.academy_resource_bookings
+  add constraint academy_resource_bookings_no_overlapping_active_ranges
+  exclude using gist (
+    organization_id with =,
+    resource_id with =,
+    tstzrange(starts_at, ends_at, '[)') with &&
+  )
+  where (status <> 'cancelled');
 
 create table public.academy_lesson_capacity_controls (
   id uuid primary key default gen_random_uuid(),
