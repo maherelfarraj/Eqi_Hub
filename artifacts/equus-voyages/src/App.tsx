@@ -32,6 +32,7 @@ const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const StableOperationsPage = lazy(() => import("@/pages/StableOperationsPage"));
 const VideoReviewPage = lazy(() => import("@/pages/VideoReviewPage"));
+const VideoIntelligencePage = lazy(() => import("@/pages/VideoIntelligencePage"));
 
 function RouteSkeleton({ fullScreen = false }: { fullScreen?: boolean }) {
   const { t } = useTranslation();
@@ -197,6 +198,14 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <VideoReviewPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/video-intelligence"
+          element={
+            <SuspendedPage>
+              <VideoIntelligencePage />
             </SuspendedPage>
           }
         />
