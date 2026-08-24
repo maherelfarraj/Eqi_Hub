@@ -453,7 +453,7 @@ begin
   )
   values (
     v_organization_id,
-    'stable_horse_operations',
+    'system',
     (select auth.uid()),
     case tg_table_name
       when 'horse_operation_profiles' then 'horse_operation_profile'

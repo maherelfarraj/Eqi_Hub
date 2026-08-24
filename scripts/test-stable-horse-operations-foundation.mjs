@@ -117,6 +117,13 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace("'system',\n    (select auth.uid()),", "'stable_horse_operations',\n    (select auth.uid()),"),
+  }).join("\n"),
+  /generic audit records must use a canonical source value/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace("limited horse availability requires staff confirmation", "limited assignment bypassed"),
   }).join("\n"),
   /limited assignments must require staff confirmation/,

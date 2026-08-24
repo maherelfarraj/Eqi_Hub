@@ -95,6 +95,7 @@ export function validateStableHorseOperationsFoundation({
     [/array\['academy_admin', 'coach'\]/, "private operational access must be limited to academy admins and coaches"],
     [/create function private\.audit_horse_operation_change/, "append-only audit writer is required"],
     [/insert into public\.audit_events/, "generic audit events must be written"],
+    [/'system',\s+\(select auth\.uid\(\)\),\s+case tg_table_name/, "generic audit records must use a canonical source value"],
     [/tg_table_name in \('horse_operation_profiles', 'horse_operation_holds', 'horse_care_schedules'\)/, "horse deletion cascade audit must cover every cascading operational record"],
     [/v_entity_id := v_horse_id;\s+end if;\s+v_horse_id := null;/, "horse deletion cascade audit must retain identity without a deleting horse foreign key"],
     [/tg_table_name = 'stable_tasks'[\s\S]*?and \(v_after ->> 'horse_id'\) is null[\s\S]*?v_horse_id := null;/, "horse deletion task audit must not restore a deleting horse foreign key"],
