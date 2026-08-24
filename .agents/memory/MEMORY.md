@@ -1,2 +1,3 @@
 - [Private video review approval boundary](video-review-approval-boundary.md) — audience output is invalidated whenever clips or audience-visible annotations change.
 - [Horse assignment serialization](horse-assignment-serialization.md) — operational eligibility changes and assignments must serialize per horse.
+- [GitHub feature branch updates](github-feature-branch-updates.md) — verify slash-named branches with matching refs and update them through the plural refs endpoint.
