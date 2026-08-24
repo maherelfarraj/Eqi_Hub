@@ -80,9 +80,22 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
-    migration: migration.replace("v_entity_id := v_horse_id;\n    v_horse_id := null;", "cascade audit keeps deleting horse foreign key"),
+    migration: migration.replace(
+      "v_entity_id := v_horse_id;\n    end if;\n    v_horse_id := null;",
+      "cascade audit keeps deleting horse foreign key",
+    ),
   }).join("\n"),
   /cascade audit must retain identity without a deleting horse foreign key/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "'horse_operation_profiles', 'horse_operation_holds', 'horse_care_schedules'",
+      "'horse_operation_profiles'",
+    ),
+  }).join("\n"),
+  /must cover every cascading operational record/,
 );
 assert.match(
   validateStableHorseOperationsFoundation({
