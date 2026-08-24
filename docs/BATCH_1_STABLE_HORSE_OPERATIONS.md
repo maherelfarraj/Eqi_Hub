@@ -26,7 +26,7 @@ The browser route is deliberately preview-only. It reads existing horse informat
 | Rider | No direct private-table access | Only horses assigned to the rider |
 | Guardian | No direct private-table access | Only horses attached to a verified guardian/rider link |
 
-Private welfare, care, and task notes never appear in the curated availability function. The safe output contains only horse identity, the approval-gated availability state, and a short staff-curated availability message; internal ownership and workload configuration are not audience fields. All operational tables and helpers are organization-scoped; policies fail closed for any role outside the matrix.
+Private welfare, care, and task notes never appear in the curated availability function. The safe output contains only horse identity, the approval-gated availability state, and a short staff-curated availability message; internal ownership and workload configuration are not audience fields. A guardian cannot use a direct guardian horse-access row as a substitute for the verified guardian/rider relationship. All operational tables and helpers are organization-scoped; policies fail closed for any role outside the matrix.
 
 ## Audit behavior
 

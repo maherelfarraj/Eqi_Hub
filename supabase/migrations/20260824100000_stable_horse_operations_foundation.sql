@@ -211,7 +211,7 @@ as $$
         and direct_access.horse_id = p_horse_id
         and direct_access.profile_id = (select auth.uid())
         and direct_access.active
-        and direct_access.access_type in ('rider', 'guardian')
+        and direct_access.access_type = 'rider'
     )
     or exists (
       select 1

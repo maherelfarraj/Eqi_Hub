@@ -225,6 +225,16 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace(
+      "and direct_access.access_type = 'rider'",
+      "and direct_access.access_type in ('rider', 'guardian')",
+    ),
+  }).join("\n"),
+  /safe availability must require verified rider links for every guardian path/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     page: `${page}\nvoid supabase.from("stable_tasks").insert({});`,
   }).join("\n"),
   /must not perform operational mutations/,

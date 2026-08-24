@@ -141,6 +141,15 @@ export function validateStableHorseOperationsFoundation({
   ) {
     errors.push("safe availability must mark non-active horses unavailable");
   }
+  const safeAvailabilityAccessHelper =
+    migration.match(/create function private\.can_read_safe_horse_availability[\s\S]*?\$\$;/i)?.[0] ?? "";
+  if (
+    !/direct_access\.access_type = 'rider'/.test(safeAvailabilityAccessHelper) ||
+    /direct_access\.access_type in \('rider', 'guardian'\)/.test(safeAvailabilityAccessHelper) ||
+    !/rider_access\.access_type = 'rider'[\s\S]*?private\.can_guardian_access_rider/.test(safeAvailabilityAccessHelper)
+  ) {
+    errors.push("safe availability must require verified rider links for every guardian path");
+  }
   const staffRosterFunction =
     migration.match(/create function public\.get_stable_operations_roster[\s\S]*?\$\$;/i)?.[0] ?? "";
   if (!/private\.can_manage_stable_operations\(p_organization_id\)/.test(staffRosterFunction)) {
