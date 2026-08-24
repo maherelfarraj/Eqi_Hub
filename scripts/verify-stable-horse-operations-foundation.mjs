@@ -87,6 +87,7 @@ export function validateStableHorseOperationsFoundation({
     [/horse operation profiles cannot be reassigned/, "profile identity must be immutable"],
     [/horse operation holds cannot be reassigned/, "hold identity must be immutable"],
     [/create trigger horse_operation_holds_prepare_delete/, "hold deletion must use the horse operation lock"],
+    [/create trigger horses_horse_operation_status_lock/, "canonical horse status changes must use the horse operation lock"],
     [/private\.can_read_safe_horse_availability/, "safe availability access helper is required"],
     [/private\.can_guardian_access_rider/, "guardian safe output must use verified-link access"],
     [/create function public\.get_safe_horse_availability/, "curated safe availability output is required"],
@@ -114,6 +115,12 @@ export function validateStableHorseOperationsFoundation({
   if (/ownership_type|workload_limit_minutes_7d/i.test(safeAvailabilityFunction)) {
     errors.push("safe availability output must not expose internal ownership or workload configuration");
   }
+  if (
+    !/when horse\.status <> 'active' then 'unavailable'/.test(safeAvailabilityFunction) ||
+    !/when horse\.status <> 'active' then 'This horse is not active for lesson assignment\.'/.test(safeAvailabilityFunction)
+  ) {
+    errors.push("safe availability must mark non-active horses unavailable");
+  }
   const staffRosterFunction =
     migration.match(/create function public\.get_stable_operations_roster[\s\S]*?\$\$;/i)?.[0] ?? "";
   if (!/private\.can_manage_stable_operations\(p_organization_id\)/.test(staffRosterFunction)) {
@@ -140,6 +147,20 @@ export function validateStableHorseOperationsFoundation({
     !/drop function if exists private\.prepare_horse_operation_hold_delete\(\)/i.test(rollback)
   ) {
     errors.push("hold delete guard rollback is missing");
+  }
+  const horseStatusLock =
+    migration.match(/create function private\.lock_horse_operation_status_change[\s\S]*?\$\$;/i)?.[0] ?? "";
+  if (
+    !/new\.status is distinct from old\.status/.test(horseStatusLock) ||
+    !/perform private\.lock_horse_operation\(old\.organization_id, old\.id\);/.test(horseStatusLock)
+  ) {
+    errors.push("canonical horse status changes must acquire the horse operation lock");
+  }
+  if (
+    !/drop trigger if exists horses_horse_operation_status_lock/i.test(rollback) ||
+    !/drop function if exists private\.lock_horse_operation_status_change\(\)/i.test(rollback)
+  ) {
+    errors.push("horse status lock rollback is missing");
   }
   if (!/drop trigger if exists horse_operation_profiles_prevent_delete/i.test(rollback)
     || !/drop function if exists private\.prevent_horse_operation_profile_delete\(\)/i.test(rollback)) {

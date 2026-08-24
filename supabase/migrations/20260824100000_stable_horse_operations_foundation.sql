@@ -348,6 +348,21 @@ begin
 end;
 $$;
 
+create function private.lock_horse_operation_status_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.status is distinct from old.status
+    and old.organization_id is not null then
+    perform private.lock_horse_operation(old.organization_id, old.id);
+  end if;
+  return new;
+end;
+$$;
+
 create function private.prepare_horse_care_schedule()
 returns trigger
 language plpgsql
@@ -601,11 +616,13 @@ as $$
     horse.id,
     horse.name,
     case
+      when horse.status <> 'active' then 'unavailable'
       when profile.availability_approved is not true then 'unavailable'
       when active_hold.id is not null then active_hold.safe_availability_state
       else profile.availability_state
     end,
     case
+      when horse.status <> 'active' then 'This horse is not active for lesson assignment.'
       when profile.availability_approved is not true then 'Availability has not been approved.'
       when active_hold.id is not null then active_hold.safe_message
       when profile.availability_state = 'available' then 'Available for suitable lesson assignment.'
@@ -675,6 +692,9 @@ for each row execute function private.prepare_horse_operation_hold();
 create trigger horse_operation_holds_prepare_delete
 before delete on public.horse_operation_holds
 for each row execute function private.prepare_horse_operation_hold_delete();
+create trigger horses_horse_operation_status_lock
+before update of status on public.horses
+for each row execute function private.lock_horse_operation_status_change();
 create trigger horse_care_schedules_prepare
 before insert or update on public.horse_care_schedules
 for each row execute function private.prepare_horse_care_schedule();
@@ -728,6 +748,7 @@ revoke all on function private.can_read_safe_horse_availability(uuid, uuid) from
 revoke all on function private.prepare_horse_operation_profile() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_operation_hold() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_operation_hold_delete() from public, anon, authenticated, service_role;
+revoke all on function private.lock_horse_operation_status_change() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_care_schedule() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_stable_task() from public, anon, authenticated, service_role;
 revoke all on function private.audit_horse_operation_change() from public, anon, authenticated, service_role;

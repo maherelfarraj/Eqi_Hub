@@ -2,6 +2,7 @@
 begin;
 
 drop trigger if exists lessons_horse_operation_assignment_guard on public.lessons;
+drop trigger if exists horses_horse_operation_status_lock on public.horses;
 drop trigger if exists stable_tasks_audit on public.stable_tasks;
 drop trigger if exists horse_care_schedules_audit on public.horse_care_schedules;
 drop trigger if exists horse_operation_holds_audit on public.horse_operation_holds;
@@ -21,6 +22,7 @@ drop function if exists private.audit_horse_operation_change();
 drop function if exists private.prepare_stable_task();
 drop function if exists private.prepare_horse_care_schedule();
 drop function if exists private.prepare_horse_operation_hold_delete();
+drop function if exists private.lock_horse_operation_status_change();
 drop function if exists private.prepare_horse_operation_hold();
 drop function if exists private.prevent_horse_operation_profile_delete();
 drop function if exists private.prepare_horse_operation_profile();

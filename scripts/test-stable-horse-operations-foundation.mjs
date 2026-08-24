@@ -67,8 +67,8 @@ assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
     migration: migration.replace(
-      "  perform private.lock_horse_operation(old.organization_id, old.horse_id);\n  return old;\nend;\n$$;\n\ncreate function private.prepare_horse_care_schedule",
-      "  hold deletion lock removed\n  return old;\nend;\n$$;\n\ncreate function private.prepare_horse_care_schedule",
+      "  perform private.lock_horse_operation(old.organization_id, old.horse_id);\n  return old;\nend;\n$$;\n\ncreate function private.lock_horse_operation_status_change",
+      "  hold deletion lock removed\n  return old;\nend;\n$$;\n\ncreate function private.lock_horse_operation_status_change",
     ),
   }).join("\n"),
   /hold deletion must verify staff access and acquire the horse operation lock/,
@@ -82,6 +82,26 @@ assert.match(
     ),
   }).join("\n"),
   /hold deletion must use the horse operation lock/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "when horse.status <> 'active' then 'unavailable'",
+      "non-active horses treated as available",
+    ),
+  }).join("\n"),
+  /safe availability must mark non-active horses unavailable/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "perform private.lock_horse_operation(old.organization_id, old.id);",
+      "canonical status lock removed",
+    ),
+  }).join("\n"),
+  /canonical horse status changes must acquire the horse operation lock/,
 );
 assert.match(
   validateStableHorseOperationsFoundation({
