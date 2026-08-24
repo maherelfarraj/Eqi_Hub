@@ -1173,6 +1173,7 @@
       },
       "status": {
         "available": "Available",
+    "limited": "Limited",
         "resting": "Resting",
         "welfareHold": "Welfare Hold",
         "unavailable": "Unavailable"

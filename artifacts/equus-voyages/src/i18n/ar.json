@@ -1183,6 +1183,7 @@
       },
       "status": {
         "available": "متاح",
+    "limited": "متاح بشكل محدود",
         "resting": "في راحة",
         "welfareHold": "إيقاف صحي",
         "unavailable": "غير متاح"

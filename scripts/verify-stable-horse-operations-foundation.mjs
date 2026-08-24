@@ -89,6 +89,8 @@ export function validateStableHorseOperationsFoundation({
     [/private\.can_read_safe_horse_availability/, "safe availability access helper is required"],
     [/private\.can_guardian_access_rider/, "guardian safe output must use verified-link access"],
     [/create function public\.get_safe_horse_availability/, "curated safe availability output is required"],
+    [/create function public\.get_stable_operations_roster/, "staff roster RPC is required for coach preview access"],
+    [/grant execute on function public\.get_stable_operations_roster\(uuid\) to authenticated;/, "staff roster RPC must grant authenticated execution only"],
     [/safe_message text\n\)/, "safe availability output must stop at curated fields"],
     [/private_welfare_note text/, "private welfare notes are required"],
     [/private\.can_manage_stable_operations/, "staff permission helper is required"],
@@ -110,6 +112,11 @@ export function validateStableHorseOperationsFoundation({
     migration.match(/create function public\.get_safe_horse_availability[\s\S]*?\$\$;/i)?.[0] ?? "";
   if (/ownership_type|workload_limit_minutes_7d/i.test(safeAvailabilityFunction)) {
     errors.push("safe availability output must not expose internal ownership or workload configuration");
+  }
+  const staffRosterFunction =
+    migration.match(/create function public\.get_stable_operations_roster[\s\S]*?\$\$;/i)?.[0] ?? "";
+  if (!/private\.can_manage_stable_operations\(p_organization_id\)/.test(staffRosterFunction)) {
+    errors.push("staff roster RPC must remain restricted to stable operations staff");
   }
   const profileAndHoldPrepares =
     migration.match(/create function private\.prepare_horse_operation_(?:profile|hold)[\s\S]*?\$\$;/gi) ?? [];

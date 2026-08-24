@@ -13,6 +13,7 @@ drop trigger if exists horse_operation_profiles_prevent_delete on public.horse_o
 drop trigger if exists horse_operation_profiles_prepare on public.horse_operation_profiles;
 
 drop function if exists public.get_safe_horse_availability(uuid);
+drop function if exists public.get_stable_operations_roster(uuid);
 drop function if exists private.enforce_lesson_horse_operation_assignment();
 drop function if exists public.assert_horse_assignment_allowed(uuid, uuid, timestamptz, integer, uuid, boolean);
 drop function if exists private.audit_horse_operation_change();

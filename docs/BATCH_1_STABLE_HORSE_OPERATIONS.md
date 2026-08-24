@@ -32,6 +32,8 @@ Private welfare, care, and task notes never appear in the curated availability f
 
 Changes to profiles, holds, schedules, and tasks write both the generic `audit_events` stream and a dedicated private `horse_operation_audit_events` history. When a canonical horse is deleted, its operational profile, hold, and care-schedule cascades retain private audit records without live horse foreign keys; linked stable tasks retain their organization scope and become unassigned. Authenticated clients can only select the dedicated history through the staff policy; they cannot insert, update, or delete audit rows.
 
+The preview reads the private roster through a dedicated staff-only RPC for Academy Admins and Coaches. Riders and guardians never query the canonical horse roster from this surface; they receive only the existing curated availability RPC output.
+
 ## Validation and rollback
 
 Run:

@@ -124,6 +124,16 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace(
+      "and private.can_manage_stable_operations(p_organization_id)\n  group by horse.id",
+      "group by horse.id",
+    ),
+  }).join("\n"),
+  /staff roster RPC must remain restricted to stable operations staff/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace("limited horse availability requires staff confirmation", "limited assignment bypassed"),
   }).join("\n"),
   /limited assignments must require staff confirmation/,

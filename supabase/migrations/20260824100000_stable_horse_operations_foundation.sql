@@ -611,6 +611,39 @@ as $$
     and private.can_read_safe_horse_availability(p_organization_id, horse.id);
 $$;
 
+create function public.get_stable_operations_roster(p_organization_id uuid)
+returns table (
+  horse_id uuid,
+  horse_name text,
+  breed text,
+  photo_url text,
+  horse_status text,
+  rider_count integer
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    horse.id,
+    horse.name,
+    horse.breed,
+    horse.photo_url,
+    horse.status,
+    count(rider_access.profile_id)::integer
+  from public.horses as horse
+  left join public.horse_access_assignments as rider_access
+    on rider_access.organization_id = horse.organization_id
+    and rider_access.horse_id = horse.id
+    and rider_access.active
+    and rider_access.access_type = 'rider'
+  where horse.organization_id = p_organization_id
+    and private.can_manage_stable_operations(p_organization_id)
+  group by horse.id, horse.name, horse.breed, horse.photo_url, horse.status
+  order by horse.name;
+$$;
+
 create trigger horse_operation_profiles_prepare
 before insert or update on public.horse_operation_profiles
 for each row execute function private.prepare_horse_operation_profile();
@@ -678,10 +711,12 @@ revoke all on function private.audit_horse_operation_change() from public, anon,
 revoke all on function private.enforce_lesson_horse_operation_assignment() from public, anon, authenticated, service_role;
 revoke all on function public.assert_horse_assignment_allowed(uuid, uuid, timestamptz, integer, uuid, boolean) from public, anon;
 revoke all on function public.get_safe_horse_availability(uuid) from public, anon;
+revoke all on function public.get_stable_operations_roster(uuid) from public, anon;
 grant execute on function private.can_manage_stable_operations(uuid) to authenticated;
 grant execute on function private.can_read_safe_horse_availability(uuid, uuid) to authenticated;
 grant execute on function public.assert_horse_assignment_allowed(uuid, uuid, timestamptz, integer, uuid, boolean) to authenticated;
 grant execute on function public.get_safe_horse_availability(uuid) to authenticated;
+grant execute on function public.get_stable_operations_roster(uuid) to authenticated;
 
 grant select, insert, update, delete on public.horse_operation_profiles to authenticated;
 grant select, insert, update, delete on public.horse_operation_holds to authenticated;

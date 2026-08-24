@@ -10,7 +10,7 @@ import {
   Warehouse,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useHorses } from "@/hooks/use-horses";
+import { useStableOperationsPreview } from "@/hooks/use-stable-operations-preview";
 import {
   EmptyState,
   ErrorState,
@@ -24,13 +24,16 @@ import {
 export default function StableOperationsPage() {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
-  const { data: horses, loading, error, refetch } = useHorses();
-  const [searchQuery, setSearchQuery] = useState("");
-
   const canViewStaffPreview =
     hasRole("platform_admin") ||
     hasRole("academy_admin") ||
     hasRole("coach");
+  const { data: preview, loading, error, refetch } =
+    useStableOperationsPreview(canViewStaffPreview);
+  const [searchQuery, setSearchQuery] = useState("");
+  const horses = preview?.audience === "staff" ? preview.horses : [];
+  const safeAvailability =
+    preview?.audience === "rider" ? preview.availability : [];
 
   const metrics = useMemo(() => {
     if (!horses) return { active: 0, resting: 0, welfare: 0, pending: 0 };
@@ -62,7 +65,7 @@ export default function StableOperationsPage() {
     );
   }
 
-  // View for rider-only personas showing safe approved availability messaging
+  // Riders and guardians only receive the curated safe availability contract.
   if (!canViewStaffPreview) {
     return (
       <div className="mx-auto max-w-4xl">
@@ -78,6 +81,30 @@ export default function StableOperationsPage() {
             <p className="max-w-md text-text-secondary">
               {t("stableOperations.riderMessage")}
             </p>
+            {safeAvailability.length > 0 && (
+              <ul className="mt-6 w-full divide-y divide-cream-100 text-left">
+                {safeAvailability.map((horse) => (
+                  <li key={horse.id} className="py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="font-semibold text-espresso">{horse.name}</p>
+                      <StatusBadge
+                        status={
+                          horse.availabilityState === "available"
+                            ? "active"
+                            : "pending"
+                        }
+                        label={t(
+                          `stableOperations.status.${horse.availabilityState}`,
+                        )}
+                      />
+                    </div>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      {horse.safeMessage}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </SurfaceCard>
       </div>
@@ -197,7 +224,7 @@ export default function StableOperationsPage() {
                       <p className="truncate text-sm text-text-secondary">
                         {horse.breed ?? "Unknown breed"} ·{" "}
                         {t("stableOperations.horseList.riderCount", {
-                          count: horse.riderNames?.length ?? 0,
+                          count: horse.riderCount,
                         })}
                       </p>
                     </div>
