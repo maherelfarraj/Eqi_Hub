@@ -99,6 +99,7 @@ export function validateStableHorseOperationsFoundation({
     [/array\['academy_admin', 'coach'\]/, "private operational access must be limited to academy admins and coaches"],
     [/create function private\.audit_horse_operation_change/, "append-only audit writer is required"],
     [/insert into public\.audit_events/, "generic audit events must be written"],
+    [/'stable_operations\.' \|\| lower\(tg_op\),\s+v_generic_before,\s+v_generic_after/, "generic audit records must use sanitized operational snapshots"],
     [/'system',\s+\(select auth\.uid\(\)\),\s+case tg_table_name/, "generic audit records must use a canonical source value"],
     [/tg_table_name in \('horse_operation_profiles', 'horse_operation_holds', 'horse_care_schedules'\)/, "horse deletion cascade audit must cover every cascading operational record"],
     [/v_entity_id := v_horse_id;\s+end if;\s+v_horse_id := null;/, "horse deletion cascade audit must retain identity without a deleting horse foreign key"],
@@ -114,6 +115,25 @@ export function validateStableHorseOperationsFoundation({
     migration.match(/create function public\.get_safe_horse_availability[\s\S]*?\$\$;/i)?.[0] ?? "";
   if (/ownership_type|workload_limit_minutes_7d/i.test(safeAvailabilityFunction)) {
     errors.push("safe availability output must not expose internal ownership or workload configuration");
+  }
+  const operationalAuditFunction =
+    migration.match(/create function private\.audit_horse_operation_change[\s\S]*?\$\$;/i)?.[0] ?? "";
+  for (const [snapshot, source] of [
+    ["v_generic_before", "v_before"],
+    ["v_generic_after", "v_after"],
+  ]) {
+    const sanitizedSnapshot =
+      operationalAuditFunction.match(
+        new RegExp(`${snapshot} := ${source} - array\\[([\\s\\S]*?)\\];`),
+      )?.[1] ?? "";
+    if (
+      !["private_operations_note", "private_welfare_note", "private_care_note", "private_task_note"].every(
+        (field) => sanitizedSnapshot.includes(`'${field}'`),
+      )
+    ) {
+      errors.push("generic audit records must remove every private operational note");
+      break;
+    }
   }
   if (
     !/when horse\.status <> 'active' then 'unavailable'/.test(safeAvailabilityFunction) ||

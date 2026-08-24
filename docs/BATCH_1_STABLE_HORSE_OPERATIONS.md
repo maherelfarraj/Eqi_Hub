@@ -30,7 +30,7 @@ Private welfare, care, and task notes never appear in the curated availability f
 
 ## Audit behavior
 
-Changes to profiles, holds, schedules, and tasks write both the generic `audit_events` stream and a dedicated private `horse_operation_audit_events` history. When a canonical horse is deleted, its operational profile, hold, and care-schedule cascades retain private audit records without live horse foreign keys; linked stable tasks retain their organization scope and become unassigned. Authenticated clients can only select the dedicated history through the staff policy; they cannot insert, update, or delete audit rows.
+Changes to profiles, holds, schedules, and tasks write both the generic `audit_events` stream and a dedicated private `horse_operation_audit_events` history. The generic stream removes every private operational-note field before writing its snapshot; full snapshots remain only in the staff-only dedicated history. When a canonical horse is deleted, its operational profile, hold, and care-schedule cascades retain private audit records without live horse foreign keys; linked stable tasks retain their organization scope and become unassigned. Authenticated clients can only select the dedicated history through the staff policy; they cannot insert, update, or delete audit rows.
 
 The preview reads the private roster through a dedicated staff-only RPC for Academy Admins and Coaches. Riders and guardians never query the canonical horse roster from this surface; they receive only the existing curated availability RPC output. A canonical resting or retired state is always rendered as unavailable to audience users, regardless of an older approved operational profile.
 

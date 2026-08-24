@@ -165,6 +165,26 @@ assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
     migration: migration.replace(
+      "    'private_welfare_note',\n    'private_care_note',",
+      "    'private_welfare_note_removed',\n    'private_care_note',",
+    ),
+  }).join("\n"),
+  /generic audit records must remove every private operational note/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "    v_generic_before,\n    v_generic_after",
+      "    v_before,\n    v_after",
+    ),
+  }).join("\n"),
+  /generic audit records must use sanitized operational snapshots/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
       "and private.can_manage_stable_operations(p_organization_id)\n  group by horse.id",
       "group by horse.id",
     ),

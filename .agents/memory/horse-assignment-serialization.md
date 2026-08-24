@@ -1,10 +1,10 @@
 ---
-name: Horse assignment serialization
-description: Concurrency and lifecycle rules for safe operational horse eligibility.
+name: Horse operational safety boundaries
+description: Concurrency and audit-privacy rules for safe operational horse eligibility.
 ---
 
-Horse availability approval, holds (including deletion), canonical horse status changes, and assignments must take the same transaction-scoped lock for a given organization and horse. Operational profile identity is immutable, and direct profile deletion must fail closed; canonical horse deletion retains its database-driven cascade cleanup.
+Any operational action that changes a horse's assignment eligibility must serialize on the same transaction-scoped per-horse lock. Generic audit streams must remove staff-only operational notes before storing snapshots.
 
-**Why:** Snapshot-only eligibility checks can admit conflicting assignments or miss a concurrently-created hold. Removing a profile while an assignment validates also defeats the required explicit-profile, fail-closed model.
+**Why:** Snapshot-only checks can admit conflicting assignments during concurrent eligibility changes. Generic audit readers can include broader organization roles than the staff-only operational audience.
 
-**How to apply:** Any future operational action that changes assignment eligibility, or any new assignment or booking workflow, must participate in the same lock and invoke the central eligibility guard. Preserve the canonical horse lifecycle rather than blocking its dependent-record cleanup; cascade-originated audit records must not retain a foreign key to the horse being deleted.
+**How to apply:** New eligibility-changing actions and assignment workflows must join the shared lock and central eligibility guard. When operational data enters a broader audit stream, redact fields outside that stream's audience.

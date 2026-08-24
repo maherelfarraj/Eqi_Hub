@@ -434,12 +434,28 @@ as $$
 declare
   v_before jsonb;
   v_after jsonb;
+  v_generic_before jsonb;
+  v_generic_after jsonb;
   v_organization_id uuid;
   v_horse_id uuid;
   v_entity_id uuid;
 begin
   v_before := case when tg_op in ('UPDATE', 'DELETE') then to_jsonb(old) else null end;
   v_after := case when tg_op in ('INSERT', 'UPDATE') then to_jsonb(new) else null end;
+  -- The generic audit stream is visible to non-operational organization roles.
+  -- Keep full snapshots only in the staff-only operational audit stream.
+  v_generic_before := v_before - array[
+    'private_operations_note',
+    'private_welfare_note',
+    'private_care_note',
+    'private_task_note'
+  ];
+  v_generic_after := v_after - array[
+    'private_operations_note',
+    'private_welfare_note',
+    'private_care_note',
+    'private_task_note'
+  ];
   v_organization_id := coalesce((v_after ->> 'organization_id')::uuid, (v_before ->> 'organization_id')::uuid);
   v_horse_id := nullif(coalesce(v_after ->> 'horse_id', v_before ->> 'horse_id'), '')::uuid;
   v_entity_id := coalesce((v_after ->> 'id')::uuid, (v_before ->> 'id')::uuid, v_horse_id);
@@ -497,8 +513,8 @@ begin
     end,
     v_entity_id,
     'stable_operations.' || lower(tg_op),
-    v_before,
-    v_after
+    v_generic_before,
+    v_generic_after
   );
   return null;
 end;
