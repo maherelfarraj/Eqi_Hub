@@ -100,6 +100,23 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace("on delete set null (horse_id)", "on delete set null"),
+  }).join("\n"),
+  /must retain a stable task's organization scope/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "tg_table_name = 'stable_tasks'\n    and tg_op = 'UPDATE'",
+      "stable task cascade audit removed",
+    ),
+  }).join("\n"),
+  /task audit must not restore a deleting horse foreign key/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace("limited horse availability requires staff confirmation", "limited assignment bypassed"),
   }).join("\n"),
   /limited assignments must require staff confirmation/,

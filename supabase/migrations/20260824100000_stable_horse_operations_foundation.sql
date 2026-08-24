@@ -113,7 +113,7 @@ create table public.stable_tasks (
   updated_at timestamptz not null default now(),
   constraint stable_tasks_horse_organization_fkey
     foreign key (horse_id, organization_id)
-    references public.horses(id, organization_id) on delete set null,
+    references public.horses(id, organization_id) on delete set null (horse_id),
   constraint stable_tasks_type_check
     check (task_type in ('feeding', 'turnout', 'tack_equipment', 'safety_check', 'routine_care')),
   constraint stable_tasks_status_check
@@ -418,6 +418,15 @@ begin
     if tg_table_name = 'horse_operation_profiles' then
       v_entity_id := v_horse_id;
     end if;
+    v_horse_id := null;
+  end if;
+  -- A canonical horse delete retains its stable tasks but clears their horse
+  -- reference. Do not restore that deleting UUID through the audit fallback.
+  if tg_table_name = 'stable_tasks'
+    and tg_op = 'UPDATE'
+    and pg_trigger_depth() > 1
+    and (v_after ->> 'horse_id') is null
+    and (v_before ->> 'horse_id') is not null then
     v_horse_id := null;
   end if;
 
