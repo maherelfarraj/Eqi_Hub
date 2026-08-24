@@ -329,6 +329,25 @@ begin
 end;
 $$;
 
+create function private.prepare_horse_operation_hold_delete()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  -- Direct deletion changes assignment eligibility and must serialize with
+  -- lesson assignment. The canonical horse cascade keeps its lifecycle path,
+  -- but still takes the same per-horse lock before dependent cleanup.
+  if pg_trigger_depth() <= 1
+    and not private.can_manage_stable_operations(old.organization_id) then
+    raise exception 'academy administrator or coach access required for stable operations' using errcode = '42501';
+  end if;
+  perform private.lock_horse_operation(old.organization_id, old.horse_id);
+  return old;
+end;
+$$;
+
 create function private.prepare_horse_care_schedule()
 returns trigger
 language plpgsql
@@ -653,6 +672,9 @@ for each row execute function private.prevent_horse_operation_profile_delete();
 create trigger horse_operation_holds_prepare
 before insert or update on public.horse_operation_holds
 for each row execute function private.prepare_horse_operation_hold();
+create trigger horse_operation_holds_prepare_delete
+before delete on public.horse_operation_holds
+for each row execute function private.prepare_horse_operation_hold_delete();
 create trigger horse_care_schedules_prepare
 before insert or update on public.horse_care_schedules
 for each row execute function private.prepare_horse_care_schedule();
@@ -705,6 +727,7 @@ revoke all on function private.can_manage_stable_operations(uuid) from public, a
 revoke all on function private.can_read_safe_horse_availability(uuid, uuid) from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_operation_profile() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_operation_hold() from public, anon, authenticated, service_role;
+revoke all on function private.prepare_horse_operation_hold_delete() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_horse_care_schedule() from public, anon, authenticated, service_role;
 revoke all on function private.prepare_stable_task() from public, anon, authenticated, service_role;
 revoke all on function private.audit_horse_operation_change() from public, anon, authenticated, service_role;

@@ -66,6 +66,26 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace(
+      "  perform private.lock_horse_operation(old.organization_id, old.horse_id);\n  return old;\nend;\n$$;\n\ncreate function private.prepare_horse_care_schedule",
+      "  hold deletion lock removed\n  return old;\nend;\n$$;\n\ncreate function private.prepare_horse_care_schedule",
+    ),
+  }).join("\n"),
+  /hold deletion must verify staff access and acquire the horse operation lock/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "create trigger horse_operation_holds_prepare_delete",
+      "hold delete trigger removed",
+    ),
+  }).join("\n"),
+  /hold deletion must use the horse operation lock/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace("horse operation profiles cannot be deleted; mark them unavailable and unapproved instead", "profile deletion allowed"),
   }).join("\n"),
   /profile deletion must fail closed/,

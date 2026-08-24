@@ -86,6 +86,7 @@ export function validateStableHorseOperationsFoundation({
     [/if pg_trigger_depth\(\) > 1 then\s+return old;/, "profile delete guard must preserve canonical horse cascade cleanup"],
     [/horse operation profiles cannot be reassigned/, "profile identity must be immutable"],
     [/horse operation holds cannot be reassigned/, "hold identity must be immutable"],
+    [/create trigger horse_operation_holds_prepare_delete/, "hold deletion must use the horse operation lock"],
     [/private\.can_read_safe_horse_availability/, "safe availability access helper is required"],
     [/private\.can_guardian_access_rider/, "guardian safe output must use verified-link access"],
     [/create function public\.get_safe_horse_availability/, "curated safe availability output is required"],
@@ -119,12 +120,26 @@ export function validateStableHorseOperationsFoundation({
     errors.push("staff roster RPC must remain restricted to stable operations staff");
   }
   const profileAndHoldPrepares =
-    migration.match(/create function private\.prepare_horse_operation_(?:profile|hold)[\s\S]*?\$\$;/gi) ?? [];
+    migration.match(/create function private\.prepare_horse_operation_(?:profile|hold)\(\)[\s\S]*?\$\$;/gi) ?? [];
   if (
     profileAndHoldPrepares.length !== 2 ||
     profileAndHoldPrepares.some((body) => !/perform private\.lock_horse_operation\(new\.organization_id, new\.horse_id\);/i.test(body))
   ) {
     errors.push("profile and hold changes must acquire the horse operation lock");
+  }
+  const holdDeleteGuard =
+    migration.match(/create function private\.prepare_horse_operation_hold_delete[\s\S]*?\$\$;/i)?.[0] ?? "";
+  if (
+    !/private\.can_manage_stable_operations\(old\.organization_id\)/.test(holdDeleteGuard) ||
+    !/perform private\.lock_horse_operation\(old\.organization_id, old\.horse_id\);/.test(holdDeleteGuard)
+  ) {
+    errors.push("hold deletion must verify staff access and acquire the horse operation lock");
+  }
+  if (
+    !/drop trigger if exists horse_operation_holds_prepare_delete/i.test(rollback) ||
+    !/drop function if exists private\.prepare_horse_operation_hold_delete\(\)/i.test(rollback)
+  ) {
+    errors.push("hold delete guard rollback is missing");
   }
   if (!/drop trigger if exists horse_operation_profiles_prevent_delete/i.test(rollback)
     || !/drop function if exists private\.prevent_horse_operation_profile_delete\(\)/i.test(rollback)) {

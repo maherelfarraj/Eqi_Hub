@@ -8,6 +8,7 @@ drop trigger if exists horse_operation_holds_audit on public.horse_operation_hol
 drop trigger if exists horse_operation_profiles_audit on public.horse_operation_profiles;
 drop trigger if exists stable_tasks_prepare on public.stable_tasks;
 drop trigger if exists horse_care_schedules_prepare on public.horse_care_schedules;
+drop trigger if exists horse_operation_holds_prepare_delete on public.horse_operation_holds;
 drop trigger if exists horse_operation_holds_prepare on public.horse_operation_holds;
 drop trigger if exists horse_operation_profiles_prevent_delete on public.horse_operation_profiles;
 drop trigger if exists horse_operation_profiles_prepare on public.horse_operation_profiles;
@@ -19,6 +20,7 @@ drop function if exists public.assert_horse_assignment_allowed(uuid, uuid, times
 drop function if exists private.audit_horse_operation_change();
 drop function if exists private.prepare_stable_task();
 drop function if exists private.prepare_horse_care_schedule();
+drop function if exists private.prepare_horse_operation_hold_delete();
 drop function if exists private.prepare_horse_operation_hold();
 drop function if exists private.prevent_horse_operation_profile_delete();
 drop function if exists private.prepare_horse_operation_profile();
