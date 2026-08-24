@@ -426,6 +426,16 @@ begin
 end;
 $$;
 
+create function private.lock_academy_staff_schedule(p_organization_id uuid, p_staff_profile_id uuid)
+returns void language plpgsql security definer set search_path = ''
+as $$
+begin
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(p_organization_id::text || ':' || p_staff_profile_id::text, 0)
+  );
+end;
+$$;
+
 create function private.audit_academy_operations(p_organization_id uuid, p_entity_type text, p_entity_id uuid, p_action text, p_before jsonb default null, p_after jsonb default null)
 returns void language plpgsql security definer set search_path = ''
 as $$
@@ -520,6 +530,7 @@ begin
   perform private.assert_academy_operations_access(p_organization_id);
   perform private.assert_academy_operation_record_organization(p_organization_id, 'shift', p_shift_id);
   if p_ends_at <= p_starts_at then raise exception 'shift end must be after start' using errcode = '22023'; end if;
+  perform private.lock_academy_staff_schedule(p_organization_id, p_staff_profile_id);
   if exists (select 1 from public.academy_staff_shifts s where s.organization_id = p_organization_id and s.staff_profile_id = p_staff_profile_id and s.id <> v_id and s.status <> 'cancelled' and tstzrange(s.starts_at, s.ends_at, '[)') && tstzrange(p_starts_at, p_ends_at, '[)')) then raise exception 'staff shift conflicts with an existing shift' using errcode = '23P01'; end if;
   if exists (select 1 from public.academy_staff_leave l where l.organization_id = p_organization_id and l.staff_profile_id = p_staff_profile_id and l.status = 'approved' and tstzrange(l.starts_at, l.ends_at, '[)') && tstzrange(p_starts_at, p_ends_at, '[)')) then raise exception 'staff shift conflicts with approved leave' using errcode = '23P01'; end if;
   insert into public.academy_staff_shifts (id, organization_id, staff_profile_id, status, starts_at, ends_at, duties_en, duties_ar, private_note, created_by, updated_by)
@@ -556,6 +567,7 @@ begin
   perform private.assert_academy_operations_access(p_organization_id);
   perform private.assert_academy_operation_record_organization(p_organization_id, 'leave', p_leave_id);
   if p_ends_at <= p_starts_at then raise exception 'leave end must be after start' using errcode = '22023'; end if;
+  if p_status = 'approved' then perform private.lock_academy_staff_schedule(p_organization_id, p_staff_profile_id); end if;
   if p_status = 'approved' and exists (select 1 from public.academy_staff_shifts s where s.organization_id = p_organization_id and s.staff_profile_id = p_staff_profile_id and s.status <> 'cancelled' and tstzrange(s.starts_at, s.ends_at, '[)') && tstzrange(p_starts_at, p_ends_at, '[)')) then raise exception 'approved leave conflicts with an existing shift' using errcode = '23P01'; end if;
   insert into public.academy_staff_leave (id, organization_id, staff_profile_id, status, starts_at, ends_at, reason_en, reason_ar, reviewed_by, reviewed_at, created_by)
   values (v_id, p_organization_id, p_staff_profile_id, p_status, p_starts_at, p_ends_at, btrim(p_reason_en), btrim(p_reason_ar), case when p_status = 'requested' then null else auth.uid() end, case when p_status = 'requested' then null else now() end, auth.uid())

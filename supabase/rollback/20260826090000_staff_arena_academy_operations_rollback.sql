@@ -18,6 +18,7 @@ drop function if exists public.create_academy_operations_alert(uuid, text, text,
 drop function if exists public.get_academy_operations_workspace(uuid);
 drop function if exists public.get_academy_operations_access(uuid);
 drop function if exists private.audit_academy_operations(uuid, text, uuid, text, jsonb, jsonb);
+drop function if exists private.lock_academy_staff_schedule(uuid, uuid);
 drop function if exists private.assert_academy_operation_record_organization(uuid, text, uuid);
 drop function if exists private.assert_academy_compensation_access(uuid);
 drop function if exists private.assert_academy_operations_access(uuid);

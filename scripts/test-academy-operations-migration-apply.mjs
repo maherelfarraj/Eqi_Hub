@@ -154,6 +154,27 @@ try {
   `]);
   const bookingResults = await Promise.all([concurrentBooking, overlappingBooking]);
   assert.equal(bookingResults.filter((result) => result.status === 0).length, 1, "Concurrent overlapping resource bookings must accept exactly one insert.");
+
+  const shiftRpc = runAsync(psql, [...connection, "-c", `
+    begin;
+    select public.upsert_academy_staff_shift(
+      '10000000-0000-0000-0000-000000000001', null, '50000000-0000-0000-0000-000000000001',
+      'scheduled', '2030-01-03T09:00:00Z', '2030-01-03T11:00:00Z',
+      'RPC schedule lock shift', 'مناوبة قفل RPC', null
+    );
+    select pg_sleep(1);
+    commit;
+  `]);
+  await wait(150);
+  const approvedLeaveRpc = runAsync(psql, [...connection, "-c", `
+    select public.upsert_academy_staff_leave(
+      '10000000-0000-0000-0000-000000000001', null, '50000000-0000-0000-0000-000000000001',
+      'approved', '2030-01-03T10:00:00Z', '2030-01-03T12:00:00Z',
+      'Overlapping approved leave', 'إجازة معتمدة متداخلة'
+    );
+  `]);
+  const shiftLeaveResults = await Promise.all([shiftRpc, approvedLeaveRpc]);
+  assert.equal(shiftLeaveResults.filter((result) => result.status === 0).length, 1, "Concurrent shift and approved leave RPCs must accept exactly one mutation.");
   console.log("Academy Operations migration applied successfully to an isolated temporary PostgreSQL instance.");
 } finally {
   if (started) spawnSync(pgCtl, ["-D", dataDirectory, "-m", "immediate", "stop"], { encoding: "utf8" });

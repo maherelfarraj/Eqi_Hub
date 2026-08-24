@@ -26,6 +26,8 @@ assert.match(migration, /academy_commission_calculations where id = v_id and org
 assert.match(migration, /create extension if not exists btree_gist/, "Concurrent scheduling controls require GiST equality support.");
 assert.match(migration, /academy_staff_shifts_no_overlapping_active_ranges/, "Staff shifts must have a database-enforced overlap constraint.");
 assert.match(migration, /academy_resource_bookings_no_overlapping_active_ranges/, "Resource bookings must have a database-enforced overlap constraint.");
+assert.match(migration, /create function private\.lock_academy_staff_schedule/, "Shift and approved leave decisions must serialize per staff member.");
+assert.match(migration, /perform private\.lock_academy_staff_schedule\(p_organization_id, p_staff_profile_id\);/, "Shift and approved leave mutations must take the schedule lock before checking conflicts.");
 assert.match(migration, /resource booking conflicts with an existing booking/, "Bookings must be conflict-checked server-side.");
 assert.match(migration, /staff shift conflicts with approved leave/, "Shifts must be checked against approved leave.");
 assert.match(migration, /confirmed lesson count exceeds capacity/, "Capacity must be enforced server-side.");
