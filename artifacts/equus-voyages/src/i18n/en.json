@@ -71,12 +71,126 @@
       "lessons": "Lessons",
       "horses": "Horses",
       "stableOperations": "Stable Operations",
+      "horseWelfare": "Horse Welfare",
+      "academyOperations": "Academy Operations",
       "membership": "Membership",
       "payments": "Payments",
       "billing": "Billing",
       "organization": "Organization",
       "settings": "Settings",
-      "videoIntelligence": "Coach-approved video"
+      "videoIntelligence": "Coach-approved video",
+      "competitionDevelopment": "Competition development"
+    },
+    "competitionDevelopment": {
+      "eyebrow": "Coach-approved planning",
+      "title": "Competition & annual rider development",
+      "description": "A private, Coach-led workspace for annual plans, competition readiness, entries, results, and approved bilingual reports.",
+      "rider": "Rider",
+      "gatedTitle": "Competition development is not enabled",
+      "gatedDescription": "This non-production module is default-off and is only available when your organization explicitly enables it.",
+      "noRiderTitle": "No rider is available",
+      "noRiderDescription": "There is no current, authorized Rider relationship available for this workspace.",
+      "noAccessTitle": "This development workspace is not available",
+      "noAccessDescription": "Only assigned Coaches, authorized staff, Riders, and permitted Guardians can access approved competition development information.",
+      "signedOff": "Coach signed off",
+      "annualPlan": {
+        "title": "Annual plan",
+        "description": "Set bilingual annual goals. Riders and Guardians only see an explicitly approved plan.",
+        "portalApproval": "Approve this plan for the Rider / Guardian portal",
+        "publish": "Approve plan",
+        "year": "Plan year",
+        "name": "Plan title",
+        "goalsEnglish": "Goals (English)",
+        "goalsArabic": "الأهداف (العربية)",
+        "portalVisible": "Make this approved plan visible in the portal",
+        "create": "Create & sign off plan",
+        "emptyTitle": "No approved annual plan",
+        "emptyDescription": "Your Coach will publish an approved annual development plan here."
+      },
+      "calendar": {
+        "title": "Competition calendar & entries",
+        "description": "Keep dates, entry readiness, transport, costs, and outcomes together under Coach control.",
+        "name": "Competition name",
+        "venue": "Venue",
+        "startsOn": "Starts on",
+        "endsOn": "Ends on",
+        "deadline": "Entry deadline",
+        "portalVisible": "Visible in approved portal view",
+        "add": "Add competition",
+        "empty": "No competition dates are available yet."
+      },
+      "disciplines": {
+        "showJumping": "Show jumping",
+        "flatwork": "Flatwork",
+        "dressage": "Dressage",
+        "eventing": "Eventing",
+        "other": "Other"
+      },
+      "entries": {
+        "noPlan": "No plan",
+        "noHorse": "No horse selected",
+        "class": "Class name",
+        "foundation": "Foundation",
+        "add": "Add Coach-signed entry",
+        "selectEntry": "Entry for transport & results"
+      },
+      "logistics": {
+        "provider": "Transport provider",
+        "cost": "Cost",
+        "outbound": "Outbound details",
+        "return": "Return details",
+        "confirmed": "Confirmed",
+        "save": "Save logistics"
+      },
+      "results": {
+        "placing": "Placing",
+        "score": "Score",
+        "outcome": "Outcome",
+        "note": "Coach note",
+        "save": "Record result"
+      },
+      "readiness": {
+        "title": "Readiness evidence",
+        "description": "Evidence records capture coaching observations and approved source evidence. Nothing is treated as an autonomous readiness decision.",
+        "coachObservation": "Coach observation",
+        "note": "Evidence note",
+        "add": "Add evidence",
+        "signOff": "Coach sign off",
+        "empty": "No readiness evidence has been recorded."
+      },
+      "jumping": {
+        "title": "Show Jumping progression",
+        "description": "Coach-confirmed Level 1–5 progression is supported by signed-off evidence.",
+        "level": "Level",
+        "status": "Progress state",
+        "evidence": "Signed-off evidence",
+        "none": "No evidence link",
+        "save": "Save progression"
+      },
+      "statuses": {
+        "planned": "Planned",
+        "inProgress": "In progress",
+        "coachConfirmed": "Coach confirmed"
+      },
+      "reports": {
+        "title": "Bilingual development reports",
+        "description": "English and Arabic content are both required before Coach approval and controlled publication.",
+        "draft": "Save bilingual draft",
+        "approve": "Approve",
+        "publish": "Publish to portal",
+        "empty": "No approved development reports are available."
+      },
+      "messages": {
+        "planSaved": "Annual plan saved and Coach signed off.",
+        "planPublished": "Annual plan approved for the portal.",
+        "competitionSaved": "Competition date saved.",
+        "readinessSaved": "Readiness evidence saved.",
+        "readinessConfirmed": "Readiness evidence signed off.",
+        "ladderSaved": "Jumping progression saved.",
+        "reportSaved": "Bilingual report draft saved.",
+        "reportApproved": "Report approved.",
+        "reportPublished": "Report published to the approved portal."
+      }
     },
     "safety": {
       "eyebrow": "Rider readiness",
@@ -1428,6 +1542,11 @@
       "guideline3": "Use coaching observations only; this pilot does not make medical or soundness claims.",
       "guideline4": "Consent controls retention and rider visibility.",
       "noContext": "No exercise context"
+    },
+    "videoRelease3": {
+      "eyebrow": "Batch 3 · Coach development intelligence",
+      "title": "Approved development record",
+      "description": "Use approved, consented video evidence only. This Coach-only workspace does not create Rider or Guardian output."
     }
   }
 }
