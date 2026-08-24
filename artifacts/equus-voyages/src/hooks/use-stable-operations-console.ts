@@ -33,8 +33,8 @@ export interface StableDailyTask {
   taskType: string;
   title: string;
   dueAt: string;
-  status: "open" | "in_progress" | "completed";
-  workflowState: "open" | "in_progress" | "completed" | "overdue";
+  status: "open" | "in_progress" | "completed" | "cancelled";
+  workflowState: "open" | "in_progress" | "completed" | "cancelled" | "overdue";
   escalationLevel: "none" | "attention" | "escalated";
   escalationNote: string | null;
   privateTaskNote: string | null;

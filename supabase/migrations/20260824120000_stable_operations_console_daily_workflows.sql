@@ -163,11 +163,10 @@ begin
     return;
   end if;
 
-  perform private.lock_horse_operation(p_organization_id, p_horse_id);
-
   if not private.can_manage_stable_operations(p_organization_id) then
     raise exception 'academy administrator or coach access required for assignment eligibility' using errcode = '42501';
   end if;
+  perform private.lock_horse_operation(p_organization_id, p_horse_id);
   if not exists (
     select 1 from public.horses
     where id = p_horse_id and organization_id = p_organization_id and status = 'active'
@@ -348,11 +347,11 @@ as $$
     horse.breed,
     horse.photo_url,
     horse.status,
-    profile.ownership_type,
-    profile.availability_state,
-    profile.availability_approved,
+    coalesce(profile.ownership_type, 'academy'),
+    coalesce(profile.availability_state, 'unavailable'),
+    coalesce(profile.availability_approved, false),
     coalesce(workload.used_minutes, 0)::integer,
-    profile.workload_limit_minutes_7d,
+    coalesce(profile.workload_limit_minutes_7d, 360),
     active_hold.id,
     active_hold.hold_type,
     active_hold.reason,
@@ -360,7 +359,7 @@ as $$
     coalesce(tasks.open_count, 0)::integer,
     coalesce(tasks.overdue_count, 0)::integer
   from public.horses as horse
-  join public.horse_operation_profiles as profile
+  left join public.horse_operation_profiles as profile
     on profile.horse_id = horse.id and profile.organization_id = horse.organization_id
   left join lateral (
     select
@@ -552,6 +551,12 @@ declare
 begin
   if not private.can_manage_stable_operations(p_organization_id) then
     raise exception 'academy administrator or coach access required for stable operations' using errcode = '42501';
+  end if;
+  if not exists (
+    select 1 from public.horses
+    where id = p_horse_id and organization_id = p_organization_id
+  ) then
+    raise exception 'horse operation profile must use a horse in its organization' using errcode = '23514';
   end if;
   insert into public.horse_operation_profiles (
     horse_id, organization_id, ownership_type, availability_state,

@@ -583,7 +583,7 @@ export default function StableOperationsPage() {
     hasRole("academy_admin") ||
     hasRole("coach");
 
-  const previewReq = useStableOperationsPreview(!canManage);
+  const previewReq = useStableOperationsPreview(canManage);
   const consoleReq = useStableOperationsConsole(canManage);
 
   const loading = canManage ? consoleReq.loading : previewReq.loading;
@@ -632,6 +632,15 @@ export default function StableOperationsPage() {
     setActionError("");
     try {
       await consoleReq.releaseHold(horse.activeHoldId, status);
+    } catch (err) {
+      setActionError(mutationError(err, t("stableOperations.errors.saveFailed")));
+    }
+  };
+
+  const completeCareSchedule = async (scheduleId: string) => {
+    setActionError("");
+    try {
+      await consoleReq.completeCareSchedule(scheduleId);
     } catch (err) {
       setActionError(mutationError(err, t("stableOperations.errors.saveFailed")));
     }
@@ -904,8 +913,8 @@ export default function StableOperationsPage() {
                     </p>
                   </div>
                   <div className="shrink-0 self-start sm:self-auto">
-                    {care.status !== "completed" && (
-                      <OutlineButton onClick={() => consoleReq.completeCareSchedule(care.id)}>
+                    {care.status === "scheduled" && (
+                      <OutlineButton onClick={() => completeCareSchedule(care.id)}>
                         <CheckCircle2 className="size-4 mr-2" /> {t("stableOperations.actions.completeCare")}
                       </OutlineButton>
                     )}

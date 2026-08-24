@@ -20,6 +20,8 @@ test("stable operations route is registered", () => {
 test("staff console uses guarded workflow RPCs while audiences remain on safe availability", () => {
   assert.match(page, /useStableOperationsPreview/);
   assert.match(page, /useStableOperationsConsole/);
+  assert.match(page, /useStableOperationsPreview\(canManage\)/);
+  assert.doesNotMatch(page, /useStableOperationsPreview\(!canManage\)/);
   assert.doesNotMatch(page, /useHorses/);
   assert.match(
     previewHook,
@@ -32,6 +34,9 @@ test("staff console uses guarded workflow RPCs while audiences remain on safe av
   assert.match(page, /safeAvailability/);
   assert.match(page, /releaseHold/);
   assert.match(page, /checkAssignmentEligibility/);
+  assert.match(page, /const completeCareSchedule = async/);
+  assert.match(page, /await consoleReq\.completeCareSchedule\(scheduleId\)/);
+  assert.match(page, /setActionError\(mutationError\(err, t\("stableOperations\.errors\.saveFailed"\)\)\)/);
   for (const rpc of [
     "update_horse_operation_profile",
     "create_horse_operation_hold",

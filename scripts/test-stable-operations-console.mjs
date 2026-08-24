@@ -42,6 +42,56 @@ assert.match(
   validateStableOperationsConsole({
     ...fixture,
     migration: migration.replace(
+      "if not private.can_manage_stable_operations(p_organization_id) then\n    raise exception 'academy administrator or coach access required for assignment eligibility' using errcode = '42501';\n  end if;\n  perform private.lock_horse_operation(p_organization_id, p_horse_id);",
+      "perform private.lock_horse_operation(p_organization_id, p_horse_id);\n  if not private.can_manage_stable_operations(p_organization_id) then\n    raise exception 'academy administrator or coach access required for assignment eligibility' using errcode = '42501';\n  end if;",
+    ),
+  }).join("\n"),
+  /authorize before acquiring/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    migration: migration.replace(
+      "  if not exists (\n    select 1 from public.horses\n    where id = p_horse_id and organization_id = p_organization_id\n  ) then\n    raise exception 'horse operation profile must use a horse in its organization' using errcode = '23514';\n  end if;",
+      "profile horse ownership validation removed",
+    ),
+  }).join("\n"),
+  /profile upsert must verify/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    migration: migration.replace(
+      "left join public.horse_operation_profiles as profile",
+      "join public.horse_operation_profiles as profile",
+    ),
+  }).join("\n"),
+  /visible, fail-closed defaults/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    page: page.replace(
+      "useStableOperationsPreview(canManage)",
+      "useStableOperationsPreview(!canManage)",
+    ),
+  }).join("\n"),
+  /audience-safe rendering/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    page: page.replaceAll(
+      "setActionError(mutationError(err, t(\"stableOperations.errors.saveFailed\")));",
+      "care completion error dropped",
+    ),
+  }).join("\n"),
+  /care completion failures/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    migration: migration.replace(
       "create or replace function public.assert_horse_assignment_allowed",
       "create function public.assert_horse_assignment_allowed",
     ).replace(

@@ -24,6 +24,10 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
     migration.match(/create function public\.check_horse_assignment_eligibility[\s\S]*?\$\$;/i)?.[0] ?? "";
   const assignmentGuard =
     migration.match(/create or replace function public\.assert_horse_assignment_allowed[\s\S]*?\$\$;/i)?.[0] ?? "";
+  const profileUpsert =
+    migration.match(/create function public\.update_horse_operation_profile[\s\S]*?\$\$;/i)?.[0] ?? "";
+  const consoleFunction =
+    migration.match(/create function public\.get_stable_operations_console[\s\S]*?\$\$;/i)?.[0] ?? "";
   for (const required of [
     "create function public.check_horse_assignment_eligibility",
     "perform private.lock_horse_operation(p_organization_id, p_horse_id)",
@@ -53,6 +57,29 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
   ) {
     errors.push("lesson assignment enforcement must preserve safe non-staff availability access without calling staff-only diagnostics");
   }
+  if (
+    eligibilityFunction.indexOf("if not private.can_manage_stable_operations(p_organization_id) then") === -1 ||
+    eligibilityFunction.indexOf("perform private.lock_horse_operation(p_organization_id, p_horse_id)") === -1 ||
+    eligibilityFunction.indexOf("if not private.can_manage_stable_operations(p_organization_id) then") >
+      eligibilityFunction.indexOf("perform private.lock_horse_operation(p_organization_id, p_horse_id)")
+  ) {
+    errors.push("staff eligibility must authorize before acquiring the horse operation lock");
+  }
+  if (!/where id = p_horse_id and organization_id = p_organization_id/.test(profileUpsert)) {
+    errors.push("profile upsert must verify the horse belongs to the selected organization before mutation");
+  }
+  for (const required of [
+    "left join public.horse_operation_profiles as profile",
+    "coalesce(profile.ownership_type, 'academy')",
+    "coalesce(profile.availability_state, 'unavailable')",
+    "coalesce(profile.availability_approved, false)",
+    "coalesce(profile.workload_limit_minutes_7d, 360)",
+  ]) {
+    if (!consoleFunction.includes(required)) {
+      errors.push("staff console must retain visible, fail-closed defaults for horses without operational profiles");
+      break;
+    }
+  }
   if (!/released or expired horse operation holds are immutable/i.test(migration)) {
     errors.push("closed holds must be immutable");
   }
@@ -65,11 +92,19 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
   }
   if (!/useStableOperationsConsole/.test(page)
     || !/if \(!canManage\)/.test(page)
-    || !/useStableOperationsPreview/.test(page)) {
+    || !/useStableOperationsPreview\(canManage\)/.test(page)
+    || /useStableOperationsPreview\(!canManage\)/.test(page)) {
     errors.push("page must keep staff workflows and audience-safe rendering separate");
   }
   if (!/releaseHold/.test(page) || !/checkAssignmentEligibility/.test(page)) {
     errors.push("page must expose hold closure and assignment feedback workflows");
+  }
+  if (
+    !/const completeCareSchedule = async/.test(page) ||
+    !/await consoleReq\.completeCareSchedule\(scheduleId\)/.test(page) ||
+    !/setActionError\(mutationError\(err, t\("stableOperations\.errors\.saveFailed"\)\)\)/.test(page)
+  ) {
+    errors.push("care completion failures must use the staff action error state");
   }
   for (const pattern of [
     /stableOperations\.options\.\$\{task\.taskType\}/,
