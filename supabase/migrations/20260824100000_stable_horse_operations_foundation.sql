@@ -212,6 +212,9 @@ as $$
         and direct_access.profile_id = (select auth.uid())
         and direct_access.active
         and direct_access.access_type = 'rider'
+        and private.has_organization_role(
+          p_organization_id, array['rider']
+        )
     )
     or exists (
       select 1
@@ -493,7 +496,11 @@ begin
       when 'stable_tasks' then 'stable_task'
     end,
     v_entity_id,
-    lower(tg_op),
+    case tg_op
+      when 'INSERT' then 'created'
+      when 'UPDATE' then 'updated'
+      when 'DELETE' then 'deleted'
+    end,
     (select auth.uid()),
     v_before,
     v_after

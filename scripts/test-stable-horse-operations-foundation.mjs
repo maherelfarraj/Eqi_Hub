@@ -225,12 +225,29 @@ assert.match(
 assert.match(
   validateStableHorseOperationsFoundation({
     ...fixture,
+    migration: migration.replace("when 'INSERT' then 'created'", "when 'INSERT' then 'insert'"),
+  }).join("\n"),
+  /operational audit actions must use constrained lifecycle labels/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
     migration: migration.replace(
       "and direct_access.access_type = 'rider'",
       "and direct_access.access_type in ('rider', 'guardian')",
     ),
   }).join("\n"),
-  /safe availability must require verified rider links for every guardian path/,
+  /safe availability must require a rider role for direct access and verified links for guardian access/,
+);
+assert.match(
+  validateStableHorseOperationsFoundation({
+    ...fixture,
+    migration: migration.replace(
+      "and private.has_organization_role(\n          p_organization_id, array['rider']\n        )",
+      "direct guardian bypass restored",
+    ),
+  }).join("\n"),
+  /safe availability must require a rider role for direct access and verified links for guardian access/,
 );
 assert.match(
   validateStableHorseOperationsFoundation({

@@ -98,6 +98,7 @@ export function validateStableHorseOperationsFoundation({
     [/private\.can_manage_stable_operations/, "staff permission helper is required"],
     [/array\['academy_admin', 'coach'\]/, "private operational access must be limited to academy admins and coaches"],
     [/create function private\.audit_horse_operation_change/, "append-only audit writer is required"],
+    [/case tg_op\s+when 'INSERT' then 'created'\s+when 'UPDATE' then 'updated'\s+when 'DELETE' then 'deleted'\s+end,/, "operational audit actions must use constrained lifecycle labels"],
     [/insert into public\.audit_events/, "generic audit events must be written"],
     [/'stable_operations\.' \|\| lower\(tg_op\),\s+v_generic_before,\s+v_generic_after/, "generic audit records must use sanitized operational snapshots"],
     [/'system',\s+\(select auth\.uid\(\)\),\s+case tg_table_name/, "generic audit records must use a canonical source value"],
@@ -146,9 +147,10 @@ export function validateStableHorseOperationsFoundation({
   if (
     !/direct_access\.access_type = 'rider'/.test(safeAvailabilityAccessHelper) ||
     /direct_access\.access_type in \('rider', 'guardian'\)/.test(safeAvailabilityAccessHelper) ||
+    !/direct_access\.access_type = 'rider'[\s\S]*?private\.has_organization_role\(\s*p_organization_id,\s*array\['rider'\]\s*\)/.test(safeAvailabilityAccessHelper) ||
     !/rider_access\.access_type = 'rider'[\s\S]*?private\.can_guardian_access_rider/.test(safeAvailabilityAccessHelper)
   ) {
-    errors.push("safe availability must require verified rider links for every guardian path");
+    errors.push("safe availability must require a rider role for direct access and verified links for guardian access");
   }
   const staffRosterFunction =
     migration.match(/create function public\.get_stable_operations_roster[\s\S]*?\$\$;/i)?.[0] ?? "";
