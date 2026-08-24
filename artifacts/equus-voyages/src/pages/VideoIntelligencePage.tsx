@@ -40,6 +40,8 @@ import {
   useVideoRelease2AssignedCoaches,
   type VideoRelease2TrendPoint
 } from "@/hooks/use-video-release-2";
+import { useVideoRelease3Access } from "@/hooks/use-video-release-3";
+import { VideoDevelopmentWorkspace } from "@/components/VideoDevelopmentWorkspace";
 
 function NotEnrolledView() {
   const { t } = useTranslation();
@@ -845,12 +847,34 @@ function CoachSessionList({ onSelect }: { onSelect: (id: string) => void }) {
 }
 
 function CoachWorkspace() {
+  const { t } = useTranslation();
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const developmentAccess = useVideoRelease3Access();
 
   if (selectedSessionId) {
     return <CoachSessionDetail sessionId={selectedSessionId} onBack={() => setSelectedSessionId(null)} />;
   }
-  return <CoachSessionList onSelect={setSelectedSessionId} />;
+  return (
+    <div className="space-y-10">
+      <CoachSessionList onSelect={setSelectedSessionId} />
+      {developmentAccess.data?.enabled && developmentAccess.data.canManage ? (
+        <section className="mx-auto max-w-5xl space-y-5" aria-labelledby="video-development-intelligence">
+          <div className="border-t border-cream-200 pt-10">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-600">
+              {t("videoRelease3.eyebrow", "Batch 3 · Coach Development Intelligence")}
+            </p>
+            <h2 id="video-development-intelligence" className="mt-2 font-serif text-3xl text-espresso">
+              {t("videoRelease3.title", "Approved development record")}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">
+              {t("videoRelease3.description", "Use approved, consented video evidence only. This Coach-only workspace does not create Rider or Guardian output.")}
+            </p>
+          </div>
+          <VideoDevelopmentWorkspace />
+        </section>
+      ) : null}
+    </div>
+  );
 }
 
 export default function VideoIntelligencePage() {
