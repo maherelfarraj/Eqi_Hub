@@ -14,6 +14,7 @@ import {
   CreditCard,
   Globe2,
   Heart,
+  HeartPulse,
   FileSignature,
   ShieldCheck,
   LayoutDashboard,
@@ -22,6 +23,7 @@ import {
   ReceiptText,
   Settings,
   Sparkles,
+  Trophy,
   Video,
   Warehouse,
   X,
@@ -34,6 +36,8 @@ import {
 } from "@/lib/portal-persona";
 
 import { useVideoRelease2Access } from "@/hooks/use-video-release-2";
+import { useCompetitionDevelopmentAccess } from "@/hooks/use-competition-development";
+import { useHorseWelfareAccess } from "@/hooks/use-horse-welfare";
 
 const navigation = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
@@ -43,9 +47,11 @@ const navigation = [
   { path: "/analysis", labelKey: "nav.videoAnalysis", icon: Video },
   { path: "/video-review", labelKey: "nav.videoReview", icon: Video },
   { path: "/video-intelligence", labelKey: "nav.videoIntelligence", icon: Video },
+  { path: "/competition-development", labelKey: "nav.competitionDevelopment", icon: Trophy },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
   { path: "/stable-operations", labelKey: "nav.stableOperations", icon: Warehouse },
+  { path: "/horse-welfare", labelKey: "nav.horseWelfare", icon: HeartPulse },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
   { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
@@ -66,6 +72,8 @@ export default function AppShell() {
   const portalPersona = resolvePortalPersona(activeOrganization?.roles);
   const redirectPath = portalRedirect(portalPersona, location.pathname);
   const videoRelease2Access = useVideoRelease2Access();
+  const competitionDevelopmentAccess = useCompetitionDevelopmentAccess();
+  const horseWelfareAccess = useHorseWelfareAccess();
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -152,6 +160,14 @@ export default function AppShell() {
                   hasRole("platform_admin")) &&
                 (path !== "/video-intelligence" ||
                   Boolean(videoRelease2Access.data?.canManage || videoRelease2Access.data?.canViewApproved)) &&
+                (path !== "/competition-development" ||
+                  Boolean(
+                    competitionDevelopmentAccess.data?.canManage ||
+                      competitionDevelopmentAccess.data?.canView ||
+                      (hasRole("guardian") && competitionDevelopmentAccess.data?.enabled),
+                  )) &&
+                (path !== "/horse-welfare" ||
+                  Boolean(horseWelfareAccess.data?.canManage)) &&
                 isNavigationPathVisible(
                   portalPersona,
                   path,

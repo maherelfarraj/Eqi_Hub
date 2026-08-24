@@ -15,9 +15,13 @@ import "@/i18n";
 const AnalysisPage = lazy(() => import("@/pages/AnalysisPage"));
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
+const CompetitionDevelopmentPage = lazy(
+  () => import("@/pages/CompetitionDevelopmentPage"),
+);
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const GuardianViewPage = lazy(() => import("@/pages/GuardianViewPage"));
 const HorsesPage = lazy(() => import("@/pages/HorsesPage"));
+const HorseWelfarePage = lazy(() => import("@/pages/HorseWelfarePage"));
 const LessonsPage = lazy(() => import("@/pages/LessonsPage"));
 const LegalPage = lazy(() => import("@/pages/LegalPage"));
 const MembershipPage = lazy(() => import("@/pages/MembershipPage"));
@@ -178,6 +182,14 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/competition-development"
+          element={
+            <SuspendedPage>
+              <CompetitionDevelopmentPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
           path="/analysis"
           element={
             <SuspendedPage>
@@ -246,6 +258,14 @@ function AppRoutes() {
           element={
             <SuspendedPage>
               <StableOperationsPage />
+            </SuspendedPage>
+          }
+        />
+        <Route
+          path="/horse-welfare"
+          element={
+            <SuspendedPage>
+              <HorseWelfarePage />
             </SuspendedPage>
           }
         />
