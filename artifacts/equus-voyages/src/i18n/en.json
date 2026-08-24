@@ -1428,6 +1428,11 @@
       "guideline3": "Use coaching observations only; this pilot does not make medical or soundness claims.",
       "guideline4": "Consent controls retention and rider visibility.",
       "noContext": "No exercise context"
+    },
+    "videoRelease3": {
+      "eyebrow": "Batch 3 · Coach development intelligence",
+      "title": "Approved development record",
+      "description": "Use approved, consented video evidence only. This Coach-only workspace does not create Rider or Guardian output."
     }
   }
 }
