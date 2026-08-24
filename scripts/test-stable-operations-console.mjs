@@ -24,9 +24,32 @@ assert.match(
 assert.match(
   validateStableOperationsConsole({
     ...fixture,
-    migration: migration.replace("perform private.lock_horse_operation(p_organization_id, p_horse_id)", "lock removed"),
+    migration: migration.replaceAll("perform private.lock_horse_operation(p_organization_id, p_horse_id)", "lock removed"),
   }).join("\n"),
   /lock_horse_operation/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    migration: migration.replace(
+      "if not private.can_read_safe_horse_availability(p_organization_id, p_horse_id) then",
+      "safe non-staff access removed",
+    ),
+  }).join("\n"),
+  /safe non-staff availability access/,
+);
+assert.match(
+  validateStableOperationsConsole({
+    ...fixture,
+    migration: migration.replace(
+      "create or replace function public.assert_horse_assignment_allowed",
+      "create function public.assert_horse_assignment_allowed",
+    ).replace(
+      "if p_organization_id is null or p_horse_id is null or p_starts_at is null",
+      "from public.check_horse_assignment_eligibility",
+    ),
+  }).join("\n"),
+  /safe non-staff availability access/,
 );
 assert.match(
   validateStableOperationsConsole({

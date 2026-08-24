@@ -553,7 +553,7 @@ function EligibilityModal({
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className={labelClass}>{t("stableOperations.eligibility.reason")}</p>
-              <p className="mt-1 font-semibold">{result.reasonCode}</p>
+              <p className="mt-1 font-semibold">{String(t(`stableOperations.eligibility.reasons.${result.reasonCode}`, result.reasonCode))}</p>
             </div>
             <div>
               <p className={labelClass}>{t("stableOperations.eligibility.feedback")}</p>
@@ -862,11 +862,11 @@ export default function StableOperationsPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="font-semibold text-espresso">{task.title}</h3>
-                      <StatusBadge status={task.status === "completed" ? "active" : task.status === "open" ? "pending" : "warning"} label={t(`stableOperations.status.${task.status}`)} />
+                       <StatusBadge status={task.workflowState === "completed" ? "active" : task.workflowState === "open" ? "pending" : "warning"} label={t(`stableOperations.status.${task.workflowState}`)} />
                       {task.escalationLevel !== "none" && <StatusBadge status="failed" label={t(`stableOperations.status.${task.escalationLevel}`)} />}
                     </div>
                     <p className="text-sm text-text-secondary">
-                      {task.horseName ? `${task.horseName} · ` : ""}{task.taskType} · {t("stableOperations.labels.due")} {formatDate(task.dueAt, i18n.language, { dateStyle: 'medium', timeStyle: 'short' })}
+                       {task.horseName ? `${task.horseName} · ` : ""}{t(`stableOperations.options.${task.taskType}`, task.taskType)} · {t("stableOperations.labels.due")} {formatDate(task.dueAt, i18n.language, { dateStyle: 'medium', timeStyle: 'short' })}
                     </p>
                     {task.escalationNote && <p className="mt-3 text-sm text-error-700 bg-error-50 p-2.5 rounded-lg border border-error-100">{task.escalationNote}</p>}
                   </div>
@@ -896,8 +896,8 @@ export default function StableOperationsPage() {
                 <SurfaceCard key={care.id} className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
-                      <h3 className="font-semibold text-espresso">{care.horseName} · {t(`stableOperations.options.${care.careType}`)}</h3>
-                      <StatusBadge status={care.status === "completed" ? "active" : "pending"} label={t(`stableOperations.status.${care.status}`)} />
+                      <h3 className="font-semibold text-espresso">{care.horseName} · {t(`stableOperations.options.${care.careType}`, care.careType)}</h3>
+                      <StatusBadge status={care.workflowState === "completed" ? "active" : care.workflowState === "scheduled" ? "pending" : "warning"} label={t(`stableOperations.status.${care.workflowState}`)} />
                     </div>
                     <p className="text-sm text-text-secondary">
                       {t("stableOperations.labels.due")} {formatDate(care.dueOn, i18n.language)} · {care.safeSummary}
@@ -933,7 +933,8 @@ export default function StableOperationsPage() {
                       <p className="font-semibold text-espresso">
                         {event.actorName || t("stableOperations.labels.system")}{" "}
                         <span className="text-text-secondary font-normal">
-                          {event.action} {event.entityType.replace("_", " ")}
+                          {t(`stableOperations.audit.actions.${event.action}`, event.action)}{" "}
+                          {t(`stableOperations.audit.entities.${event.entityType}`, event.entityType.replaceAll("_", " "))}
                         </span>
                       </p>
                       <p className="text-xs text-text-secondary mt-1.5 uppercase tracking-wide">

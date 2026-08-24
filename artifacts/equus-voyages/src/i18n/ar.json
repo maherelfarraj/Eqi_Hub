@@ -1216,6 +1216,9 @@
         "open": "مفتوحة",
         "in_progress": "قيد التنفيذ",
         "completed": "مكتملة",
+        "scheduled": "مجدولة",
+        "cancelled": "ملغاة",
+        "overdue": "متأخرة",
         "none": "لا يوجد",
         "attention": "تحتاج انتباهاً",
         "escalated": "تم التصعيد"
@@ -1264,7 +1267,7 @@
         "durationMinutes": "المدة (دقيقة)",
         "status": "الحالة",
         "selectHorse": "اختر حصاناً",
-        "taskTypePlaceholder": "مثال: تمشيط أو إطعام"
+        "taskTypePlaceholder": "اختر نوع المهمة"
       },
       "eligibility": {
         "title": "أهلية التعيين",
@@ -1274,6 +1277,17 @@
         "feedback": "ملاحظات",
         "scheduled": "المجدول (7 أيام)",
         "limit": "الحد (7 أيام)",
+        "reasons": {
+          "invalid_input": "إدخال غير صالح",
+          "horse_inactive": "الحصان غير نشط",
+          "profile_missing": "الملف مفقود",
+          "availability_unapproved": "التوفر غير معتمد",
+          "availability_unavailable": "الحصان غير متاح",
+          "limited_requires_confirmation": "يتطلب تأكيد الموظف",
+          "active_hold": "إيقاف نشط",
+          "workload_exceeded": "تم تجاوز عبء العمل",
+          "eligible": "مؤهل"
+        },
         "feedbacks": {
           "invalid_input": "أدخل وقت ومدة تعيين صالحين.",
           "horse_inactive": "هذا الحصان غير نشط لتعيين الدروس.",
@@ -1307,6 +1321,19 @@
         "turnout": "إخراج للمرعى",
         "tack_equipment": "السرج والمعدات",
         "safety_check": "فحص السلامة"
+      },
+      "audit": {
+        "actions": {
+          "created": "تم الإنشاء",
+          "updated": "تم التحديث",
+          "deleted": "تم الحذف"
+        },
+        "entities": {
+          "horse_operation_profile": "الملف التشغيلي للحصان",
+          "horse_operation_hold": "إيقاف تشغيل الحصان",
+          "horse_care_schedule": "جدول رعاية الحصان",
+          "stable_task": "مهمة الإسطبل"
+        }
       },
       "labels": {
         "optional": "اختياري",

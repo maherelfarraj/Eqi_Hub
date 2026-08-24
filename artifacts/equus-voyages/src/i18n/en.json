@@ -1198,6 +1198,9 @@
         "open": "Open",
         "in_progress": "In progress",
         "completed": "Completed",
+        "scheduled": "Scheduled",
+        "cancelled": "Cancelled",
+        "overdue": "Overdue",
         "none": "None",
         "attention": "Attention",
         "escalated": "Escalated"
@@ -1246,7 +1249,7 @@
         "durationMinutes": "Duration (mins)",
         "status": "Status",
         "selectHorse": "Select a horse",
-        "taskTypePlaceholder": "For example: grooming or feeding"
+        "taskTypePlaceholder": "Select a task type"
       },
       "eligibility": {
         "title": "Assignment Eligibility",
@@ -1256,6 +1259,17 @@
         "feedback": "Feedback",
         "scheduled": "Scheduled (7d)",
         "limit": "Limit (7d)",
+        "reasons": {
+          "invalid_input": "Invalid input",
+          "horse_inactive": "Horse inactive",
+          "profile_missing": "Profile missing",
+          "availability_unapproved": "Availability not approved",
+          "availability_unavailable": "Horse unavailable",
+          "limited_requires_confirmation": "Staff confirmation required",
+          "active_hold": "Active hold",
+          "workload_exceeded": "Workload exceeded",
+          "eligible": "Eligible"
+        },
         "feedbacks": {
           "invalid_input": "Enter a valid assignment time and duration.",
           "horse_inactive": "This horse is not active for lesson assignment.",
@@ -1289,6 +1303,19 @@
         "turnout": "Turnout",
         "tack_equipment": "Tack & equipment",
         "safety_check": "Safety check"
+      },
+      "audit": {
+        "actions": {
+          "created": "created",
+          "updated": "updated",
+          "deleted": "deleted"
+        },
+        "entities": {
+          "horse_operation_profile": "horse operational profile",
+          "horse_operation_hold": "horse operation hold",
+          "horse_care_schedule": "horse care schedule",
+          "stable_task": "stable task"
+        }
       },
       "labels": {
         "optional": "Optional",

@@ -258,19 +258,62 @@ security definer
 set search_path = ''
 as $$
 declare
-  v_check record;
+  v_profile public.horse_operation_profiles%rowtype;
+  v_existing_workload integer := 0;
+  v_has_profile boolean := false;
 begin
-  select * into v_check
-  from public.check_horse_assignment_eligibility(
-    p_organization_id,
-    p_horse_id,
-    p_starts_at,
-    p_duration_minutes,
-    p_exclude_lesson_id,
-    p_staff_confirmation
-  );
-  if not v_check.eligible then
-    raise exception '%', v_check.feedback using errcode = '23514';
+  if p_organization_id is null or p_horse_id is null or p_starts_at is null
+    or p_duration_minutes is null or p_duration_minutes not between 15 and 480 then
+    raise exception 'organization, horse, start time, and a valid duration are required' using errcode = '23514';
+  end if;
+  perform private.lock_horse_operation(p_organization_id, p_horse_id);
+  if not private.can_read_safe_horse_availability(p_organization_id, p_horse_id) then
+    raise exception 'horse assignment access required' using errcode = '42501';
+  end if;
+  if not exists (
+    select 1 from public.horses
+    where id = p_horse_id and organization_id = p_organization_id and status = 'active'
+  ) then
+    raise exception 'horse is not active for assignment' using errcode = '23514';
+  end if;
+
+  select * into v_profile
+  from public.horse_operation_profiles
+  where horse_id = p_horse_id and organization_id = p_organization_id;
+  v_has_profile := found;
+  if not v_has_profile then
+    raise exception 'horse operational profile is required before assignment' using errcode = '23514';
+  end if;
+  if not v_profile.availability_approved or v_profile.availability_state = 'unavailable' then
+    raise exception 'horse availability has not been approved for assignment' using errcode = '23514';
+  end if;
+  if v_profile.availability_state = 'limited'
+    and (not p_staff_confirmation or not private.can_manage_stable_operations(p_organization_id)) then
+    raise exception 'limited horse availability requires staff confirmation' using errcode = '42501';
+  end if;
+  if exists (
+    select 1
+    from public.horse_operation_holds as hold
+    where hold.organization_id = p_organization_id
+      and hold.horse_id = p_horse_id
+      and hold.status = 'active'
+      and hold.starts_at < p_starts_at + make_interval(mins => p_duration_minutes)
+      and (hold.ends_at is null or hold.ends_at > p_starts_at)
+  ) then
+    raise exception 'horse has an active welfare or care hold during this assignment' using errcode = '23514';
+  end if;
+  if v_profile.workload_limit_minutes_7d is not null then
+    select coalesce(sum(lesson.duration_min), 0)::integer into v_existing_workload
+    from public.lessons as lesson
+    where lesson.organization_id = p_organization_id
+      and lesson.horse_id = p_horse_id
+      and lesson.status in ('pending', 'confirmed', 'completed')
+      and lesson.date_time >= p_starts_at - interval '6 days'
+      and lesson.date_time < p_starts_at + interval '1 day'
+      and (p_exclude_lesson_id is null or lesson.id <> p_exclude_lesson_id);
+    if v_existing_workload + p_duration_minutes > v_profile.workload_limit_minutes_7d then
+      raise exception 'horse workload limit would be exceeded by this assignment' using errcode = '23514';
+    end if;
   end if;
 end;
 $$;

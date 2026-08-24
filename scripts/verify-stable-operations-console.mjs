@@ -22,6 +22,8 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
   }
   const eligibilityFunction =
     migration.match(/create function public\.check_horse_assignment_eligibility[\s\S]*?\$\$;/i)?.[0] ?? "";
+  const assignmentGuard =
+    migration.match(/create or replace function public\.assert_horse_assignment_allowed[\s\S]*?\$\$;/i)?.[0] ?? "";
   for (const required of [
     "create function public.check_horse_assignment_eligibility",
     "perform private.lock_horse_operation(p_organization_id, p_horse_id)",
@@ -45,6 +47,12 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
   if (!eligibilityFunction.includes("p_exclude_lesson_id uuid default null")) {
     errors.push("missing required Batch 2 contract: p_exclude_lesson_id uuid default null");
   }
+  if (
+    !assignmentGuard.includes("private.can_read_safe_horse_availability(p_organization_id, p_horse_id)") ||
+    /from public\.check_horse_assignment_eligibility/i.test(assignmentGuard)
+  ) {
+    errors.push("lesson assignment enforcement must preserve safe non-staff availability access without calling staff-only diagnostics");
+  }
   if (!/released or expired horse operation holds are immutable/i.test(migration)) {
     errors.push("closed holds must be immutable");
   }
@@ -62,6 +70,16 @@ export function validateStableOperationsConsole({ migration, rollback, page, hoo
   }
   if (!/releaseHold/.test(page) || !/checkAssignmentEligibility/.test(page)) {
     errors.push("page must expose hold closure and assignment feedback workflows");
+  }
+  for (const pattern of [
+    /stableOperations\.options\.\$\{task\.taskType\}/,
+    /stableOperations\.status\.\$\{task\.workflowState\}/,
+    /stableOperations\.status\.\$\{care\.workflowState\}/,
+    /stableOperations\.audit\.actions\.\$\{event\.action\}/,
+    /stableOperations\.audit\.entities\.\$\{event\.entityType\}/,
+    /stableOperations\.eligibility\.reasons\.\$\{result\.reasonCode\}/,
+  ]) {
+    if (!pattern.test(page)) errors.push("page must translate every staff workflow enum");
   }
   if (/\.(?:insert|update|delete|upsert)\s*\(/.test(page)) {
     errors.push("page must not bypass guarded workflow RPCs with direct mutations");

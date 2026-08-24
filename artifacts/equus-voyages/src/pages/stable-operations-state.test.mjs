@@ -62,6 +62,33 @@ test("translations exist", () => {
   assert.ok(arTranslations.nav.stableOperations);
 });
 
+test("staff workflow enums are localized in English and Arabic", () => {
+  const enStable = JSON.parse(en).translation.stableOperations;
+  const arStable = JSON.parse(ar).translation.stableOperations;
+  for (const dictionary of [enStable, arStable]) {
+    for (const key of [
+      "feeding", "turnout", "tack_equipment", "safety_check", "routine_care",
+    ]) assert.ok(dictionary.options[key]);
+    for (const key of [
+      "open", "in_progress", "completed", "scheduled", "cancelled", "overdue", "escalated",
+    ]) assert.ok(dictionary.status[key]);
+    for (const key of ["created", "updated", "deleted"]) assert.ok(dictionary.audit.actions[key]);
+    for (const key of [
+      "horse_operation_profile", "horse_operation_hold", "horse_care_schedule", "stable_task",
+    ]) assert.ok(dictionary.audit.entities[key]);
+    for (const key of [
+      "invalid_input", "horse_inactive", "profile_missing", "availability_unapproved",
+      "availability_unavailable", "limited_requires_confirmation", "active_hold",
+      "workload_exceeded", "eligible",
+    ]) assert.ok(dictionary.eligibility.reasons[key]);
+  }
+  assert.match(page, /stableOperations\.options\.\$\{task\.taskType\}/);
+  assert.match(page, /stableOperations\.status\.\$\{task\.workflowState\}/);
+  assert.match(page, /stableOperations\.status\.\$\{care\.workflowState\}/);
+  assert.match(page, /stableOperations\.audit\.actions\.\$\{event\.action\}/);
+  assert.match(page, /stableOperations\.audit\.entities\.\$\{event\.entityType\}/);
+  assert.match(page, /stableOperations\.eligibility\.reasons\.\$\{result\.reasonCode\}/);
+});
 test("navigation includes stable operations", () => {
   assert.match(shell, /path: "\/stable-operations"/);
   assert.match(persona, /guardianNavigationPaths[\s\S]*?"\/stable-operations"/);
