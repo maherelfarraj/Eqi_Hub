@@ -70,6 +70,7 @@
       "videoReview": "Video Review",
       "lessons": "Lessons",
       "horses": "Horses",
+      "stableOperations": "Stable Operations",
       "membership": "Membership",
       "payments": "Payments",
       "billing": "Billing",
@@ -1144,6 +1145,39 @@
       "working": "Working...",
       "retry": "Retry",
       "close": "Close"
+    },
+    "stableOperations": {
+      "eyebrow": "Stable Operations",
+      "title": "Facility Operations Preview",
+      "description": "This is a read-only preview of the upcoming Stable Operations interface. No live actions can be performed.",
+      "riderMessage": "The Stable Operations module is currently in development. You will receive safe, approved notifications about horse availability when the feature launches.",
+      "metrics": {
+        "activeHorses": "Active Horses",
+        "welfareHolds": "Welfare Holds",
+        "workload": "Weekly Workload",
+        "pendingTasks": "Pending Tasks"
+      },
+      "metricDetails": {
+        "activeInStable": "In current stable",
+        "veterinaryReview": "Awaiting veterinary review",
+        "lessonsScheduled": "Lessons scheduled",
+        "careActions": "Routine care actions"
+      },
+      "horseList": {
+        "title": "Horse Roster Preview",
+        "description": "A preview of the operational horse roster, showing derived status and assigned riders.",
+        "searchPlaceholder": "Search horses by name...",
+        "noHorses": "No horses found in the current organization.",
+        "riderCount": "{{count}} linked rider",
+        "riderCount_plural": "{{count}} linked riders"
+      },
+      "status": {
+        "available": "Available",
+    "limited": "Limited",
+        "resting": "Resting",
+        "welfareHold": "Welfare Hold",
+        "unavailable": "Unavailable"
+      }
     }
   }
 }

@@ -1,1 +1,2 @@
 - [Private video review approval boundary](video-review-approval-boundary.md) — audience output is invalidated whenever clips or audience-visible annotations change.
+- [Horse assignment serialization](horse-assignment-serialization.md) — operational eligibility changes and assignments must serialize per horse.

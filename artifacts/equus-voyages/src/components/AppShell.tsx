@@ -23,6 +23,7 @@ import {
   Settings,
   Sparkles,
   Video,
+  Warehouse,
   X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,6 +42,7 @@ const navigation = [
   { path: "/video-review", labelKey: "nav.videoReview", icon: Video },
   { path: "/lessons", labelKey: "nav.lessons", icon: CalendarDays },
   { path: "/horses", labelKey: "nav.horses", icon: Heart },
+  { path: "/stable-operations", labelKey: "nav.stableOperations", icon: Warehouse },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
   { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
