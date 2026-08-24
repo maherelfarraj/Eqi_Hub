@@ -635,7 +635,10 @@
         "approveBadgeAction": "Approve badge",
         "badgeApproved": "Badge approved",
         "title": "Rider development",
-        "status": { "draft": "Draft", "approved": "Approved" },
+        "status": {
+          "draft": "Draft",
+          "approved": "Approved"
+        },
         "coachSummary": "Coach summary",
         "strengths": "Strengths",
         "focusAreas": "Focus areas",
@@ -679,7 +682,10 @@
         "past": "Past",
         "requests": "Requests"
       },
-      "views": { "list": "List", "week": "Week" },
+      "views": {
+        "list": "List",
+        "week": "Week"
+      },
       "empty": {
         "upcomingTitle": "No upcoming lessons",
         "upcomingDescription": "Book a lesson to begin your next training cycle.",
@@ -733,7 +739,10 @@
       "paymentServicePendingTitle": "Payment service coming soon",
       "paymentServicePendingDescription": "Membership changes are temporarily read-only while the protected payment service is being connected. Your current plan and usage remain available.",
       "paymentServicePendingButton": "Payment service pending",
-      "intervals": { "month": "month", "year": "year" }
+      "intervals": {
+        "month": "month",
+        "year": "year"
+      }
     },
     "payments": {
       "eyebrow": "Secure billing",
@@ -774,7 +783,10 @@
       "checkoutEmptyDescription": "Add a tokenized payment method through the future secure provider to continue.",
       "secureBoundaryTitle": "Protected payment boundary",
       "secureBoundaryDescription": "This screen does not call the current database-only checkout stub because it cannot charge a real payment provider.",
-      "interval": { "month": "Monthly", "year": "Yearly" }
+      "interval": {
+        "month": "Monthly",
+        "year": "Yearly"
+      }
     },
     "billing": {
       "eyebrow": "Account records",
@@ -1059,7 +1071,11 @@
       "notifications": "Notifications",
       "notificationPreferences": "Notification preferences",
       "channel": "Notification channel",
-      "channels": { "email": "Email", "push": "Push", "both": "Both" },
+      "channels": {
+        "email": "Email",
+        "push": "Push",
+        "both": "Both"
+      },
       "notificationLabels": {
         "lessonReminders": "Lesson reminders",
         "analysisReady": "Analysis ready",
@@ -1148,9 +1164,9 @@
     },
     "stableOperations": {
       "eyebrow": "Stable Operations",
-      "title": "Facility Operations Preview",
-      "description": "This is a read-only preview of the upcoming Stable Operations interface. No live actions can be performed.",
-      "riderMessage": "The Stable Operations module is currently in development. You will receive safe, approved notifications about horse availability when the feature launches.",
+      "title": "Stable Operations",
+      "description": "Manage approved horse availability, daily stable work, care schedules, and the staff audit timeline.",
+      "riderMessage": "Your view shows only safe, approved horse availability. Private operational details remain restricted to authorized stable staff.",
       "metrics": {
         "activeHorses": "Active Horses",
         "welfareHolds": "Welfare Holds",
@@ -1173,10 +1189,151 @@
       },
       "status": {
         "available": "Available",
-    "limited": "Limited",
+        "limited": "Limited",
         "resting": "Resting",
         "welfareHold": "Welfare Hold",
-        "unavailable": "Unavailable"
+        "unavailable": "Unavailable",
+        "active": "Active",
+        "retired": "Retired",
+        "open": "Open",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "scheduled": "Scheduled",
+        "cancelled": "Cancelled",
+        "overdue": "Overdue",
+        "none": "None",
+        "attention": "Attention",
+        "escalated": "Escalated"
+      },
+      "tabs": {
+        "horses": "Horses & Holds",
+        "tasks": "Daily Tasks",
+        "care": "Care Schedules",
+        "audit": "Audit Timeline"
+      },
+      "actions": {
+        "editProfile": "Edit Profile",
+        "addHold": "Place Hold",
+        "checkEligibility": "Check Eligibility",
+        "newTask": "New Task",
+        "updateTask": "Update",
+        "scheduleCare": "Schedule Care",
+        "completeCare": "Complete",
+        "save": "Save Changes",
+        "cancel": "Cancel",
+        "create": "Create",
+        "check": "Check",
+        "releaseHold": "Release hold",
+        "expireHold": "Mark expired"
+      },
+      "forms": {
+        "horse": "Horse",
+        "ownershipType": "Ownership",
+        "availabilityState": "Availability",
+        "availabilityApproved": "Availability Approved",
+        "workloadLimit": "Workload Limit (mins/7d)",
+        "privateNote": "Private Note",
+        "holdType": "Hold Type",
+        "reason": "Reason",
+        "endsAt": "Ends At",
+        "safeMessage": "Safe Message",
+        "careType": "Care Type",
+        "dueOn": "Due Date",
+        "safeSummary": "Safe Summary",
+        "taskType": "Task Type",
+        "title": "Title",
+        "dueAt": "Due Date & Time",
+        "escalationLevel": "Escalation Level",
+        "escalationNote": "Escalation Note",
+        "startsAt": "Starts At",
+        "durationMinutes": "Duration (mins)",
+        "status": "Status",
+        "selectHorse": "Select a horse",
+        "taskTypePlaceholder": "Select a task type"
+      },
+      "eligibility": {
+        "title": "Assignment Eligibility",
+        "eligible": "Eligible",
+        "notEligible": "Not Eligible",
+        "reason": "Reason Code",
+        "feedback": "Feedback",
+        "scheduled": "Scheduled (7d)",
+        "limit": "Limit (7d)",
+        "reasons": {
+          "invalid_input": "Invalid input",
+          "horse_inactive": "Horse inactive",
+          "profile_missing": "Profile missing",
+          "availability_unapproved": "Availability not approved",
+          "availability_unavailable": "Horse unavailable",
+          "limited_requires_confirmation": "Staff confirmation required",
+          "active_hold": "Active hold",
+          "workload_exceeded": "Workload exceeded",
+          "eligible": "Eligible"
+        },
+        "feedbacks": {
+          "invalid_input": "Enter a valid assignment time and duration.",
+          "horse_inactive": "This horse is not active for lesson assignment.",
+          "profile_missing": "Create and approve an operational profile before assigning this horse.",
+          "availability_unapproved": "Availability approval is required before assignment.",
+          "availability_unavailable": "This horse is marked unavailable for assignment.",
+          "limited_requires_confirmation": "Limited availability requires staff confirmation.",
+          "active_hold": "Assignment is blocked by an active hold.",
+          "workload_exceeded": "This assignment would exceed the seven-day workload limit.",
+          "eligible": "This horse is eligible for the assignment."
+        }
+      },
+      "empty": {
+        "horses": "No horses found.",
+        "tasks": "No tasks found.",
+        "care": "No care schedules found.",
+        "audit": "No audit events found."
+      },
+      "options": {
+        "academy": "Academy",
+        "personal": "Personal",
+        "guest": "Guest",
+        "rest": "Rest",
+        "injury": "Injury",
+        "veterinary": "Veterinary",
+        "welfare": "Welfare",
+        "routine_care": "Routine care",
+        "farrier": "Farrier",
+        "vaccination": "Vaccination",
+        "feeding": "Feeding",
+        "turnout": "Turnout",
+        "tack_equipment": "Tack & equipment",
+        "safety_check": "Safety check"
+      },
+      "audit": {
+        "actions": {
+          "created": "created",
+          "updated": "updated",
+          "deleted": "deleted"
+        },
+        "entities": {
+          "horse_operation_profile": "horse operational profile",
+          "horse_operation_hold": "horse operation hold",
+          "horse_care_schedule": "horse care schedule",
+          "stable_task": "stable task"
+        }
+      },
+      "labels": {
+        "optional": "Optional",
+        "none": "None",
+        "minutes": "mins",
+        "hours": "hrs",
+        "unknownBreed": "Unknown breed",
+        "activeHold": "Hold: {{type}}",
+        "workload": "Workload (7d)",
+        "openTasks": "Open tasks",
+        "overdueTasks": "Overdue tasks",
+        "holdEnds": "Hold ends",
+        "due": "Due:",
+        "system": "System"
+      },
+      "errors": {
+        "saveFailed": "We could not save that change. Please review the details and try again.",
+        "checkFailed": "We could not check assignment eligibility. Please try again."
       }
     }
   }

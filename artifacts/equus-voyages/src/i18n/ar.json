@@ -153,7 +153,11 @@
       "noMembersDescription": "أضف حساب EquiVista مسجلاً لبدء تعيين أدوار المنظمة.",
       "memberAccessTitle": "عضوية المنظمة",
       "memberAccessDescription": "تظهر هنا منظمتك النشطة والأدوار المعينة لك. إدارة الأعضاء مقتصرة على المسؤولين المصرح لهم.",
-      "statuses": { "active": "نشط", "suspended": "موقوف", "left": "غادر" },
+      "statuses": {
+        "active": "نشط",
+        "suspended": "موقوف",
+        "left": "غادر"
+      },
       "types": {
         "academy": "أكاديمية",
         "stable": "إسطبل",
@@ -590,7 +594,11 @@
       "color": "اللون",
       "heightCm": "الارتفاع (سم)",
       "statusLabel": "الحالة",
-      "status": { "active": "نشط", "resting": "راحة", "retired": "متقاعد" },
+      "status": {
+        "active": "نشط",
+        "resting": "راحة",
+        "retired": "متقاعد"
+      },
       "photo": "الصورة",
       "choosePhoto": "اختر صورة",
       "photoHint": "JPG أو PNG أو WebP.",
@@ -639,7 +647,10 @@
         "approveBadgeAction": "اعتماد الشارة",
         "badgeApproved": "تم اعتماد الشارة",
         "title": "تطور الفارس",
-        "status": { "draft": "مسودة", "approved": "معتمد" },
+        "status": {
+          "draft": "مسودة",
+          "approved": "معتمد"
+        },
         "coachSummary": "ملخص المدرب",
         "strengths": "نقاط القوة",
         "focusAreas": "مجالات التركيز",
@@ -683,7 +694,10 @@
         "past": "السابقة",
         "requests": "الطلبات"
       },
-      "views": { "list": "قائمة", "week": "أسبوع" },
+      "views": {
+        "list": "قائمة",
+        "week": "أسبوع"
+      },
       "empty": {
         "upcomingTitle": "لا توجد دروس قادمة",
         "upcomingDescription": "احجز درساً لبدء دورة التدريب التالية.",
@@ -737,7 +751,10 @@
       "paymentServicePendingTitle": "خدمة الدفع قريباً",
       "paymentServicePendingDescription": "تغييرات العضوية متاحة للقراءة فقط مؤقتاً أثناء ربط خدمة الدفع المحمية. تبقى خطتك الحالية واستخدامك متاحين.",
       "paymentServicePendingButton": "خدمة الدفع قيد الإعداد",
-      "intervals": { "month": "شهر", "year": "سنة" }
+      "intervals": {
+        "month": "شهر",
+        "year": "سنة"
+      }
     },
     "payments": {
       "eyebrow": "فوترة آمنة",
@@ -778,7 +795,10 @@
       "checkoutEmptyDescription": "أضف وسيلة دفع مرمزة عبر المزود الآمن مستقبلاً للمتابعة.",
       "secureBoundaryTitle": "حد دفع محمي",
       "secureBoundaryDescription": "لا تستدعي هذه الشاشة نموذج الدفع الحالي الخاص بقاعدة البيانات لأنه لا يستطيع تحصيل دفعة حقيقية.",
-      "interval": { "month": "شهري", "year": "سنوي" }
+      "interval": {
+        "month": "شهري",
+        "year": "سنوي"
+      }
     },
     "billing": {
       "eyebrow": "سجلات الحساب",
@@ -1063,7 +1083,11 @@
       "notifications": "الإشعارات",
       "notificationPreferences": "تفضيلات الإشعارات",
       "channel": "قناة الإشعار",
-      "channels": { "email": "البريد", "push": "التنبيهات", "both": "كلاهما" },
+      "channels": {
+        "email": "البريد",
+        "push": "التنبيهات",
+        "both": "كلاهما"
+      },
       "notificationLabels": {
         "lessonReminders": "تذكيرات الدروس",
         "analysisReady": "جاهزية التحليل",
@@ -1152,9 +1176,9 @@
     },
     "stableOperations": {
       "eyebrow": "عمليات الإسطبل",
-      "title": "معاينة عمليات المنشأة",
-      "description": "هذه معاينة للقراءة فقط لواجهة عمليات الإسطبل القادمة. لا يمكن تنفيذ أي إجراءات حية.",
-      "riderMessage": "وحدة عمليات الإسطبل قيد التطوير حالياً. ستتلقى إشعارات آمنة ومعتمدة حول توفر الخيول عند إطلاق الميزة.",
+      "title": "عمليات الإسطبل",
+      "description": "إدارة توفر الخيول المعتمد والعمل اليومي بالإسطبل وجداول الرعاية وسجل تدقيق الموظفين.",
+      "riderMessage": "تعرض بوابتك توفر الخيول الآمن والمعتمد فقط. تبقى التفاصيل التشغيلية الخاصة مقيدة للموظفين المصرح لهم.",
       "metrics": {
         "activeHorses": "الخيول النشطة",
         "welfareHolds": "الإيقافات الصحية",
@@ -1183,10 +1207,151 @@
       },
       "status": {
         "available": "متاح",
-    "limited": "متاح بشكل محدود",
+        "limited": "متاح بشكل محدود",
         "resting": "في راحة",
         "welfareHold": "إيقاف صحي",
-        "unavailable": "غير متاح"
+        "unavailable": "غير متاح",
+        "active": "نشط",
+        "retired": "متقاعد",
+        "open": "مفتوحة",
+        "in_progress": "قيد التنفيذ",
+        "completed": "مكتملة",
+        "scheduled": "مجدولة",
+        "cancelled": "ملغاة",
+        "overdue": "متأخرة",
+        "none": "لا يوجد",
+        "attention": "تحتاج انتباهاً",
+        "escalated": "تم التصعيد"
+      },
+      "tabs": {
+        "horses": "الخيول والإيقافات",
+        "tasks": "المهام اليومية",
+        "care": "جداول الرعاية",
+        "audit": "السجل التدقيقي"
+      },
+      "actions": {
+        "editProfile": "تعديل الملف التشغيلي",
+        "addHold": "إضافة إيقاف",
+        "checkEligibility": "فحص أهلية التعيين",
+        "newTask": "مهمة جديدة",
+        "updateTask": "تحديث",
+        "scheduleCare": "جدولة رعاية",
+        "completeCare": "إكمال",
+        "save": "حفظ التغييرات",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "check": "فحص",
+        "releaseHold": "إلغاء الإيقاف",
+        "expireHold": "وضع علامة منتهٍ"
+      },
+      "forms": {
+        "horse": "الحصان",
+        "ownershipType": "الملكية",
+        "availabilityState": "التوفر",
+        "availabilityApproved": "تم اعتماد التوفر",
+        "workloadLimit": "حد عبء العمل (دقيقة/7 أيام)",
+        "privateNote": "ملاحظة خاصة",
+        "holdType": "نوع الإيقاف",
+        "reason": "السبب",
+        "endsAt": "ينتهي في",
+        "safeMessage": "رسالة آمنة",
+        "careType": "نوع الرعاية",
+        "dueOn": "تاريخ الاستحقاق",
+        "safeSummary": "ملخص آمن",
+        "taskType": "نوع المهمة",
+        "title": "العنوان",
+        "dueAt": "تاريخ ووقت الاستحقاق",
+        "escalationLevel": "مستوى التصعيد",
+        "escalationNote": "ملاحظة التصعيد",
+        "startsAt": "يبدأ في",
+        "durationMinutes": "المدة (دقيقة)",
+        "status": "الحالة",
+        "selectHorse": "اختر حصاناً",
+        "taskTypePlaceholder": "اختر نوع المهمة"
+      },
+      "eligibility": {
+        "title": "أهلية التعيين",
+        "eligible": "مؤهل",
+        "notEligible": "غير مؤهل",
+        "reason": "رمز السبب",
+        "feedback": "ملاحظات",
+        "scheduled": "المجدول (7 أيام)",
+        "limit": "الحد (7 أيام)",
+        "reasons": {
+          "invalid_input": "إدخال غير صالح",
+          "horse_inactive": "الحصان غير نشط",
+          "profile_missing": "الملف مفقود",
+          "availability_unapproved": "التوفر غير معتمد",
+          "availability_unavailable": "الحصان غير متاح",
+          "limited_requires_confirmation": "يتطلب تأكيد الموظف",
+          "active_hold": "إيقاف نشط",
+          "workload_exceeded": "تم تجاوز عبء العمل",
+          "eligible": "مؤهل"
+        },
+        "feedbacks": {
+          "invalid_input": "أدخل وقت ومدة تعيين صالحين.",
+          "horse_inactive": "هذا الحصان غير نشط لتعيين الدروس.",
+          "profile_missing": "أنشئ واعتمد ملفاً تشغيلياً قبل تعيين هذا الحصان.",
+          "availability_unapproved": "تتطلب الإتاحة موافقة قبل التعيين.",
+          "availability_unavailable": "هذا الحصان محدد على أنه غير متاح للتعيين.",
+          "limited_requires_confirmation": "تتطلب الإتاحة المحدودة تأكيد أحد الموظفين.",
+          "active_hold": "التعيين محظور بسبب إيقاف نشط.",
+          "workload_exceeded": "سيتجاوز هذا التعيين حد عبء العمل لسبعة أيام.",
+          "eligible": "هذا الحصان مؤهل للتعيين."
+        }
+      },
+      "empty": {
+        "horses": "لم يتم العثور على خيول.",
+        "tasks": "لا توجد مهام.",
+        "care": "لا توجد جداول رعاية.",
+        "audit": "لا توجد أحداث تدقيق."
+      },
+      "options": {
+        "academy": "الأكاديمية",
+        "personal": "شخصي",
+        "guest": "ضيف",
+        "rest": "راحة",
+        "injury": "إصابة",
+        "veterinary": "بيطري",
+        "welfare": "رفاهية",
+        "routine_care": "رعاية روتينية",
+        "farrier": "حداد الخيل",
+        "vaccination": "تطعيم",
+        "feeding": "إطعام",
+        "turnout": "إخراج للمرعى",
+        "tack_equipment": "السرج والمعدات",
+        "safety_check": "فحص السلامة"
+      },
+      "audit": {
+        "actions": {
+          "created": "تم الإنشاء",
+          "updated": "تم التحديث",
+          "deleted": "تم الحذف"
+        },
+        "entities": {
+          "horse_operation_profile": "الملف التشغيلي للحصان",
+          "horse_operation_hold": "إيقاف تشغيل الحصان",
+          "horse_care_schedule": "جدول رعاية الحصان",
+          "stable_task": "مهمة الإسطبل"
+        }
+      },
+      "labels": {
+        "optional": "اختياري",
+        "none": "لا يوجد",
+        "minutes": "دقيقة",
+        "hours": "ساعات",
+        "unknownBreed": "سلالة غير معروفة",
+        "activeHold": "إيقاف: {{type}}",
+        "workload": "عبء العمل (7 أيام)",
+        "openTasks": "المهام المفتوحة",
+        "overdueTasks": "المهام المتأخرة",
+        "holdEnds": "ينتهي الإيقاف",
+        "due": "مستحق:",
+        "system": "النظام"
+      },
+      "errors": {
+        "saveFailed": "تعذر حفظ هذا التغيير. راجع التفاصيل وحاول مرة أخرى.",
+        "checkFailed": "تعذر فحص أهلية التعيين. حاول مرة أخرى."
       }
     }
   }
