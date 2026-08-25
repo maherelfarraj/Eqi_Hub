@@ -41,10 +41,20 @@ function runAsync(command, args, input) {
     const child = spawn(command, args, { cwd: root });
     let stdout = "";
     let stderr = "";
+    const timeout = setTimeout(() => {
+      child.kill("SIGKILL");
+      reject(new Error(`${command} timed out after 60 seconds.`));
+    }, 60_000);
     child.stdout.on("data", (chunk) => { stdout += chunk; });
     child.stderr.on("data", (chunk) => { stderr += chunk; });
-    child.on("error", reject);
-    child.on("close", (status) => resolve({ status, stdout, stderr }));
+    child.on("error", (error) => {
+      clearTimeout(timeout);
+      reject(error);
+    });
+    child.on("close", (status) => {
+      clearTimeout(timeout);
+      resolve({ status, stdout, stderr });
+    });
     if (input) child.stdin.end(input);
     else child.stdin.end();
   });

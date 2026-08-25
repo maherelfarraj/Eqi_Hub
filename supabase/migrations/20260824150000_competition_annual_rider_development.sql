@@ -383,10 +383,7 @@ as $$
   );
 $$;
 
-create or replace function private.can_manage_competition_calendar(
-  p_organization_id uuid,
-  p_user_id uuid default auth.uid()
-)
+create or replace function private.can_manage_competition_calendar(p_organization_id uuid)
 returns boolean
 language sql stable security definer
 set search_path = public, private
@@ -400,8 +397,7 @@ $$;
 
 create or replace function private.can_manage_competition_development(
   p_organization_id uuid,
-  p_rider_id uuid,
-  p_user_id uuid default auth.uid()
+  p_rider_id uuid
 )
 returns boolean
 language sql stable security definer
@@ -416,7 +412,7 @@ as $$
         and exists (
           select 1 from public.coach_rider_assignments assignment
           where assignment.organization_id = p_organization_id
-            and assignment.coach_id = p_user_id
+            and assignment.coach_id = auth.uid()
             and assignment.rider_id = p_rider_id
             and assignment.active
             and assignment.starts_on <= current_date
@@ -428,8 +424,7 @@ $$;
 
 create or replace function private.can_view_competition_rider(
   p_organization_id uuid,
-  p_rider_id uuid,
-  p_user_id uuid default auth.uid()
+  p_rider_id uuid
 )
 returns boolean
 language sql stable security definer
@@ -437,32 +432,31 @@ set search_path = public, private
 as $$
   select private.competition_development_enabled(p_organization_id)
     and (
-      private.can_manage_competition_development(p_organization_id, p_rider_id, p_user_id)
-      or p_rider_id = p_user_id
-      or private.can_guardian_access_rider(p_organization_id, p_user_id, p_rider_id)
+      private.can_manage_competition_development(p_organization_id, p_rider_id)
+      or p_rider_id = auth.uid()
+      or private.can_guardian_access_rider(p_organization_id, auth.uid(), p_rider_id)
     );
 $$;
 
 create or replace function private.can_view_competition_costs(
   p_organization_id uuid,
-  p_rider_id uuid,
-  p_user_id uuid default auth.uid()
+  p_rider_id uuid
 )
 returns boolean
 language sql stable security definer
 set search_path = public, private
 as $$
-  select private.can_manage_competition_development(p_organization_id, p_rider_id, p_user_id)
+  select private.can_manage_competition_development(p_organization_id, p_rider_id)
     or private.has_organization_role(p_organization_id, array['accountant'])
     or exists (
       select 1 from public.guardian_riders link
       where link.organization_id = p_organization_id
-        and link.guardian_id = p_user_id
+        and link.guardian_id = auth.uid()
         and link.rider_id = p_rider_id
         and link.active
         and link.verification_status = 'verified'
         and link.can_view_financials
-        and private.can_guardian_access_rider(p_organization_id, p_user_id, p_rider_id)
+        and private.can_guardian_access_rider(p_organization_id, auth.uid(), p_rider_id)
     );
 $$;
 
@@ -1354,10 +1348,10 @@ end;
 $$;
 
 revoke all on function private.competition_development_enabled(uuid) from public, anon, authenticated;
-revoke all on function private.can_manage_competition_calendar(uuid, uuid) from public, anon, authenticated;
-revoke all on function private.can_manage_competition_development(uuid, uuid, uuid) from public, anon, authenticated;
-revoke all on function private.can_view_competition_rider(uuid, uuid, uuid) from public, anon, authenticated;
-revoke all on function private.can_view_competition_costs(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_competition_calendar(uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_competition_development(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_rider(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_costs(uuid, uuid) from public, anon, authenticated;
 revoke all on function private.competition_readiness_source_valid(uuid, uuid, uuid, text, uuid) from public, anon, authenticated;
 revoke all on function private.competition_audit(uuid, uuid, text, uuid, text, jsonb) from public, anon, authenticated;
 

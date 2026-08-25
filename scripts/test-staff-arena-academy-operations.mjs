@@ -3,8 +3,9 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const [migration, page, hook, app, shell, persona, english, arabic] = await Promise.all([
+const [migration, hardeningMigration, page, hook, app, shell, persona, english, arabic] = await Promise.all([
   readFile(resolve(root, "supabase/migrations/20260826090000_staff_arena_academy_operations.sql"), "utf8"),
+  readFile(resolve(root, "supabase/migrations/20260826110000_review_security_hardening.sql"), "utf8"),
   readFile(resolve(root, "artifacts/equus-voyages/src/pages/AcademyOperationsPage.tsx"), "utf8"),
   readFile(resolve(root, "artifacts/equus-voyages/src/hooks/use-academy-operations.ts"), "utf8"),
   readFile(resolve(root, "artifacts/equus-voyages/src/App.tsx"), "utf8"),
@@ -46,6 +47,40 @@ for (const entity of ["staff_profile", "availability", "shift", "leave", "coach_
 }
 assert.match(migration, /foreign key \(staff_profile_id, organization_id\)/, "Bookings must reference organization-scoped staff profiles.");
 assert.doesNotMatch(migration, /\b(create payment|create payout|payment provider|stripe)\b/i, "Batch 6 must not process payments.");
+const workspaceFunction = migration.match(
+  /create function public\.get_academy_operations_workspace[\s\S]*?\n\$\$;/,
+)?.[0] ?? "";
+for (const orderedField of [
+  "v.display_name_en",
+  "v.starts_at",
+  "v.inspected_at desc",
+  "v.due_at nulls last",
+  "v.period_end desc",
+]) {
+  assert.match(
+    workspaceFunction,
+    new RegExp(`jsonb_agg\\(\\(to_jsonb\\(v\\) - 'private_note'\\) order by ${orderedField.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\)`),
+    `Workspace must redact private notes before ordering by ${orderedField}.`,
+  );
+}
+for (const relation of [
+  "academy_staff_profiles",
+  "academy_staff_shifts",
+  "academy_facility_inspections",
+  "academy_maintenance_work_orders",
+  "academy_payroll_calculations",
+  "academy_commission_calculations",
+]) {
+  assert.match(
+    workspaceFunction,
+    new RegExp(`from public\\.${relation}[\\s\\S]*?to_jsonb\\(v\\) - 'private_note'|to_jsonb\\(v\\) - 'private_note'[\\s\\S]*?from public\\.${relation}`),
+    `${relation} must redact private_note before it enters the workspace payload.`,
+  );
+}
+for (const key of ["staffProfiles", "availability", "shifts", "leave", "coachAllocations", "resources", "bookings", "lessonCapacity", "inspections", "workOrders", "alerts", "payroll", "commissions"]) {
+  assert.match(workspaceFunction, new RegExp(`'${key}'`), `Workspace must preserve the ${key} response key.`);
+}
+assert.match(hardeningMigration, /create or replace function public\.get_academy_operations_workspace/, "Forward hardening must correct already-applied Batch 6 databases.");
 
 for (const section of [
   "Staff roster & availability",

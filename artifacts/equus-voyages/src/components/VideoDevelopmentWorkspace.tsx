@@ -26,12 +26,19 @@ import {
   labelClass
 } from './EquiVistaUI';
 import { Users, FileText, Target, Award, GitMerge, CheckCircle, Clock, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+function useWorkspaceLocale() {
+  const { i18n } = useTranslation();
+  return (i18n.resolvedLanguage ?? i18n.language) === 'ar' ? 'ar-JO' : 'en-US';
+}
 
 function TimelineTab({
   timeline
 }: {
   timeline: DevelopmentTimelinePoint[];
 }) {
+  const locale = useWorkspaceLocale();
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -45,7 +52,7 @@ function TimelineTab({
           {timeline.map((tp, idx) => (
             <div key={`${tp.sessionId}-${idx}`} className="relative">
               <div className="absolute -left-[35px] top-1 w-4 h-4 rounded-full border-2 border-primary-500 bg-white" />
-              <div className="text-xs font-bold text-primary-600 mb-1">{formatDate(tp.approvedAt, 'en-US')}</div>
+              <div className="text-xs font-bold text-primary-600 mb-1">{formatDate(tp.approvedAt, locale)}</div>
               <SurfaceCard className="p-4 inline-block min-w-full max-w-xl">
                 <div className="font-bold text-espresso mb-1">{tp.title}</div>
                 <div className="text-sm text-text-secondary flex gap-3 items-center flex-wrap">
@@ -82,6 +89,7 @@ function PlansTab({
   actions: ReturnType<typeof useVideoRelease3Actions>;
   refetch: () => void;
 }) {
+  const locale = useWorkspaceLocale();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Partial<TrainingPlan> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -180,7 +188,7 @@ function PlansTab({
               <div className="text-sm text-text-secondary mb-4 line-clamp-3 flex-1">{p.targetText}</div>
               <div className="flex flex-wrap gap-2 text-xs text-text-secondary mb-4">
                 <span className="bg-cream-100 px-2 py-1 rounded capitalize">{p.cycleType}</span>
-                <span className="bg-cream-100 px-2 py-1 rounded">{formatDate(p.periodStart, 'en-US')} - {formatDate(p.periodEnd, 'en-US')}</span>
+                <span className="bg-cream-100 px-2 py-1 rounded">{formatDate(p.periodStart, locale)} - {formatDate(p.periodEnd, locale)}</span>
                 <span className="bg-cream-100 px-2 py-1 rounded">{p.evidenceCount} evidence linked</span>
               </div>
               <div className="flex gap-2 mt-auto pt-2 border-t border-cream-100">
@@ -263,7 +271,7 @@ function PlansTab({
             <label className={labelClass}>Select Evidence</label>
             <select className={fieldClass} value={linkSessionId} onChange={e => setLinkSessionId(e.target.value)}>
               <option value="">Choose an approved session...</option>
-              {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, 'en-US')})</option>)}
+              {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, locale)})</option>)}
             </select>
           </div>
           <div>
@@ -291,6 +299,7 @@ function BenchmarksTab({
   actions: ReturnType<typeof useVideoRelease3Actions>;
   refetch: () => void;
 }) {
+  const locale = useWorkspaceLocale();
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -337,7 +346,7 @@ function BenchmarksTab({
                 </div>
                 <div>
                   <h4 className="font-bold text-espresso capitalize">{b.family.replace('_', ' ')} &middot; Level {b.level}</h4>
-                  <div className="text-xs text-text-secondary">{formatDate(b.confirmedAt, 'en-US')}</div>
+                  <div className="text-xs text-text-secondary">{formatDate(b.confirmedAt, locale)}</div>
                 </div>
               </div>
               {b.coachNote && <p className="text-sm text-text-secondary italic border-l-2 border-cream-200 pl-3">"{b.coachNote}"</p>}
@@ -384,7 +393,7 @@ function BenchmarksTab({
             <label className={labelClass}>Evidence Session</label>
             <select className={fieldClass} value={evidenceSessionId} onChange={e => setEvidenceSessionId(e.target.value)}>
               <option value="">Select an approved session...</option>
-              {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, 'en-US')})</option>)}
+              {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, locale)})</option>)}
             </select>
           </div>
           <div>
@@ -412,6 +421,7 @@ function MilestonesTab({
   actions: ReturnType<typeof useVideoRelease3Actions>;
   refetch: () => void;
 }) {
+  const locale = useWorkspaceLocale();
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -456,7 +466,7 @@ function MilestonesTab({
               </div>
               <div>
                 <h4 className="font-bold text-espresso text-lg">{m.title}</h4>
-                <div className="text-sm font-semibold text-primary-600 mb-2">{formatDate(m.milestoneDate, 'en-US')}</div>
+                <div className="text-sm font-semibold text-primary-600 mb-2">{formatDate(m.milestoneDate, locale)}</div>
                 {m.detail && <p className="text-sm text-text-secondary leading-relaxed">{m.detail}</p>}
               </div>
             </SurfaceCard>
@@ -498,7 +508,7 @@ function MilestonesTab({
               <label className={labelClass}>Linked Evidence (Optional)</label>
               <select className={fieldClass} value={evidenceSessionId} onChange={e => setEvidenceSessionId(e.target.value)}>
                 <option value="">None</option>
-                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, 'en-US')})</option>)}
+                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, locale)})</option>)}
               </select>
             </div>
           </div>
@@ -523,6 +533,7 @@ function ComparisonsTab({
   actions: ReturnType<typeof useVideoRelease3Actions>;
   refetch: () => void;
 }) {
+  const locale = useWorkspaceLocale();
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -572,7 +583,7 @@ function ComparisonsTab({
                   <div className="flex-1 truncate text-sm font-bold text-espresso">{second?.title ?? 'Unknown Session'}</div>
                 </div>
                 <p className="text-sm text-text-secondary leading-relaxed mb-3">{c.summary}</p>
-                <div className="text-xs text-text-secondary">Created {formatDate(c.createdAt, 'en-US')}</div>
+                <div className="text-xs text-text-secondary">Created {formatDate(c.createdAt, locale)}</div>
               </SurfaceCard>
             );
           })}
@@ -601,14 +612,14 @@ function ComparisonsTab({
               <label className={labelClass}>First Session (Earlier)</label>
               <select className={fieldClass} value={firstSessionId} onChange={e => setFirstSessionId(e.target.value)}>
                 <option value="">Select session...</option>
-                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, 'en-US')})</option>)}
+                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, locale)})</option>)}
               </select>
             </div>
             <div>
               <label className={labelClass}>Second Session (Later)</label>
               <select className={fieldClass} value={secondSessionId} onChange={e => setSecondSessionId(e.target.value)}>
                 <option value="">Select session...</option>
-                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, 'en-US')})</option>)}
+                {timeline.map(tp => <option key={tp.sessionId} value={tp.sessionId}>{tp.title} ({formatDate(tp.approvedAt, locale)})</option>)}
               </select>
             </div>
           </div>
@@ -635,6 +646,7 @@ function ReportsTab({
   actions: ReturnType<typeof useVideoRelease3Actions>;
   refetch: () => void;
 }) {
+  const locale = useWorkspaceLocale();
   const [modalOpen, setReportModalOpen] = useState(false);
   const [editingReport, setEditingReport] = useState<Partial<CoachReport> | null>(null);
   const [sourceIds, setSourceIds] = useState<string[]>([]);
@@ -722,7 +734,7 @@ function ReportsTab({
                 <StatusBadge status={r.status} />
               </div>
               <div className="text-sm text-text-secondary mb-4 flex-1">
-                {formatDate(r.periodStart, 'en-US')} - {formatDate(r.periodEnd, 'en-US')} &middot; {r.sourceCount} sources cited
+                {formatDate(r.periodStart, locale)} - {formatDate(r.periodEnd, locale)} &middot; {r.sourceCount} sources cited
               </div>
               {r.status === 'draft' && (
                 <OutlineButton onClick={() => openEdit(r)} className="w-full mt-auto">Edit & Approve</OutlineButton>
@@ -798,7 +810,7 @@ function ReportsTab({
                       />
                       <div className="text-sm min-w-0">
                         <div className="font-semibold text-espresso truncate">{tp.title}</div>
-                        <div className="text-xs text-text-secondary mt-0.5">{tp.category} &middot; Score: {tp.score} &middot; {formatDate(tp.approvedAt, 'en-US')}</div>
+                        <div className="text-xs text-text-secondary mt-0.5">{tp.category} &middot; Score: {tp.score} &middot; {formatDate(tp.approvedAt, locale)}</div>
                       </div>
                     </label>
                   ))}
