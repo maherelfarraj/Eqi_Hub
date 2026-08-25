@@ -51,6 +51,11 @@ as $$ select private.can_manage_competition_development(p_organization_id, p_rid
   or private.has_organization_role(p_organization_id, array['accountant'])
   or exists (select 1 from public.guardian_riders link where link.organization_id = p_organization_id and link.guardian_id = auth.uid() and link.rider_id = p_rider_id and link.active and link.verification_status = 'verified' and link.can_view_financials and private.can_guardian_access_rider(p_organization_id, auth.uid(), p_rider_id)); $$;
 
+revoke all on function private.can_manage_competition_calendar(uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_competition_development(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_rider(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_costs(uuid, uuid) from public, anon, authenticated;
+
 revoke all on function private.video_release_3_enabled(uuid) from public, anon, authenticated;
 revoke all on function private.can_manage_video_release_3(uuid, uuid, uuid) from public, anon, authenticated;
 revoke all on function private.video_release_3_approved_session(uuid, uuid, uuid, uuid) from public, anon, authenticated;

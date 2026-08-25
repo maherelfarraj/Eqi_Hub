@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const paths = {
   migration: "supabase/migrations/20260824143000_video_release_3_development_intelligence.sql",
+  hardeningMigration: "supabase/migrations/20260826110000_review_security_hardening.sql",
   rollback: "supabase/rollback/20260824143000_video_release_3_development_intelligence_rollback.sql",
   hook: "artifacts/equus-voyages/src/hooks/use-video-release-3.ts",
   workspace: "artifacts/equus-voyages/src/components/VideoDevelopmentWorkspace.tsx",
@@ -38,7 +39,12 @@ for (const helper of [
   "video_release_3_audit",
   "video_release_3_plan_visible",
 ]) {
-  has("migration", new RegExp(`revoke all on function private\\.${helper}`), `${helper} must not be directly executable by clients`);
+  const revokeStatement = new RegExp(
+    `revoke\\s+all\\s+on\\s+function\\s+private\\.${helper}\\([^;]+?\\)\\s+from\\s+public,\\s+anon,\\s+authenticated;`,
+    "i",
+  );
+  has("migration", revokeStatement, `${helper} must revoke EXECUTE from public, anon, and authenticated`);
+  has("hardeningMigration", revokeStatement, `Forward hardening must revoke EXECUTE from public, anon, and authenticated for ${helper}`);
 }
 has("migration", /create policy video_release_3_reports_assigned_coach_select/, "Coach report rows require an assigned-Coach RLS policy");
 has("rollback", /drop table if exists public\.video_release_3_training_plans/, "Rollback must remove Batch 3 tables");
@@ -49,7 +55,15 @@ has("workspace", /Title \(Arabic\)[\s\S]*Content \(Arabic\)[\s\S]*Cite Approved 
 has("workspace", /const maxLevel = family === 'show_jumping' \? 5 : 10[\s\S]*max=\{maxLevel\}/, "Show-jumping benchmarks must never exceed level five in the Coach workspace");
 has("workspace", /nextFamily === 'show_jumping' \? 5 : 10/, "Changing benchmark families must clamp the selected level to that family's range");
 has("workspace", /useWorkspaceLocale[\s\S]*ar-JO/, "Video development dates must follow the active English or Arabic locale.");
-assert.doesNotMatch(files.workspace, /formatDate\([^)]*, 'en-US'\)/, "Video development workspace must not force English date formatting.");
+assert.doesNotMatch(files.workspace, /formatDate\([^,]+,\s*['"](?:en-US|ar-JO)['"]/, "Video development workspace must not force a fixed date locale.");
+const workspaceDateCalls = files.workspace.match(/formatDate\(/g)?.length ?? 0;
+const workspaceLocaleDateCalls = files.workspace.match(/formatDate\([^,]+,\s*locale\b/g)?.length ?? 0;
+assert.equal(workspaceLocaleDateCalls, workspaceDateCalls, "Every Video Development date formatter must receive the active locale.");
+has("page", /useWorkspaceLocale[\s\S]*ar-JO/, "Video Intelligence dates must follow the active English or Arabic locale.");
+assert.doesNotMatch(files.page, /formatDate\([^,]+,\s*['"](?:en-US|ar-JO)['"]/, "Video Intelligence must not force a fixed date locale.");
+const pageDateCalls = files.page.match(/formatDate\(/g)?.length ?? 0;
+const pageLocaleDateCalls = files.page.match(/formatDate\([^,]+,\s*locale\b/g)?.length ?? 0;
+assert.equal(pageLocaleDateCalls, pageDateCalls, "Every Video Intelligence date formatter must receive the active locale.");
 has("page", /useVideoRelease3Access[\s\S]*developmentAccess\.data\?\.enabled[\s\S]*developmentAccess\.data\.canManage[\s\S]*VideoDevelopmentWorkspace/, "Coach workspace must be server-gated by Batch 3 access");
 assert.doesNotMatch(files.persona, /video-intelligence/, "Guardian navigation must not gain Batch 3 access");
 has("arabic", /ولي الأمر/, "Arabic Guardian copy must use the established ولي الأمر terminology");
