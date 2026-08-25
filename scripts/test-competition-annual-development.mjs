@@ -49,16 +49,20 @@ has(
   /create or replace function private\.can_manage_competition_calendar\(p_organization_id uuid\)[\s\S]*create or replace function private\.can_view_competition_costs\(/,
   "Forward hardening must provide unambiguous identity-safe competition helpers for already-applied databases.",
 );
-for (const helper of [
-  "can_manage_competition_calendar",
-  "can_manage_competition_development",
-  "can_view_competition_rider",
-  "can_view_competition_costs",
+for (const [helper, signature] of [
+  ["can_manage_competition_calendar", "uuid"],
+  ["can_manage_competition_development", "uuid,\\s*uuid"],
+  ["can_view_competition_rider", "uuid,\\s*uuid"],
+  ["can_view_competition_costs", "uuid,\\s*uuid"],
+  ["can_manage_competition_calendar", "uuid,\\s*uuid"],
+  ["can_manage_competition_development", "uuid,\\s*uuid,\\s*uuid"],
+  ["can_view_competition_rider", "uuid,\\s*uuid,\\s*uuid"],
+  ["can_view_competition_costs", "uuid,\\s*uuid,\\s*uuid"],
 ]) {
   assert.match(
     files.hardeningMigration,
-    new RegExp(`revoke\\s+all\\s+on\\s+function\\s+private\\.${helper}\\([^;]+?\\)\\s+from\\s+public,\\s+anon,\\s+authenticated;`, "i"),
-    `Forward hardening must revoke EXECUTE from public, anon, and authenticated for ${helper}.`,
+    new RegExp(`revoke\\s+all\\s+on\\s+function\\s+private\\.${helper}\\(${signature}\\)\\s+from\\s+public,\\s+anon,\\s+authenticated;`, "i"),
+    `Forward hardening must revoke EXECUTE from public, anon, and authenticated for ${helper}(${signature.replaceAll("\\s*", " ")}).`,
   );
 }
 has(

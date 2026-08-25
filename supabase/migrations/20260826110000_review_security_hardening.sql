@@ -55,6 +55,10 @@ revoke all on function private.can_manage_competition_calendar(uuid) from public
 revoke all on function private.can_manage_competition_development(uuid, uuid) from public, anon, authenticated;
 revoke all on function private.can_view_competition_rider(uuid, uuid) from public, anon, authenticated;
 revoke all on function private.can_view_competition_costs(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_competition_calendar(uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_competition_development(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_rider(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.can_view_competition_costs(uuid, uuid, uuid) from public, anon, authenticated;
 
 revoke all on function private.video_release_3_enabled(uuid) from public, anon, authenticated;
 revoke all on function private.can_manage_video_release_3(uuid, uuid, uuid) from public, anon, authenticated;
