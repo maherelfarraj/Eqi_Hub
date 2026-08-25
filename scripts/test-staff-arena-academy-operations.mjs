@@ -50,30 +50,17 @@ assert.doesNotMatch(migration, /\b(create payment|create payout|payment provider
 const workspaceFunction = migration.match(
   /create function public\.get_academy_operations_workspace[\s\S]*?\n\$\$;/,
 )?.[0] ?? "";
-for (const orderedField of [
-  "v.display_name_en",
-  "v.starts_at",
-  "v.inspected_at desc",
-  "v.due_at nulls last",
-  "v.period_end desc",
+for (const [relation, orderedField] of [
+  ["academy_staff_profiles", "v.display_name_en"],
+  ["academy_staff_shifts", "v.starts_at"],
+  ["academy_facility_inspections", "v.inspected_at desc"],
+  ["academy_maintenance_work_orders", "v.due_at nulls last"],
+  ["academy_payroll_calculations", "v.period_end desc"],
+  ["academy_commission_calculations", "v.period_end desc"],
 ]) {
   assert.match(
     workspaceFunction,
-    new RegExp(`jsonb_agg\\(\\(to_jsonb\\(v\\) - 'private_note'\\) order by ${orderedField.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\)`),
-    `Workspace must redact private notes before ordering by ${orderedField}.`,
-  );
-}
-for (const relation of [
-  "academy_staff_profiles",
-  "academy_staff_shifts",
-  "academy_facility_inspections",
-  "academy_maintenance_work_orders",
-  "academy_payroll_calculations",
-  "academy_commission_calculations",
-]) {
-  assert.match(
-    workspaceFunction,
-    new RegExp(`from public\\.${relation}[\\s\\S]*?to_jsonb\\(v\\) - 'private_note'|to_jsonb\\(v\\) - 'private_note'[\\s\\S]*?from public\\.${relation}`),
+    new RegExp(`jsonb_agg\\(\\(to_jsonb\\(v\\) - 'private_note'\\) order by ${orderedField.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\) from public\\.${relation}\\b`),
     `${relation} must redact private_note before it enters the workspace payload.`,
   );
 }
