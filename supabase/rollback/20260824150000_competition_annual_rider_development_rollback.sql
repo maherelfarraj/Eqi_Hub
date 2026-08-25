@@ -20,10 +20,10 @@ drop function if exists public.get_competition_development_access(uuid, uuid);
 
 drop function if exists private.competition_audit(uuid, uuid, text, uuid, text, jsonb);
 drop function if exists private.competition_readiness_source_valid(uuid, uuid, uuid, text, uuid);
-drop function if exists private.can_view_competition_costs(uuid, uuid, uuid);
-drop function if exists private.can_view_competition_rider(uuid, uuid, uuid);
-drop function if exists private.can_manage_competition_development(uuid, uuid, uuid);
-drop function if exists private.can_manage_competition_calendar(uuid, uuid);
+drop function if exists private.can_view_competition_costs(uuid, uuid);
+drop function if exists private.can_view_competition_rider(uuid, uuid);
+drop function if exists private.can_manage_competition_development(uuid, uuid);
+drop function if exists private.can_manage_competition_calendar(uuid);
 drop function if exists private.competition_development_enabled(uuid);
 
 drop table if exists public.competition_development_audit_events;

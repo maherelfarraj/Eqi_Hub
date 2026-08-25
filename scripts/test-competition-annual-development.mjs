@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 const root = process.cwd();
 const paths = {
   migration: "supabase/migrations/20260824150000_competition_annual_rider_development.sql",
+  hardeningMigration: "supabase/migrations/20260826110000_review_security_hardening.sql",
   rollback: "supabase/rollback/20260824150000_competition_annual_rider_development_rollback.sql",
   hook: "artifacts/equus-voyages/src/hooks/use-competition-development.ts",
   page: "artifacts/equus-voyages/src/pages/CompetitionDevelopmentPage.tsx",
@@ -31,6 +32,39 @@ has(
   /can_manage_competition_development[\s\S]*coach_rider_assignments[\s\S]*starts_on <= current_date/,
   "Coach mutations must require a current active Coach–Rider assignment",
 );
+for (const helper of [
+  "can_manage_competition_calendar",
+  "can_manage_competition_development",
+  "can_view_competition_rider",
+  "can_view_competition_costs",
+]) {
+  assert.doesNotMatch(
+    files.migration.match(new RegExp(`create or replace function private\\.${helper}[\\s\\S]*?\\n\\$\\$;`))?.[0] ?? "",
+    /\bp_user_id\b/,
+    `${helper} must derive caller identity from auth.uid() rather than accept a caller-supplied user id.`,
+  );
+}
+has(
+  "hardeningMigration",
+  /create or replace function private\.can_manage_competition_calendar\(p_organization_id uuid\)[\s\S]*create or replace function private\.can_view_competition_costs\(/,
+  "Forward hardening must provide unambiguous identity-safe competition helpers for already-applied databases.",
+);
+for (const [helper, signature] of [
+  ["can_manage_competition_calendar", "uuid"],
+  ["can_manage_competition_development", "uuid,\\s*uuid"],
+  ["can_view_competition_rider", "uuid,\\s*uuid"],
+  ["can_view_competition_costs", "uuid,\\s*uuid"],
+  ["can_manage_competition_calendar", "uuid,\\s*uuid"],
+  ["can_manage_competition_development", "uuid,\\s*uuid,\\s*uuid"],
+  ["can_view_competition_rider", "uuid,\\s*uuid,\\s*uuid"],
+  ["can_view_competition_costs", "uuid,\\s*uuid,\\s*uuid"],
+]) {
+  assert.match(
+    files.hardeningMigration,
+    new RegExp(`revoke\\s+all\\s+on\\s+function\\s+private\\.${helper}\\(${signature}\\)\\s+from\\s+public,\\s+anon,\\s+authenticated;`, "i"),
+    `Forward hardening must revoke EXECUTE from public, anon, and authenticated for ${helper}(${signature.replaceAll("\\s*", " ")}).`,
+  );
+}
 has(
   "migration",
   /save_competition_annual_plan[\s\S]*Annual plans require a current Coach–Rider assignment/,

@@ -293,6 +293,13 @@ as $$
   select private.can_manage_video_release_3(p_plan.organization_id, p_plan.rider_id);
 $$;
 
+revoke all on function private.video_release_3_enabled(uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_video_release_3(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.video_release_3_approved_session(uuid, uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.video_release_3_approved_revision(uuid, uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function private.video_release_3_audit(uuid, uuid, text, uuid, text, jsonb) from public, anon, authenticated;
+revoke all on function private.video_release_3_plan_visible(public.video_release_3_training_plans) from public, anon, authenticated;
+
 alter table public.video_release_3_feature_flags enable row level security;
 alter table public.video_release_3_training_plans enable row level security;
 alter table public.video_release_3_plan_evidence enable row level security;

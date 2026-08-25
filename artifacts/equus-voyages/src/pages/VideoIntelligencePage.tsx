@@ -43,6 +43,11 @@ import {
 import { useVideoRelease3Access } from "@/hooks/use-video-release-3";
 import { VideoDevelopmentWorkspace } from "@/components/VideoDevelopmentWorkspace";
 
+function useWorkspaceLocale() {
+  const { i18n } = useTranslation();
+  return (i18n.resolvedLanguage ?? i18n.language) === "ar" ? "ar-JO" : "en-US";
+}
+
 function NotEnrolledView() {
   const { t } = useTranslation();
   return (
@@ -203,6 +208,7 @@ function RiderSubmission() {
 
 function RiderFeedbackView() {
   const { t } = useTranslation();
+  const locale = useWorkspaceLocale();
   const { user } = useAuth();
   const feedbackQuery = useVideoRelease2ApprovedFeedback();
   const consentSessions = useVideoRelease2RiderConsentSessions();
@@ -267,7 +273,7 @@ function RiderFeedbackView() {
               <div key={i} className="rounded-xl bg-cream-50 p-4 border border-cream-100">
                 <p className="text-xs font-bold uppercase tracking-wider text-text-secondary">{pt.category}</p>
                 <p className="mt-1 text-2xl font-serif text-espresso">{pt.score}</p>
-                <p className="mt-2 text-xs text-text-secondary">{formatDate(pt.approvedAt, 'en-US')}</p>
+                <p className="mt-2 text-xs text-text-secondary">{formatDate(pt.approvedAt, locale)}</p>
               </div>
             ))}
           </div>
@@ -320,7 +326,7 @@ function RiderFeedbackView() {
               </div>
               <div className="mt-4 text-xs text-text-secondary flex items-center gap-1">
                 <CheckCircle className="size-3" aria-hidden="true" />
-                <span>{t("videoRelease2.approvedAt", "Approved at")}: {formatDate(fb.approvedAt, 'en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                <span>{t("videoRelease2.approvedAt", "Approved at")}: {formatDate(fb.approvedAt, locale, { dateStyle: 'medium', timeStyle: 'short' })}</span>
               </div>
             </SurfaceCard>
           ))}
@@ -529,6 +535,7 @@ function DraftEditor({
 
 function CoachSessionDetail({ sessionId, onBack }: { sessionId: string; onBack: () => void }) {
   const { t } = useTranslation();
+  const locale = useWorkspaceLocale();
   const workspace = useVideoRelease2SessionWorkspace(sessionId);
   const actions = useVideoRelease2Actions();
   const access = useVideoRelease2Access();
@@ -608,7 +615,7 @@ function CoachSessionDetail({ sessionId, onBack }: { sessionId: string; onBack: 
                     <div key={clip.id} className="flex justify-between items-center p-4 bg-cream-50 rounded-xl border border-cream-100">
                       <div>
                         <p className="text-sm font-semibold text-espresso">{clip.mimeType.split('/')[1]?.toUpperCase() || 'VIDEO'} - {(clip.byteSize / 1024 / 1024).toFixed(1)} MB</p>
-                        <p className="text-xs text-text-secondary mt-1">{Math.round(clip.durationMs / 1000)}s duration · {formatDate(clip.createdAt, 'en-US')}</p>
+                        <p className="text-xs text-text-secondary mt-1">{Math.round(clip.durationMs / 1000)}s duration · {formatDate(clip.createdAt, locale)}</p>
                       </div>
                       <StatusBadge status={clip.uploadState} />
                       {clip.uploadState === 'uploaded' ? (
@@ -680,6 +687,7 @@ function CoachSessionDetail({ sessionId, onBack }: { sessionId: string; onBack: 
 
 function CoachSessionList({ onSelect }: { onSelect: (id: string) => void }) {
   const { t } = useTranslation();
+  const locale = useWorkspaceLocale();
   const { user } = useAuth();
   const sessionsQuery = useVideoRelease2Sessions();
   const ridersQuery = useVideoRelease2PilotRiders();
@@ -772,7 +780,7 @@ function CoachSessionList({ onSelect }: { onSelect: (id: string) => void }) {
                     <Lock className="size-3" aria-hidden="true" />
                     {session.consentStatus.replace('_', ' ').toUpperCase()}
                   </span>
-                  <span>{formatDate(session.createdAt, 'en-US')}</span>
+                  <span>{formatDate(session.createdAt, locale)}</span>
                 </div>
               </SurfaceCard>
             </button>

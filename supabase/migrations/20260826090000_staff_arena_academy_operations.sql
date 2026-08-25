@@ -489,19 +489,19 @@ as $$
 begin
   perform private.assert_academy_operations_access(p_organization_id);
   return jsonb_build_object(
-    'staffProfiles', coalesce((select jsonb_agg(to_jsonb(v) order by v.display_name_en) from public.academy_staff_profiles v where v.organization_id = p_organization_id), '[]'::jsonb),
+    'staffProfiles', coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.display_name_en) from public.academy_staff_profiles v where v.organization_id = p_organization_id), '[]'::jsonb),
     'availability', coalesce((select jsonb_agg(to_jsonb(v) order by v.starts_at) from public.academy_staff_availability v where v.organization_id = p_organization_id), '[]'::jsonb),
-    'shifts', coalesce((select jsonb_agg(to_jsonb(v) order by v.starts_at) from public.academy_staff_shifts v where v.organization_id = p_organization_id), '[]'::jsonb),
+    'shifts', coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.starts_at) from public.academy_staff_shifts v where v.organization_id = p_organization_id), '[]'::jsonb),
     'leave', coalesce((select jsonb_agg(to_jsonb(v) order by v.starts_at) from public.academy_staff_leave v where v.organization_id = p_organization_id), '[]'::jsonb),
     'coachAllocations', coalesce((select jsonb_agg(to_jsonb(v) order by v.starts_at) from public.academy_coach_allocations v where v.organization_id = p_organization_id), '[]'::jsonb),
     'resources', coalesce((select jsonb_agg(to_jsonb(v) order by v.name_en) from public.academy_resources v where v.organization_id = p_organization_id), '[]'::jsonb),
     'bookings', coalesce((select jsonb_agg(to_jsonb(v) order by v.starts_at) from public.academy_resource_bookings v where v.organization_id = p_organization_id), '[]'::jsonb),
     'lessonCapacity', coalesce((select jsonb_agg(to_jsonb(v)) from public.academy_lesson_capacity_controls v where v.organization_id = p_organization_id), '[]'::jsonb),
-    'inspections', coalesce((select jsonb_agg(to_jsonb(v) order by v.inspected_at desc) from public.academy_facility_inspections v where v.organization_id = p_organization_id), '[]'::jsonb),
-    'workOrders', coalesce((select jsonb_agg(to_jsonb(v) order by v.due_at nulls last) from public.academy_maintenance_work_orders v where v.organization_id = p_organization_id), '[]'::jsonb),
+    'inspections', coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.inspected_at desc) from public.academy_facility_inspections v where v.organization_id = p_organization_id), '[]'::jsonb),
+    'workOrders', coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.due_at nulls last) from public.academy_maintenance_work_orders v where v.organization_id = p_organization_id), '[]'::jsonb),
     'alerts', coalesce((select jsonb_agg(to_jsonb(v) order by v.created_at desc) from public.academy_operations_alerts v where v.organization_id = p_organization_id), '[]'::jsonb),
-    'payroll', case when private.can_view_academy_compensation(p_organization_id) then coalesce((select jsonb_agg(to_jsonb(v) order by v.period_end desc) from public.academy_payroll_calculations v where v.organization_id = p_organization_id), '[]'::jsonb) else '[]'::jsonb end,
-    'commissions', case when private.can_view_academy_compensation(p_organization_id) then coalesce((select jsonb_agg(to_jsonb(v) order by v.period_end desc) from public.academy_commission_calculations v where v.organization_id = p_organization_id), '[]'::jsonb) else '[]'::jsonb end
+    'payroll', case when private.can_view_academy_compensation(p_organization_id) then coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.period_end desc) from public.academy_payroll_calculations v where v.organization_id = p_organization_id), '[]'::jsonb) else '[]'::jsonb end,
+    'commissions', case when private.can_view_academy_compensation(p_organization_id) then coalesce((select jsonb_agg((to_jsonb(v) - 'private_note') order by v.period_end desc) from public.academy_commission_calculations v where v.organization_id = p_organization_id), '[]'::jsonb) else '[]'::jsonb end
   );
 end;
 $$;
