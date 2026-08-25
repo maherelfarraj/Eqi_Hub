@@ -3,7 +3,16 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const migration = await readFile(resolve(root, "supabase/migrations/20260826090000_staff_arena_academy_operations.sql"), "utf8");
+const [migration, page, hook, app, shell, persona, english, arabic] = await Promise.all([
+  readFile(resolve(root, "supabase/migrations/20260826090000_staff_arena_academy_operations.sql"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/pages/AcademyOperationsPage.tsx"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/hooks/use-academy-operations.ts"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/App.tsx"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/components/AppShell.tsx"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/lib/portal-persona.ts"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/i18n/en.json"), "utf8"),
+  readFile(resolve(root, "artifacts/equus-voyages/src/i18n/ar.json"), "utf8"),
+]);
 
 for (const relation of [
   "academy_staff_profiles", "academy_staff_shifts", "academy_staff_leave", "academy_resource_bookings",
@@ -37,4 +46,45 @@ for (const entity of ["staff_profile", "availability", "shift", "leave", "coach_
 }
 assert.match(migration, /foreign key \(staff_profile_id, organization_id\)/, "Bookings must reference organization-scoped staff profiles.");
 assert.doesNotMatch(migration, /\b(create payment|create payout|payment provider|stripe)\b/i, "Batch 6 must not process payments.");
+
+for (const section of [
+  "Staff roster & availability",
+  "Availability, shifts, leave & coach allocation",
+  "Arenas & equipment",
+  "Book an arena or equipment item",
+  "Lesson capacity & bookings",
+  "Inspections, work orders & alerts",
+  "Approval-only payroll & commission calculations",
+]) {
+  assert.match(page, new RegExp(section.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `Dashboard must expose ${section}.`);
+}
+for (const localizedField of ["الاسم بالعربية", "المهام بالعربية", "ملاحظة بالعربية", "الغرض بالعربية", "النتائج بالعربية", "الإجراء بالعربية"]) {
+  assert.match(page, new RegExp(localizedField), `Dashboard must expose the Arabic field ${localizedField}.`);
+}
+for (const rpc of [
+  "get_academy_operations_access",
+  "get_academy_operations_workspace",
+  "upsert_academy_staff_profile",
+  "upsert_academy_staff_availability",
+  "upsert_academy_staff_shift",
+  "upsert_academy_staff_leave",
+  "upsert_academy_coach_allocation",
+  "upsert_academy_resource",
+  "upsert_academy_resource_booking",
+  "upsert_academy_lesson_capacity",
+  "upsert_academy_facility_inspection",
+  "upsert_academy_maintenance_work_order",
+  "create_academy_operations_alert",
+  "upsert_academy_payroll_calculation",
+  "upsert_academy_commission_calculation",
+  "approve_academy_payroll_calculation",
+  "approve_academy_commission_calculation",
+]) {
+  assert.match(hook, new RegExp(rpc), `Dashboard hook must call ${rpc}.`);
+}
+assert.match(app, /path="\/academy-operations"/, "Academy Operations must have a routed page.");
+assert.match(shell, /path !== "\/academy-operations"[\s\S]*academyOperationsAccess\.data\?\.canManage/, "Navigation must be gated by the server-side manage decision.");
+assert.match(persona, /"\/academy-operations"/, "Academy Operations must be within the academy-admin portal boundary.");
+assert.equal(JSON.parse(english).translation.nav.academyOperations, "Academy Operations", "English navigation copy must exist.");
+assert.equal(JSON.parse(arabic).translation.nav.academyOperations, "عمليات الأكاديمية", "Arabic navigation copy must exist.");
 console.log("Staff, arena, and academy operations static controls verified.");

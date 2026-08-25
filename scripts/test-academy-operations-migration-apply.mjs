@@ -8,7 +8,19 @@ import { tmpdir } from "node:os";
 const root = resolve(import.meta.dirname, "..");
 const dataDirectory = await mkdtemp(join(tmpdir(), "equivista-academy-pg-"));
 const socketDirectory = await mkdtemp(join(tmpdir(), "equivista-academy-socket-"));
-const initdb = (process.env.PATH ?? "").split(":").map((entry) => join(entry, "initdb")).find(existsSync);
+const postgresBinDirectories = [
+  ...(process.env.PATH ?? "").split(":"),
+  process.env.PG_BIN_DIR,
+  "/usr/lib/postgresql/18/bin",
+  "/usr/lib/postgresql/17/bin",
+  "/usr/lib/postgresql/16/bin",
+  "/usr/lib/postgresql/15/bin",
+  "/usr/lib/postgresql/14/bin",
+  "/usr/lib/postgresql/13/bin",
+  "/usr/lib/postgresql/12/bin",
+  "/usr/local/pgsql/bin",
+].filter(Boolean);
+const initdb = postgresBinDirectories.map((entry) => join(entry, "initdb")).find(existsSync);
 if (!initdb) throw new Error("PostgreSQL initdb is required to validate the isolated Batch 6 migration.");
 
 const postgresBin = dirname(initdb);
