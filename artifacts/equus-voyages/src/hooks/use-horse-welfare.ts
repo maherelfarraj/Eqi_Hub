@@ -293,6 +293,10 @@ function mapWorkspace(value: any): HorseWelfareWorkspace {
   };
 }
 
+function toUtcTimestamp(value: string | null | undefined) {
+  return value ? new Date(value).toISOString() : null;
+}
+
 export function useHorseWelfareAccess() {
   const { activeOrganization } = useAuth();
   const organizationId = activeOrganization?.id ?? null;
@@ -363,14 +367,14 @@ export function useHorseWelfare(canManage: boolean) {
       ...organizationArgs(), p_horse_id: input.horseId, p_schedule_id: input.id ?? null,
       p_schedule_type: input.scheduleType, p_status: input.status, p_title_en: input.titleEn, p_title_ar: input.titleAr,
       p_provider_en: input.providerEn, p_provider_ar: input.providerAr, p_instructions_en: input.instructionsEn,
-      p_instructions_ar: input.instructionsAr, p_due_at: input.dueAt,
+      p_instructions_ar: input.instructionsAr, p_due_at: toUtcTimestamp(input.dueAt),
       p_medication_name_en: input.medicationNameEn, p_medication_name_ar: input.medicationNameAr,
       p_dosage_en: input.dosageEn, p_dosage_ar: input.dosageAr, p_private_note: input.privateNote,
     }),
     recordObservation: (input: Omit<WelfareObservation, "id" | "status">) => call("record_horse_welfare_observation", {
       ...organizationArgs(), p_horse_id: input.horseId, p_category: input.category, p_severity: input.severity,
       p_summary_en: input.summaryEn, p_summary_ar: input.summaryAr, p_action_taken_en: input.actionTakenEn,
-      p_action_taken_ar: input.actionTakenAr, p_observed_at: input.observedAt, p_private_note: input.privateNote,
+      p_action_taken_ar: input.actionTakenAr, p_observed_at: toUtcTimestamp(input.observedAt), p_private_note: input.privateNote,
     }),
     updateObservation: (id: string, status: "acknowledged" | "resolved") => call("resolve_horse_welfare_observation", {
       ...organizationArgs(), p_observation_id: id, p_status: status,
@@ -385,7 +389,7 @@ export function useHorseWelfare(canManage: boolean) {
       ...organizationArgs(), p_horse_id: input.horseId, p_emergency_protocol_id: input.emergencyProtocolId,
       p_incident_type: input.incidentType, p_severity: input.severity, p_summary_en: input.summaryEn,
       p_summary_ar: input.summaryAr, p_response_en: input.responseEn, p_response_ar: input.responseAr,
-      p_occurred_at: input.occurredAt, p_private_note: input.privateNote,
+      p_occurred_at: toUtcTimestamp(input.occurredAt), p_private_note: input.privateNote,
     }),
     updateIncident: (id: string, status: "investigating" | "closed") => call("close_horse_welfare_incident", {
       ...organizationArgs(), p_incident_id: id, p_status: status,
@@ -395,19 +399,19 @@ export function useHorseWelfare(canManage: boolean) {
       p_asset_name_en: input.assetNameEn, p_asset_name_ar: input.assetNameAr, p_result: input.result,
       p_findings_en: input.findingsEn, p_findings_ar: input.findingsAr,
       p_corrective_action_en: input.correctiveActionEn, p_corrective_action_ar: input.correctiveActionAr,
-      p_inspected_at: input.inspectedAt, p_next_due_at: input.nextDueAt, p_private_note: input.privateNote,
+      p_inspected_at: toUtcTimestamp(input.inspectedAt), p_next_due_at: toUtcTimestamp(input.nextDueAt), p_private_note: input.privateNote,
     }),
     saveMaintenance: (input: MaintenanceRecord) => call("upsert_stable_maintenance_record", {
       ...organizationArgs(), p_record_id: input.id || null, p_inspection_id: input.inspectionId,
       p_facility_type: input.facilityType, p_asset_name_en: input.assetNameEn, p_asset_name_ar: input.assetNameAr,
       p_maintenance_type_en: input.maintenanceTypeEn, p_maintenance_type_ar: input.maintenanceTypeAr,
-      p_status: input.status, p_due_at: input.dueAt,
+      p_status: input.status, p_due_at: toUtcTimestamp(input.dueAt),
       p_details_en: input.detailsEn, p_details_ar: input.detailsAr, p_private_note: input.privateNote,
     }),
     createAlert: (input: Omit<WelfareAlert, "id" | "status">) => call("create_horse_welfare_alert", {
       ...organizationArgs(), p_horse_id: input.horseId, p_alert_type: input.alertType, p_severity: input.severity,
       p_title_en: input.titleEn, p_title_ar: input.titleAr, p_body_en: input.bodyEn, p_body_ar: input.bodyAr,
-      p_due_at: input.dueAt,
+      p_due_at: toUtcTimestamp(input.dueAt),
     }),
     updateAlert: (id: string, status: "acknowledged" | "resolved") => call("update_horse_welfare_alert", {
       ...organizationArgs(), p_alert_id: id, p_status: status,

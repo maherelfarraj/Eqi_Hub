@@ -657,9 +657,13 @@ begin
     ), '[]'::jsonb),
     'auditEvents', coalesce((
       select jsonb_agg(to_jsonb(event) order by event.occurred_at desc)
-      from public.horse_welfare_audit_events event
-      where event.organization_id = p_organization_id
-      limit 100
+      from (
+        select *
+        from public.horse_welfare_audit_events
+        where organization_id = p_organization_id
+        order by occurred_at desc
+        limit 100
+      ) event
     ), '[]'::jsonb)
   ) into v_result;
   return v_result;

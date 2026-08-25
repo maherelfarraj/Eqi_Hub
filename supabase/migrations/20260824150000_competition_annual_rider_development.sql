@@ -609,7 +609,7 @@ begin
   end if;
   if private.can_manage_competition_calendar(p_organization_id) then
     return query
-      select membership.user_id, coalesce(profile.full_name, 'Rider')
+      select membership.user_id, coalesce(profile.full_name, 'Rider') as rider_name
       from public.organization_memberships membership
       join public.organization_member_roles member_role on member_role.membership_id = membership.id
       join public.profiles profile on profile.id = membership.user_id
@@ -619,7 +619,7 @@ begin
     return;
   end if;
   return query
-    select distinct assignment.rider_id, coalesce(profile.full_name, 'Rider')
+      select distinct assignment.rider_id, coalesce(profile.full_name, 'Rider') as rider_name
     from public.coach_rider_assignments assignment
     join public.profiles profile on profile.id = assignment.rider_id
     where assignment.organization_id = p_organization_id
@@ -627,7 +627,7 @@ begin
       and assignment.starts_on <= current_date
       and (assignment.ends_on is null or assignment.ends_on >= current_date)
     union
-    select membership.user_id, coalesce(profile.full_name, 'Rider')
+    select membership.user_id, coalesce(profile.full_name, 'Rider') as rider_name
     from public.organization_memberships membership
     join public.organization_member_roles member_role on member_role.membership_id = membership.id
     join public.profiles profile on profile.id = membership.user_id
@@ -636,12 +636,12 @@ begin
       and membership.status = 'active'
       and member_role.role = 'rider'
     union
-    select link.rider_id, coalesce(profile.full_name, 'Rider')
+    select link.rider_id, coalesce(profile.full_name, 'Rider') as rider_name
     from public.guardian_riders link
     join public.profiles profile on profile.id = link.rider_id
     where link.organization_id = p_organization_id and link.guardian_id = auth.uid()
       and private.can_guardian_access_rider(link.organization_id, link.guardian_id, link.rider_id)
-    order by rider_name;
+    order by 2;
 end;
 $$;
 
@@ -658,14 +658,14 @@ begin
     raise exception 'Competition development is not available for this rider' using errcode = '42501';
   end if;
   return query
-    select distinct assignment.coach_id, coalesce(profile.full_name, 'Coach')
+    select distinct assignment.coach_id, coalesce(profile.full_name, 'Coach') as coach_name
     from public.coach_rider_assignments assignment
     join public.profiles profile on profile.id = assignment.coach_id
     where assignment.organization_id = p_organization_id
       and assignment.rider_id = p_rider_id and assignment.active
       and assignment.starts_on <= current_date
       and (assignment.ends_on is null or assignment.ends_on >= current_date)
-    order by coach_name;
+    order by 2;
 end;
 $$;
 
@@ -1084,6 +1084,9 @@ begin
   end if;
   if not v_entry.coach_signed_off then
     raise exception 'A signed-off entry is required before recording a result' using errcode = '23514';
+  end if;
+  if v_entry.status = 'withdrawn' then
+    raise exception 'Withdrawn entries cannot receive a result' using errcode = '23514';
   end if;
   insert into public.competition_entry_results (
     organization_id, entry_id, placing, score, outcome, coach_note, portal_visible, recorded_by

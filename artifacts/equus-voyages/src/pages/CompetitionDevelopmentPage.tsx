@@ -197,8 +197,9 @@ function WorkspaceSections({
               event.preventDefault();
               const form = new FormData(event.currentTarget);
               void save(
-                () =>
-                  actions.savePlan({
+                () => {
+                  if (!coachId) return Promise.reject(new Error(t("competitionDevelopment.messages.coachRequired")));
+                  return actions.savePlan({
                     p_rider_id: riderId,
                     p_plan_year: Number(form.get("planYear")),
                     p_title: String(form.get("planTitle")),
@@ -208,7 +209,8 @@ function WorkspaceSections({
                     p_coach_id: coachId,
                     p_coach_signed_off: true,
                     p_portal_visible: Boolean(form.get("portalVisible")),
-                  }),
+                  });
+                },
                 t("competitionDevelopment.messages.planSaved"),
               );
             }}
@@ -232,8 +234,9 @@ function WorkspaceSections({
             <label className="col-span-full flex items-center gap-2 text-sm text-espresso">
               <input name="portalVisible" type="checkbox" /> {t("competitionDevelopment.annualPlan.portalVisible")}
             </label>
+            {!coachId ? <p role="alert" className="col-span-full text-sm text-warning-700">{t("competitionDevelopment.messages.coachRequired")}</p> : null}
             <div className="col-span-full">
-              <SubmitButton disabled={actions.saving}>{t("competitionDevelopment.annualPlan.create")}</SubmitButton>
+              <SubmitButton disabled={actions.saving || !coachId}>{t("competitionDevelopment.annualPlan.create")}</SubmitButton>
             </div>
           </form>
         ) : (
@@ -573,6 +576,10 @@ function EntryList({
             onSubmit={(event) => {
               event.preventDefault();
               const form = new FormData(event.currentTarget);
+              if (!coachId) {
+                setError(t("competitionDevelopment.messages.coachRequired"));
+                return;
+              }
               void submit(() => actions.saveEntry({
                 p_rider_id: riderId,
                 p_competition_id: competitionId,
@@ -605,7 +612,8 @@ function EntryList({
               <input className={fieldClass} name="level" type="number" defaultValue={1} min={1} max={10} required />
             </div>
             <label className="text-xs text-text-secondary"><input name="portalVisible" type="checkbox" /> {t("competitionDevelopment.calendar.portalVisible")}</label>
-            <div className="md:col-span-3"><SubmitButton disabled={actions.saving}>{t("competitionDevelopment.entries.add")}</SubmitButton></div>
+            {!coachId ? <p role="alert" className="text-sm text-warning-700 md:col-span-4">{t("competitionDevelopment.messages.coachRequired")}</p> : null}
+            <div className="md:col-span-3"><SubmitButton disabled={actions.saving || !coachId}>{t("competitionDevelopment.entries.add")}</SubmitButton></div>
           </form>
           {selected ? (
             <div className="grid gap-3 rounded-lg border border-cream-200 bg-white p-3 lg:grid-cols-2">

@@ -57,6 +57,10 @@ try {
   run(pgCtl, ["-D", dataDirectory, "-o", `-k ${socketDirectory} -p ${port}`, "-w", "-t", "10", "start"]);
   started = true;
   const connection = ["-X", "-v", "ON_ERROR_STOP=1", "-h", socketDirectory, "-p", port, "-U", "postgres", "-d", "postgres"];
+  const serverVersion = Number(run(psql, connection, "show server_version_num;").trim());
+  if (serverVersion < 150000) {
+    throw new Error(`Batch 6 migration validation requires PostgreSQL 15 or later; found ${serverVersion}.`);
+  }
   run(psql, connection, `
     create role anon; create role authenticated;
     create schema auth; create schema private; create extension if not exists pgcrypto;

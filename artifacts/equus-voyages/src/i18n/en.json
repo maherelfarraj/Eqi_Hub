@@ -181,6 +181,7 @@
         "empty": "No approved development reports are available."
       },
       "messages": {
+        "coachRequired": "Assign an active coach before creating a plan or competition entry.",
         "planSaved": "Annual plan saved and Coach signed off.",
         "planPublished": "Annual plan approved for the portal.",
         "competitionSaved": "Competition date saved.",

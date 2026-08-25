@@ -10,6 +10,7 @@ const paths = {
   workspace: "artifacts/equus-voyages/src/components/VideoDevelopmentWorkspace.tsx",
   page: "artifacts/equus-voyages/src/pages/VideoIntelligencePage.tsx",
   persona: "artifacts/equus-voyages/src/lib/portal-persona.ts",
+  arabic: "artifacts/equus-voyages/src/i18n/ar.json",
 };
 const files = Object.fromEntries(
   await Promise.all(Object.entries(paths).map(async ([key, path]) => [key, await readFile(resolve(root, path), "utf8")])),
@@ -35,7 +36,10 @@ assert.doesNotMatch(files.rollback, /video_release_2_sessions|video_review_sessi
 has("hook", /get_video_release_3_timeline[\s\S]*save_video_release_3_report[\s\S]*approve_video_release_3_report/, "Client hooks must use guarded Batch 3 RPCs");
 assert.doesNotMatch(files.hook, /\.from\("video_release_3_/, "Client must not write Batch 3 tables directly");
 has("workspace", /Title \(Arabic\)[\s\S]*Content \(Arabic\)[\s\S]*Cite Approved Evidence/, "Workspace must collect bilingual report content and approved evidence");
+has("workspace", /const maxLevel = family === 'show_jumping' \? 5 : 10[\s\S]*max=\{maxLevel\}/, "Show-jumping benchmarks must never exceed level five in the Coach workspace");
+has("workspace", /nextFamily === 'show_jumping' \? 5 : 10/, "Changing benchmark families must clamp the selected level to that family's range");
 has("page", /useVideoRelease3Access[\s\S]*developmentAccess\.data\?\.enabled[\s\S]*developmentAccess\.data\.canManage[\s\S]*VideoDevelopmentWorkspace/, "Coach workspace must be server-gated by Batch 3 access");
 assert.doesNotMatch(files.persona, /video-intelligence/, "Guardian navigation must not gain Batch 3 access");
+has("arabic", /ولي الأمر/, "Arabic Guardian copy must use the established ولي الأمر terminology");
 
 console.log("Verified Batch 3 approved-only development intelligence, Coach-only access, bilingual reports, rollback, and Release 1/2 preservation");

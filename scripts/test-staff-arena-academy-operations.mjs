@@ -61,6 +61,18 @@ for (const section of [
 for (const localizedField of ["الاسم بالعربية", "المهام بالعربية", "ملاحظة بالعربية", "الغرض بالعربية", "النتائج بالعربية", "الإجراء بالعربية"]) {
   assert.match(page, new RegExp(localizedField), `Dashboard must expose the Arabic field ${localizedField}.`);
 }
+assert.match(page, /shift\.status !== "cancelled" && new Date\(shift\.ends_at\)\.getTime\(\) >= Date\.now\(\)/, "Upcoming-shift metric must not count completed shifts.");
+for (const accessibleName of [
+  "Availability starts at",
+  "Shift starts at",
+  "Booking starts at",
+  "Lesson capacity",
+  "Work order due date and time",
+  "Payroll period start date",
+  "Commission period start date",
+]) {
+  assert.match(page, new RegExp(`aria-label="${accessibleName}"`), `${accessibleName} must be exposed to assistive technology.`);
+}
 for (const rpc of [
   "get_academy_operations_access",
   "get_academy_operations_workspace",

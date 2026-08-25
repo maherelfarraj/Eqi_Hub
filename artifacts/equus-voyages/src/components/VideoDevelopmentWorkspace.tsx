@@ -299,6 +299,7 @@ function BenchmarksTab({
   const [evidenceSessionId, setEvidenceSessionId] = useState('');
   const [coachNote, setCoachNote] = useState('');
   const [horseId, setHorseId] = useState('');
+  const maxLevel = family === 'show_jumping' ? 5 : 10;
 
   const handleSave = async () => {
     if (!evidenceSessionId) return;
@@ -306,7 +307,7 @@ function BenchmarksTab({
     const res = await actions.confirmBenchmark({
       riderId,
       family,
-      level: parseInt(level, 10),
+      level: Math.min(maxLevel, Math.max(1, parseInt(level, 10) || 1)),
        evidenceSessionId,
       horseId: horseId || null,
       coachNote
@@ -358,14 +359,18 @@ function BenchmarksTab({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Family</label>
-              <select className={fieldClass} value={family} onChange={e => setFamily(e.target.value as any)}>
+              <select className={fieldClass} value={family} onChange={e => {
+                const nextFamily = e.target.value as 'foundation' | 'show_jumping';
+                setFamily(nextFamily);
+                setLevel((current) => String(Math.min(nextFamily === 'show_jumping' ? 5 : 10, Math.max(1, parseInt(current, 10) || 1))));
+              }}>
                 <option value="foundation">Foundation</option>
                 <option value="show_jumping">Show Jumping</option>
               </select>
             </div>
             <div>
               <label className={labelClass}>Level</label>
-              <input type="number" min="1" max="10" className={fieldClass} value={level} onChange={e => setLevel(e.target.value)} />
+              <input type="number" min="1" max={maxLevel} className={fieldClass} value={level} onChange={e => setLevel(e.target.value)} />
             </div>
           </div>
           <div>

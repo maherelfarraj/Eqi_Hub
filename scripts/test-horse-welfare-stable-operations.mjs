@@ -104,6 +104,11 @@ has(
   "The module must retain a private audit history",
 );
 has(
+  "migration",
+  /'auditEvents'[\s\S]*from \([\s\S]*horse_welfare_audit_events[\s\S]*order by occurred_at desc[\s\S]*limit 100[\s\S]*\) event/,
+  "Audit-event payloads must limit source rows before aggregation",
+);
+has(
   "rollback",
   /drop table if exists public\.horse_welfare_alerts/,
   "Rollback must remove Batch 5 operational alert records",
@@ -137,6 +142,26 @@ has(
   "page",
   /maintenanceTypeEn[\s\S]*maintenanceTypeAr/,
   "The maintenance form must collect both English and Arabic record types",
+);
+has(
+  "page",
+  /getTimezoneOffset\(\) \* 60_000/,
+  "Datetime-local fields must display persisted timestamps in the browser's local timezone",
+);
+has(
+  "page",
+  /dailyWorkloadLimitMinutes\}[^]*min="30" max="480"|min="30" max="480"[^]*dailyWorkloadLimitMinutes/,
+  "Daily workload input bounds must match the database constraints",
+);
+has(
+  "page",
+  /mealsPerDay\}[^]*min="1" max="8"|min="1" max="8"[^]*mealsPerDay/,
+  "Meals-per-day input bounds must match the database constraints",
+);
+has(
+  "hook",
+  /function toUtcTimestamp[\s\S]*new Date\(value\)\.toISOString\(\)[\s\S]*p_due_at: toUtcTimestamp\(input\.dueAt\)/,
+  "Datetime-local values must be serialized to timezone-aware UTC values before guarded RPC calls",
 );
 for (const method of [
   "saveProfile",

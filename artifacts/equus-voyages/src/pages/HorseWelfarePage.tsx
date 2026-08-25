@@ -43,7 +43,12 @@ const getLangField = (item: any, fieldEn: string, fieldAr: string, isAr: boolean
   return isAr ? (item[fieldAr] || item[fieldEn]) : (item[fieldEn] || item[fieldAr]);
 };
 
-const toLocalInput = (iso?: string | null) => iso ? iso.slice(0, 16) : "";
+const toLocalInput = (iso?: string | null) => {
+  if (!iso) return "";
+  const date = new Date(iso);
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+};
 const toDateInput = (iso?: string | null) => iso ? iso.slice(0, 10) : "";
 
 // -------------------------------------------------------------------------------------------------
@@ -146,7 +151,7 @@ function ProfileFormModal({ horse, profile, onClose, onSave, isAr }: any) {
        </div>
        <div className="grid grid-cols-2 gap-4">
          <FormGroup label={isAr ? "الحد الأقصى للعمل (دقائق)" : "Daily Workload (min)"} required isAr={isAr}>
-           <input type="number" required min="0" className={fieldClass} value={data.dailyWorkloadLimitMinutes} onChange={e => setData({...data, dailyWorkloadLimitMinutes: Number(e.target.value)})} dir={isAr ? "rtl" : "ltr"} />
+            <input type="number" required min="30" max="480" className={fieldClass} value={data.dailyWorkloadLimitMinutes} onChange={e => setData({...data, dailyWorkloadLimitMinutes: Number(e.target.value)})} dir={isAr ? "rtl" : "ltr"} />
          </FormGroup>
          <FormGroup label={isAr ? "درجة حالة الجسم (BCS)" : "Body Condition Score (BCS)"} isAr={isAr}>
            <input type="number" step="0.5" min="1" max="9" className={fieldClass} value={data.bodyConditionScore || ""} onChange={e => setData({...data, bodyConditionScore: e.target.value ? Number(e.target.value) : null})} dir={isAr ? "rtl" : "ltr"} />
@@ -192,7 +197,7 @@ function FeedingPlanModal({ initialData, horseId, onClose, onSave, isAr }: any) 
            </select>
          </FormGroup>
          <FormGroup label={isAr ? "وجبات يومياً" : "Meals per Day"} required isAr={isAr}>
-           <input type="number" required min="1" className={fieldClass} value={data.mealsPerDay} onChange={e => setData({...data, mealsPerDay: Number(e.target.value)})} dir={isAr ? "rtl" : "ltr"} />
+            <input type="number" required min="1" max="8" className={fieldClass} value={data.mealsPerDay} onChange={e => setData({...data, mealsPerDay: Number(e.target.value)})} dir={isAr ? "rtl" : "ltr"} />
          </FormGroup>
        </div>
        <BilingualInput labelEn="Feed Name (EN)" labelAr="اسم العلف (عربي)" required valueEn={data.feedNameEn} valueAr={data.feedNameAr} onChangeEn={(v: string) => setData({...data, feedNameEn: v})} onChangeAr={(v: string) => setData({...data, feedNameAr: v})} />

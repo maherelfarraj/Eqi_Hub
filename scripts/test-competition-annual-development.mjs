@@ -100,6 +100,31 @@ has(
   "Mutations must use guarded RPCs",
 );
 has(
+  "migration",
+  /coalesce\(profile\.full_name, 'Rider'\) as rider_name[\s\S]*order by 2/,
+  "Rider lookup output and ordering must be unambiguous",
+);
+has(
+  "migration",
+  /coalesce\(profile\.full_name, 'Coach'\) as coach_name[\s\S]*order by 2/,
+  "Coach lookup output and ordering must be unambiguous",
+);
+has(
+  "migration",
+  /v_entry\.status = 'withdrawn'[\s\S]*Withdrawn entries cannot receive a result/,
+  "Withdrawn entries must not be made completed or portal-visible by saving a result",
+);
+has(
+  "page",
+  /if \(!coachId\) return Promise\.reject[\s\S]*p_coach_id: coachId/,
+  "Annual plan saves must never submit an empty coach UUID",
+);
+has(
+  "page",
+  /if \(!coachId\) \{[\s\S]*setError\([\s\S]*coachRequired[\s\S]*p_coach_id: coachId/,
+  "Competition-entry saves must fail closed when the rider has no active Coach",
+);
+has(
   "rollback",
   /drop table if exists public\.competition_development_reports/,
   "Rollback must remove Batch 4 competition development records",
