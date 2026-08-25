@@ -2,6 +2,7 @@ export type PortalPersona = "guardian" | "academy_admin" | "default";
 
 const guardianNavigationPaths = new Set([
   "/guardian",
+  "/competition-development",
   "/safety",
   "/video-review",
   "/stable-operations",
@@ -9,10 +10,13 @@ const guardianNavigationPaths = new Set([
 ]);
 const academyAdminNavigationPaths = new Set([
   "/dashboard",
+  "/competition-development",
   "/video-review",
   "/lessons",
   "/horses",
   "/stable-operations",
+  "/horse-welfare",
+  "/academy-operations",
   "/safety",
   "/billing",
   "/organization",
