@@ -58,6 +58,10 @@ try {
   databaseStarted = true;
 
   const connectionArgs = ["-X", "-v", "ON_ERROR_STOP=1", "-h", socketDirectory, "-p", port, "-U", "postgres", "-d", "postgres"];
+  const serverVersion = Number(run(psql, connectionArgs, "show server_version_num;").trim());
+  if (serverVersion < 150000) {
+    throw new Error(`Horse Welfare migration validation requires PostgreSQL 15 or later; found ${serverVersion}.`);
+  }
   run(
     psql,
     connectionArgs,
