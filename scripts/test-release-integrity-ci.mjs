@@ -12,13 +12,14 @@ const readOptional = async (path) => {
     throw error;
   }
 };
-const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, schemaJson, previewVerifier, welfare, academy, medical, guardian] = await Promise.all([
+const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, schemaJson, releaseEvidenceJson, previewVerifier, welfare, academy, medical, guardian] = await Promise.all([
   readOptional(".github/workflows/repository-verify.yml"),
   readOptional(".github/workflows/worker-ci.yml"),
   readOptional(".github/workflows/verify-supabase-replay.yml"),
   read("package.json"),
   read("docs/BATCH_7_RELEASE_INTEGRITY.md"),
   read("intelligence/batch7-release-integrity.schema.json"),
+  read("intelligence/batch7-release-integrity.example.json"),
   read("scripts/supabase-preview-check.mjs"),
   read("scripts/test-horse-welfare-stable-operations.mjs"),
   read("scripts/test-staff-arena-academy-operations.mjs"),
@@ -66,20 +67,18 @@ test("release policy defines required and intentional-skip Supabase Preview outc
 
 test("release evidence schema is sealed and the runtime contract executes its approved suites", () => {
   const schema = JSON.parse(schemaJson);
+  const releaseEvidence = JSON.parse(releaseEvidenceJson);
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.safety.additionalProperties, false);
   assert.equal(schema.properties.role_matrix.items.additionalProperties, false);
   const command = JSON.parse(packageJson).scripts["verify:release-integrity"];
   assert.match(command, /test-supabase-preview-check/);
   assert.match(previewVerifier, /SUPABASE_GITHUB_APP_ID = 330661/);
-  for (const expected of [
-    "verify-guardian-view",
-    "test-guardian-view",
-    "verify-medical-waiver-gate",
-    "test-medical-waiver-gate",
-    "test-horse-welfare-stable-operations",
-    "test-staff-arena-academy-operations",
-  ]) assert.match(command, new RegExp(expected));
+  for (const batch of releaseEvidence.batches) {
+    for (const expected of batch.commands) {
+      assert.ok(command.includes(expected), `release verification must execute Batch ${batch.batch} command: ${expected}`);
+    }
+  }
 });
 
 test("root verify keeps focused payroll, welfare, medical, guardian, and private-boundary regressions", () => {
