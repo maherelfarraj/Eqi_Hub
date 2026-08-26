@@ -4,13 +4,19 @@ on:
   pull_request:
     paths:
       - "supabase/**"
-      - "scripts/verify-supabase-*.mjs"
+      - "scripts/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - ".github/workflows/verify-supabase-replay.yml"
   push:
     branches: [main]
     paths:
       - "supabase/**"
-      - "scripts/verify-supabase-*.mjs"
+      - "scripts/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - ".github/workflows/verify-supabase-replay.yml"
 
 permissions:
