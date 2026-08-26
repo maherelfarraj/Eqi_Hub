@@ -101,15 +101,16 @@ test("Supabase replay covers schema and validation-contract changes", () => {
   assert.match(supabaseReplay, /npm run verify:supabase/);
 });
 
-test("release policy defines required and intentional-skip Supabase Preview outcomes", () => {
+test("release policy defines required and pre-poll non-Supabase outcomes", () => {
   assert.match(
     releaseDoc,
     /supabase\/\*\*[\s\S]*Supabase[\s\S]*Preview[\s\S]*required/i,
   );
   assert.match(
     releaseDoc,
-    /non-Supabase[\s\S]*Supabase Preview[\s\S]*skipped/i,
+    /non-Supabase[\s\S]*supabase-preview-gate[\s\S]*exits successfully[\s\S]*before polling external check-runs/i,
   );
+  assert.doesNotMatch(releaseDoc, /Supabase Preview[\s\S]*skipped/i);
   assert.match(releaseDoc, /missing, pending, cancelled, or failed.*fail/is);
   assert.match(releaseDoc, /supabase-replay[\s\S]*must[\s\S]*pass/i);
 });

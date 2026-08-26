@@ -32,12 +32,11 @@ in this change and are validated as a required set.
   required root `verify` can pass. `supabase-replay` must
   also pass. The replay workflow also runs when validation scripts, root package
   metadata, or its own workflow change.
-- For a non-Supabase pull request, a **Supabase Preview** result of `skipped`
-  is the intentional non-Supabase outcome. It is paired with a passing root
-  `verify` result and does not claim that a database preview ran.
+- For a non-Supabase pull request, `supabase-preview-gate` exits successfully
+  before polling external check-runs. No literal **Supabase Preview** result is
+  required or interpreted for this path.
 - A missing, pending, cancelled, or failed Supabase Preview result for a
   database change makes `supabase-preview-gate`, and therefore `verify`, fail.
-  A skipped result must never be reclassified as a successful database preview.
 - The preview evaluator is always extracted from the pull request's trusted
   base revision. If the base revision does not contain the evaluator files,
   the gate fails closed; pull-request check data remains input and cannot
