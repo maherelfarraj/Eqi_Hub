@@ -8,6 +8,15 @@ synthetic role coverage, and makes the database-preview policy explicit. It
 does not authorize a release, enable a feature, mutate a hosted environment,
 create a persona, alter financial access, or process a payment.
 
+## Staged publication status
+
+The initial draft publishes the validated non-workflow package only. The
+workflow files remain preserved outside that draft because the active GitHub
+credential cannot write `.github/workflows/**`. CI enforcement and Supabase
+Preview gating remain pending a workflow-capable GitHub credential. The CI
+contract below is the preserved target contract and is not active until those
+workflow files are published in the dedicated follow-up.
+
 ## CI contract
 
 `verify` is the repository-level required context. It runs on every pull

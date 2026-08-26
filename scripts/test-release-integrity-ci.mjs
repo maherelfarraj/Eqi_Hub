@@ -4,10 +4,18 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
+const readOptional = async (path) => {
+  try {
+    return await read(path);
+  } catch (error) {
+    if (error?.code === "ENOENT") return null;
+    throw error;
+  }
+};
 const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, schemaJson, previewVerifier, welfare, academy, medical, guardian] = await Promise.all([
-  read(".github/workflows/repository-verify.yml"),
-  read(".github/workflows/worker-ci.yml"),
-  read(".github/workflows/verify-supabase-replay.yml"),
+  readOptional(".github/workflows/repository-verify.yml"),
+  readOptional(".github/workflows/worker-ci.yml"),
+  readOptional(".github/workflows/verify-supabase-replay.yml"),
   read("package.json"),
   read("docs/BATCH_7_RELEASE_INTEGRITY.md"),
   read("intelligence/batch7-release-integrity.schema.json"),
@@ -17,8 +25,14 @@ const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, sche
   read("scripts/test-medical-waiver-gate.mjs"),
   read("scripts/test-guardian-view.mjs"),
 ]);
+const workflowContractPresent = Boolean(repositoryVerify && workerCi && supabaseReplay);
 
-test("repository verify provides an always-present protected context", () => {
+test("staged publication declares pending workflow enforcement", { skip: workflowContractPresent }, () => {
+  assert.match(releaseDoc, /workflow-capable GitHub credential/i);
+  assert.match(releaseDoc, /CI enforcement and Supabase\s+Preview gating remain pending/i);
+});
+
+test("repository verify provides an always-present protected context", { skip: !workflowContractPresent }, () => {
   assert.match(repositoryVerify, /^  pull_request:\s*$/m);
   assert.match(repositoryVerify, /^  push:\n    branches: \[main\]$/m);
   assert.match(repositoryVerify, /\n  verify:\n    name: verify/);
@@ -36,7 +50,7 @@ test("repository verify provides an always-present protected context", () => {
   assert.doesNotMatch(workerCi, /\n  verify:\n    name: verify/);
 });
 
-test("Supabase replay covers schema and validation-contract changes", () => {
+test("Supabase replay covers schema and validation-contract changes", { skip: !workflowContractPresent }, () => {
   for (const path of ["supabase/**", "scripts/**", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]) {
     assert.match(supabaseReplay, new RegExp(`"${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
   }
