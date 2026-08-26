@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://equivista.net/schemas/batch7-release-integrity.schema.json",
+  "title": "EquiVista Batch 7 Release Integrity Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "release",
+    "mode",
+    "release_authorized",
+    "safety",
+    "stages",
+    "batches",
+    "default_off",
+    "role_matrix",
+    "privacy_assertions"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "release": { "const": "batch-7-release-integrity" },
+    "mode": { "const": "synthetic-release-evidence" },
+    "release_authorized": { "const": false },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "production_mutations_allowed",
+        "feature_activation_allowed",
+        "persona_changes_allowed",
+        "financial_permission_changes_allowed",
+        "payments_allowed",
+        "sensitive_data_allowed"
+      ],
+      "properties": {
+        "production_mutations_allowed": { "const": false },
+        "feature_activation_allowed": { "const": false },
+        "persona_changes_allowed": { "const": false },
+        "financial_permission_changes_allowed": { "const": false },
+        "payments_allowed": { "const": false },
+        "sensitive_data_allowed": { "const": false }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["static-contract", "isolated-policy", "route-boundary"]
+      }
+    },
+    "batches": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["batch", "scope", "status", "source_ref", "commands", "boundaries"],
+        "properties": {
+          "batch": { "enum": [3, 4, 5, 6] },
+          "scope": { "type": "string", "minLength": 1 },
+          "status": { "const": "accepted" },
+          "source_ref": { "type": "string", "pattern": "^docs/" },
+          "commands": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "boundaries": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "default_off": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["module", "expected_enabled"],
+        "properties": {
+          "module": { "type": "string", "minLength": 1 },
+          "expected_enabled": { "const": false }
+        }
+      }
+    },
+    "role_matrix": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "batches", "allowed", "denied", "stage_results"],
+        "properties": {
+          "role": {
+            "enum": [
+              "rider",
+              "guardian",
+              "coach",
+              "academy_admin",
+              "stable_manager",
+              "accountant",
+              "platform_admin"
+            ]
+          },
+          "batches": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "enum": [3, 4, 5, 6] }
+          },
+          "allowed": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "denied": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "stage_results": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["stage", "result", "evidence_kind"],
+              "properties": {
+                "stage": {
+                  "enum": ["static-contract", "isolated-policy", "route-boundary"]
+                },
+                "result": { "const": "covered" },
+                "evidence_kind": { "const": "synthetic" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "privacy_assertions": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

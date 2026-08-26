@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "release": "batch-7-release-integrity",
+  "mode": "synthetic-release-evidence",
+  "release_authorized": false,
+  "safety": {
+    "production_mutations_allowed": false,
+    "feature_activation_allowed": false,
+    "persona_changes_allowed": false,
+    "financial_permission_changes_allowed": false,
+    "payments_allowed": false,
+    "sensitive_data_allowed": false
+  },
+  "stages": ["static-contract", "isolated-policy", "route-boundary"],
+  "batches": [
+    {
+      "batch": 3,
+      "scope": "guardian-view",
+      "status": "accepted",
+      "source_ref": "docs/BATCH_3_GUARDIAN_VIEW.md",
+      "commands": ["node scripts/verify-guardian-view.mjs", "node --test scripts/test-guardian-view.mjs"],
+      "boundaries": ["verified-link-only", "read-only-portal", "private-staff-content-excluded"]
+    },
+    {
+      "batch": 4,
+      "scope": "medical-waiver-readiness",
+      "status": "accepted",
+      "source_ref": "docs/BATCH_4_MEDICAL_WAIVER_GATE.md",
+      "commands": ["node scripts/verify-medical-waiver-gate.mjs", "node --test scripts/test-medical-waiver-gate.mjs"],
+      "boundaries": ["versioned-consent", "fail-closed-readiness", "role-limited-safety-data"]
+    },
+    {
+      "batch": 5,
+      "scope": "controlled-pilot-and-horse-welfare",
+      "status": "accepted",
+      "source_ref": "docs/BATCH_5_CONTROLLED_PILOT_OBSERVATION.md",
+      "commands": ["pnpm verify:pilot", "node scripts/test-horse-welfare-stable-operations.mjs"],
+      "boundaries": ["cohort-retired", "default-off-welfare", "authorized-staff-only"]
+    },
+    {
+      "batch": 6,
+      "scope": "feasibility-and-academy-operations",
+      "status": "accepted",
+      "source_ref": "docs/BATCH_6_HORSE_RIDER_FEASIBILITY.md",
+      "commands": ["pnpm verify:batch6", "pnpm test:academy-operations"],
+      "boundaries": ["offline-only-feasibility", "default-off-operations", "approval-only-compensation"]
+    }
+  ],
+  "default_off": [
+    { "module": "horse-welfare", "expected_enabled": false },
+    { "module": "academy-operations", "expected_enabled": false },
+    { "module": "competition-development", "expected_enabled": false },
+    { "module": "video-release-3", "expected_enabled": false }
+  ],
+  "role_matrix": [
+    {
+      "role": "rider",
+      "batches": [3, 4],
+      "allowed": ["own-readiness-status", "own-approved-feedback"],
+      "denied": ["staff-operations", "private-staff-content", "cross-tenant"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "guardian",
+      "batches": [3, 4],
+      "allowed": ["verified-linked-read-only", "permitted-approval"],
+      "denied": ["unrelated-rider", "private-staff-content", "staff-operations"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "coach",
+      "batches": [4, 5, 6],
+      "allowed": ["assigned-rider-development", "horse-welfare-operations"],
+      "denied": ["raw-safety-data", "payroll-approval", "cross-tenant"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "academy_admin",
+      "batches": [3, 4, 5, 6],
+      "allowed": ["academy-operations", "payroll-approval", "safety-review"],
+      "denied": ["direct-payment-processing"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "stable_manager",
+      "batches": [5, 6],
+      "allowed": ["horse-welfare-operations", "academy-operations"],
+      "denied": ["payroll-approval", "raw-safety-data"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "accountant",
+      "batches": [6],
+      "allowed": ["compensation-view"],
+      "denied": ["payroll-approval", "horse-welfare-operations", "private-staff-content"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    },
+    {
+      "role": "platform_admin",
+      "batches": [3, 4, 5, 6],
+      "allowed": ["existing-administration-exception", "safety-review"],
+      "denied": ["direct-payment-processing"],
+      "stage_results": [
+        { "stage": "static-contract", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "isolated-policy", "result": "covered", "evidence_kind": "synthetic" },
+        { "stage": "route-boundary", "result": "covered", "evidence_kind": "synthetic" }
+      ]
+    }
+  ],
+  "privacy_assertions": [
+    "guardian-portal-excludes-private-staff-content",
+    "coach-excludes-raw-safety-data",
+    "academy-workspace-redacts-private-notes",
+    "cross-tenant-access-denied"
+  ]
+}
