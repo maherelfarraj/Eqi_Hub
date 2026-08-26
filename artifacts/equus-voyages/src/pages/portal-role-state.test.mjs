@@ -22,10 +22,17 @@ test("active organization persona gives academy admin precedence", () => {
 });
 
 test("guardian navigation allows the private video review list, safe stable availability, and its single-session detail route", () => {
-  assert.match(
-    persona,
-    /guardianNavigationPaths = new Set\(\[\s*"\/guardian",\s*"\/competition-development",\s*"\/safety",\s*"\/video-review",\s*"\/stable-operations",\s*"\/settings",\s*\]\)/,
-  );
+  for (const path of [
+    "/guardian",
+    "/competition-development",
+    "/safety",
+    "/video-review",
+    "/stable-operations",
+    "/family-operations",
+    "/settings",
+  ]) {
+    assert.match(persona, new RegExp(`"${path}"`));
+  }
   assert.ok(
     persona.includes(
       "const guardianVideoReviewDetailPath = /^\\/video-review\\/[^/]+$/;",

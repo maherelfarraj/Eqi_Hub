@@ -27,6 +27,8 @@ import {
   Video,
   Warehouse,
   X,
+  UsersRound,
+  Wallet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -54,6 +56,8 @@ const navigation = [
   { path: "/stable-operations", labelKey: "nav.stableOperations", icon: Warehouse },
   { path: "/horse-welfare", labelKey: "nav.horseWelfare", icon: HeartPulse },
   { path: "/academy-operations", labelKey: "nav.academyOperations", icon: Building2 },
+  { path: "/family-operations", labelKey: "nav.familyOperations", icon: UsersRound },
+  { path: "/revenue-operations", labelKey: "nav.revenueOperations", icon: Wallet },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
   { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
@@ -77,6 +81,7 @@ export default function AppShell() {
   const competitionDevelopmentAccess = useCompetitionDevelopmentAccess();
   const horseWelfareAccess = useHorseWelfareAccess();
   const academyOperationsAccess = useAcademyOperationsAccess();
+  const batch8Enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -173,6 +178,13 @@ export default function AppShell() {
                   Boolean(horseWelfareAccess.data?.canManage)) &&
                  (path !== "/academy-operations" ||
                    Boolean(academyOperationsAccess.data?.canManage)) &&
+                 (path !== "/family-operations" ||
+                    (batch8Enabled && hasRole("guardian"))) &&
+                  (path !== "/revenue-operations" ||
+                    (batch8Enabled &&
+                      (hasRole("academy_admin") ||
+                        hasRole("accountant") ||
+                        hasRole("platform_admin")))) &&
                 isNavigationPathVisible(
                   portalPersona,
                   path,

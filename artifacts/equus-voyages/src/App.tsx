@@ -36,6 +36,8 @@ const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const StableOperationsPage = lazy(() => import("@/pages/StableOperationsPage"));
+const FamilyOperationsPage = lazy(() => import("@/pages/FamilyOperationsPage"));
+const RevenueOperationsPage = lazy(() => import("@/pages/RevenueOperationsPage"));
 const VideoReviewPage = lazy(() => import("@/pages/VideoReviewPage"));
 const VideoIntelligencePage = lazy(() => import("@/pages/VideoIntelligencePage"));
 
@@ -83,6 +85,24 @@ function SuspendedPage({
       {children}
     </Suspense>
   );
+}
+
+function Batch8RouteGuard({
+  allowedRoles,
+  fallback,
+  children,
+}: {
+  allowedRoles: readonly string[];
+  fallback: string;
+  children: ReactNode;
+}) {
+  const { hasRole } = useAuth();
+  const enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
+
+  if (!enabled || !allowedRoles.some((role) => hasRole(role))) {
+    return <Navigate to={fallback} replace />;
+  }
+  return children;
 }
 
 function AppRoutes() {
@@ -268,6 +288,32 @@ function AppRoutes() {
             <SuspendedPage>
               <StableOperationsPage />
             </SuspendedPage>
+          }
+        />
+        <Route
+          path="/family-operations"
+          element={
+            <Batch8RouteGuard
+              allowedRoles={["guardian"]}
+              fallback="/guardian"
+            >
+              <SuspendedPage>
+                <FamilyOperationsPage />
+              </SuspendedPage>
+            </Batch8RouteGuard>
+          }
+        />
+        <Route
+          path="/revenue-operations"
+          element={
+            <Batch8RouteGuard
+              allowedRoles={["academy_admin", "accountant", "platform_admin"]}
+              fallback="/dashboard"
+            >
+              <SuspendedPage>
+                <RevenueOperationsPage />
+              </SuspendedPage>
+            </Batch8RouteGuard>
           }
         />
         <Route
