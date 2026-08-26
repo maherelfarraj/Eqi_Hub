@@ -4,7 +4,18 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
-const [migration, hook, app, shell, persona, familyPage, english, arabic] =
+const [
+  migration,
+  hook,
+  app,
+  shell,
+  persona,
+  familyPage,
+  revenuePage,
+  ui,
+  english,
+  arabic,
+] =
   await Promise.all([
     read(
       "supabase/migrations/20260826170000_batch8_parent_membership_revenue_operations.sql",
@@ -14,6 +25,8 @@ const [migration, hook, app, shell, persona, familyPage, english, arabic] =
     read("artifacts/equus-voyages/src/components/AppShell.tsx"),
     read("artifacts/equus-voyages/src/lib/portal-persona.ts"),
     read("artifacts/equus-voyages/src/pages/FamilyOperationsPage.tsx"),
+    read("artifacts/equus-voyages/src/pages/RevenueOperationsPage.tsx"),
+    read("artifacts/equus-voyages/src/components/EquiVistaUI.tsx"),
     read("artifacts/equus-voyages/src/i18n/en.json"),
     read("artifacts/equus-voyages/src/i18n/ar.json"),
   ]);
@@ -31,14 +44,22 @@ test("Batch 8 is default-off in both client and database gates", () => {
   assert.match(hook, /VITE_BATCH8_ENABLED === "true"/);
   assert.match(
     hook,
-    /if \(!batch8ClientEnabled \|\| !organizationId\) return null/,
+    /get_batch8_availability/,
+  );
+  assert.match(
+    hook,
+    /availability !== true[\s\S]*enabled: false,[\s\S]*loadError: null/,
+  );
+  assert.match(
+    hook,
+    /organizationId: scopedOrganizationId[\s\S]*query\.data\?\.organizationId === organizationId/,
   );
   assert.match(
     migration,
     /enabled boolean not null default false[\s\S]*readiness_status = 'ready'/,
   );
-  assert.match(app, /if \(!enabled \|\| !allowedRoles\.some/);
-  assert.match(shell, /batch8Enabled && hasRole\("guardian"\)/);
+  assert.match(app, /activeOrganization\?\.roles\.includes\(role\)/);
+  assert.match(shell, /activeOrganizationRoles\.includes\("guardian"\)/);
 });
 
 test("membership, attendance, waitlist, and credit transitions are explicit and idempotent", () => {
@@ -73,6 +94,18 @@ test("membership, attendance, waitlist, and credit transitions are explicit and 
   );
   assert.match(migration, /transition_allowed is not true/);
   assert.match(migration, /remaining_units = remaining_units - 1/);
+  assert.match(
+    migration,
+    /lesson\.rider_id = membership\.rider_id/,
+  );
+  assert.match(
+    migration,
+    /p_granted_at < exception_record\.reviewed_at/,
+  );
+  assert.match(
+    migration,
+    /credit_row\.granted_at <= p_consumed_at[\s\S]*credit_row\.expires_at > now\(\)/,
+  );
 });
 
 test("RLS denies direct writes and raw guardian-sensitive records", () => {
@@ -140,8 +173,68 @@ test("route boundaries include guardian, admin, and accountant behavior", () => 
   );
   assert.match(
     shell,
-    /path !== "\/revenue-operations"[\s\S]*hasRole\("accountant"\)/,
+    /activeOrganizationRoles\.includes\("accountant"\)/,
   );
+  assert.doesNotMatch(
+    shell,
+    /batch8Enabled && hasRole\("(guardian|academy_admin|accountant)"\)/,
+  );
+});
+
+test("organization readiness is resolved before family or revenue data", () => {
+  assert.match(
+    migration,
+    /create function public\.get_batch8_availability\([\s\S]*membership\.status = 'active'/,
+  );
+  assert.match(
+    migration,
+    /return private\.batch8_is_enabled\(p_organization_id\)/,
+  );
+  assert.match(
+    hook,
+    /get_batch8_availability[\s\S]*availability !== true[\s\S]*const rpcName/,
+  );
+  assert.match(
+    hook,
+    /data: resultMatchesOrganization \? \(query\.data\?\.data \?\? null\) : null/,
+  );
+  assert.match(hook, /loading: waitingForOrganization \|\| query\.loading/);
+  assert.match(
+    hook,
+    /catch \(error\)[\s\S]*loadError: errorMessage\(error\)/,
+  );
+  assert.match(
+    hook,
+    /error: resultMatchesOrganization[\s\S]*query\.data\?\.loadError/,
+  );
+});
+
+test("calendar dates and surfaced enums remain localized", () => {
+  const en = JSON.parse(english).translation;
+  const ar = JSON.parse(arabic).translation;
+  for (const relationship of [
+    "parent",
+    "legal_guardian",
+    "court_guardian",
+    "supporter",
+  ]) {
+    assert.ok(en.familyOperations.relationships[relationship]);
+    assert.ok(ar.familyOperations.relationships[relationship]);
+  }
+  for (const status of [
+    "open",
+    "contact_ready",
+    "link_prepared",
+    "paused",
+    "resolved",
+    "closed",
+  ]) {
+    assert.ok(en.revenueOperations.collections.statuses[status]);
+    assert.ok(ar.revenueOperations.collections.statuses[status]);
+  }
+  assert.match(familyPage, /familyOperations\.relationships/);
+  assert.match(revenuePage, /revenueOperations\.collections\.statuses/);
+  assert.match(ui, /formatCalendarDate[\s\S]*timeZone: "UTC"/);
 });
 
 test("English and Arabic Batch 8 keys are recursively equivalent", () => {

@@ -566,8 +566,17 @@
       "paymentStatus": "Payment-link preparation",
       "nonProcessingNotice": "For status only. EquiVista does not collect or process payment here.",
       "noRiders": "No linked riders found.",
+      "relationships": {
+        "parent": "Parent",
+        "legal_guardian": "Legal guardian",
+        "court_guardian": "Court-appointed guardian",
+        "supporter": "Supporter"
+      },
       "statuses": {
+        "pending": "Pending verification",
         "verified": "Verified",
+        "review_required": "Review required",
+        "revoked": "Revoked",
         "active": "Active",
         "draft": "Draft",
         "waitlisted": "Waitlisted",
@@ -601,7 +610,15 @@
         "title": "Overdue collections",
         "description": "Open collection cases and sent payment links.",
         "invoice": "Invoice",
-        "daysOverdue": "Days overdue"
+        "daysOverdue": "Days overdue",
+        "statuses": {
+          "open": "Open",
+          "contact_ready": "Contact ready",
+          "link_prepared": "Link prepared",
+          "paused": "Paused",
+          "resolved": "Resolved",
+          "closed": "Closed"
+        }
       },
       "pipeline": {
         "title": "Renewal pipeline & risk",

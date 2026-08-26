@@ -1111,6 +1111,9 @@ begin
     or p_units is null
     or p_units not between 1 and 12
     or p_granted_at is null
+    or exception_record.reviewed_at is null
+    or p_granted_at < exception_record.reviewed_at
+    or p_granted_at > now() + interval '5 minutes'
     or p_expires_at is null
     or p_expires_at <= p_granted_at
     or p_reason is null
@@ -1229,6 +1232,7 @@ begin
     or p_idempotency_key is null
     or p_idempotency_key !~ '^[a-z0-9][a-z0-9:_-]{7,159}$'
     or p_consumed_at is null
+    or p_consumed_at > now() + interval '5 minutes'
   then
     raise exception 'Batch 8 make-up credit consumption is not authorized'
       using errcode = '42501';
@@ -1241,7 +1245,9 @@ begin
     and credit_row.membership_package_id = membership.id
     and credit_row.rider_id = membership.rider_id
     and credit_row.remaining_units > 0
+    and credit_row.granted_at <= p_consumed_at
     and credit_row.expires_at > p_consumed_at
+    and credit_row.expires_at > now()
   order by credit_row.expires_at, credit_row.granted_at, credit_row.id
   limit 1
   for update;
@@ -1341,6 +1347,13 @@ begin
     or p_occurred_at is null
     or p_occurred_at > now() + interval '5 minutes'
     or p_occurred_at < membership.created_at
+    or not exists (
+      select 1
+      from public.lessons as lesson
+      where lesson.id = p_lesson_id
+        and lesson.organization_id = membership.organization_id
+        and lesson.rider_id = membership.rider_id
+    )
   then
     raise exception 'Batch 8 attendance exception is invalid'
       using errcode = '22023';
@@ -1789,6 +1802,38 @@ begin
   );
 
   return event_id;
+end;
+$$;
+
+create function public.get_batch8_availability(
+  p_organization_id uuid
+)
+returns boolean
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  actor uuid := (select auth.uid());
+begin
+  if actor is null
+    or not (
+      private.is_platform_admin()
+      or exists (
+        select 1
+        from public.organization_memberships as membership
+        where membership.organization_id = p_organization_id
+          and membership.user_id = actor
+          and membership.status = 'active'
+      )
+    )
+  then
+    raise exception 'Batch 8 availability is not authorized'
+      using errcode = '42501';
+  end if;
+
+  return private.batch8_is_enabled(p_organization_id);
 end;
 $$;
 
@@ -2303,6 +2348,7 @@ revoke all on function public.create_batch8_waitlist_entry(
 revoke all on function public.apply_batch8_waitlist_transition(
   uuid, text, text, text, timestamptz, timestamptz
 ) from public;
+revoke all on function public.get_batch8_availability(uuid) from public;
 revoke all on function public.get_batch8_family_operations(uuid) from public;
 revoke all on function public.get_batch8_revenue_operations(uuid) from public;
 
@@ -2330,6 +2376,8 @@ grant execute on function public.create_batch8_waitlist_entry(
 grant execute on function public.apply_batch8_waitlist_transition(
   uuid, text, text, text, timestamptz, timestamptz
 ) to authenticated;
+grant execute on function public.get_batch8_availability(uuid)
+  to authenticated;
 grant execute on function public.get_batch8_family_operations(uuid)
   to authenticated;
 grant execute on function public.get_batch8_revenue_operations(uuid)

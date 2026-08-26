@@ -49,6 +49,7 @@ for (const rpc of [
   "apply_batch8_waitlist_transition",
   "issue_batch8_makeup_credit",
   "consume_batch8_makeup_credit",
+  "get_batch8_availability",
   "get_batch8_family_operations",
   "get_batch8_revenue_operations",
 ]) {
@@ -104,7 +105,19 @@ assert.doesNotMatch(
 
 assert.match(
   hook,
-  /VITE_BATCH8_ENABLED === "true"[\s\S]*if \(!batch8ClientEnabled \|\| !organizationId\) return null/,
+  /VITE_BATCH8_ENABLED === "true"[\s\S]*get_batch8_availability/,
+);
+assert.match(
+  hook,
+  /availability !== true[\s\S]*enabled: false,[\s\S]*loadError: null/,
+);
+assert.match(
+  hook,
+  /query\.data\?\.organizationId === organizationId[\s\S]*data: resultMatchesOrganization/,
+);
+assert.match(
+  hook,
+  /catch \(error\)[\s\S]*loadError: errorMessage\(error\)[\s\S]*query\.data\?\.loadError/,
 );
 assert.match(hook, /get_batch8_family_operations/);
 assert.match(hook, /get_batch8_revenue_operations/);
@@ -123,7 +136,13 @@ assert.match(
   /allowedRoles=\{\["academy_admin", "accountant", "platform_admin"\]\}/,
 );
 assert.match(shell, /batch8Enabled[\s\S]*path !== "\/family-operations"/);
-assert.match(shell, /path !== "\/revenue-operations"[\s\S]*hasRole\("accountant"\)/);
+assert.match(shell, /activeOrganizationRoles\.includes\("guardian"\)/);
+assert.match(shell, /activeOrganizationRoles\.includes\("accountant"\)/);
+assert.match(shell, /path !== "\/revenue-operations"[\s\S]*canAccessBatch8Revenue/);
+assert.doesNotMatch(
+  shell,
+  /batch8Enabled && hasRole\("(guardian|academy_admin|accountant)"\)/,
+);
 assert.doesNotMatch(familyPage, /onClick=|Pay via link|OutlineButton|checkout/i);
 assert.match(familyPage, /nonProcessingNotice/);
 assert.doesNotMatch(revenuePage, /onClick=|checkout|capture|refund/i);
