@@ -70,7 +70,7 @@ try {
     "-D",
     dataDirectory,
     "-o",
-    `-k ${socketDirectory} -p ${port}`,
+    `-c listen_addresses='' -k ${socketDirectory} -p ${port}`,
     "-w",
     "-t",
     "10",
@@ -142,6 +142,9 @@ try {
       create table public.lessons (
         id uuid primary key,
         organization_id uuid not null references public.organizations(id),
+        rider_id uuid not null,
+        foreign key (organization_id, rider_id)
+          references public.organization_memberships(organization_id, user_id),
         unique (id, organization_id)
       );
       create table public.invoices (
@@ -389,14 +392,21 @@ try {
         '30000000-0000-0000-0000-000000000001'
       );
 
-      insert into public.lessons (id, organization_id) values
+      insert into public.lessons (id, organization_id, rider_id) values
         (
           '60000000-0000-0000-0000-000000000001',
-          '10000000-0000-0000-0000-000000000001'
+          '10000000-0000-0000-0000-000000000001',
+          '30000000-0000-0000-0000-000000000005'
         ),
         (
           '60000000-0000-0000-0000-000000000002',
-          '10000000-0000-0000-0000-000000000001'
+          '10000000-0000-0000-0000-000000000001',
+          '30000000-0000-0000-0000-000000000005'
+        ),
+        (
+          '60000000-0000-0000-0000-000000000003',
+          '10000000-0000-0000-0000-000000000001',
+          '30000000-0000-0000-0000-000000000003'
         );
       insert into public.invoices (
         id,
@@ -638,9 +648,35 @@ try {
   const financialGuardian = "30000000-0000-0000-0000-000000000003";
   const restrictedGuardian = "30000000-0000-0000-0000-000000000004";
   const unrelatedGuardian = "30000000-0000-0000-0000-000000000006";
+  const otherTenantRider = "30000000-0000-0000-0000-000000000007";
   const organization = "10000000-0000-0000-0000-000000000001";
   const otherOrganization = "20000000-0000-0000-0000-000000000001";
   const membership = "50000000-0000-0000-0000-000000000001";
+
+  assert.equal(
+    queryAs(
+      financialGuardian,
+      `select public.get_batch8_availability('${organization}');`,
+    ),
+    "t",
+    "A member of a ready organization must see Batch 8 as available.",
+  );
+  assert.equal(
+    queryAs(
+      otherTenantRider,
+      `select public.get_batch8_availability('${otherOrganization}');`,
+    ),
+    "f",
+    "A member of an unready organization must receive a typed disabled result.",
+  );
+  assert.notEqual(
+    failAs(
+      admin,
+      `select public.get_batch8_availability('${otherOrganization}');`,
+    ).status,
+    0,
+    "Availability must not reveal another organization's readiness.",
+  );
 
   const financialFamily = JSON.parse(
     queryAs(
@@ -762,6 +798,24 @@ try {
     ).status,
     0,
     "An absent readiness row must keep Batch 8 disabled.",
+  );
+
+  assert.notEqual(
+    failAs(
+      admin,
+      `
+        select public.record_batch8_attendance_exception(
+          '${membership}',
+          '60000000-0000-0000-0000-000000000003',
+          'academy_cancelled',
+          'A different rider lesson must fail closed',
+          'batch8:exception:cross-rider:0001',
+          now()
+        );
+      `,
+    ).status,
+    0,
+    "Attendance exceptions must belong to the membership rider's lesson.",
   );
 
   const recordedException = queryAs(
@@ -966,6 +1020,41 @@ try {
     0,
   );
 
+  assert.notEqual(
+    failAs(
+      admin,
+      `
+        select public.issue_batch8_makeup_credit(
+          '80000000-0000-0000-0000-000000000001',
+          1,
+          now() + interval '30 days',
+          'A credit cannot predate the approved review',
+          'batch8:credit:early:0001',
+          now() - interval '13 hours'
+        );
+      `,
+    ).status,
+    0,
+    "A credit grant must not predate its approved review.",
+  );
+  assert.notEqual(
+    failAs(
+      admin,
+      `
+        select public.issue_batch8_makeup_credit(
+          '80000000-0000-0000-0000-000000000001',
+          1,
+          now() + interval '30 days',
+          'A future credit grant must fail closed',
+          'batch8:credit:future:0001',
+          now() + interval '10 minutes'
+        );
+      `,
+    ).status,
+    0,
+    "A credit grant must not be future-dated beyond the allowed skew.",
+  );
+
   const creditId = queryAs(
     admin,
     `
@@ -993,6 +1082,37 @@ try {
     `,
   );
   assert.equal(creditId, retriedCreditId);
+
+  assert.notEqual(
+    failAs(
+      admin,
+      `
+        select public.consume_batch8_makeup_credit(
+          '${membership}',
+          'Consumption cannot predate the credit grant',
+          'batch8:credit:consume-early:0001',
+          now() - interval '1 minute'
+        );
+      `,
+    ).status,
+    0,
+    "Credit consumption must not predate the selected credit grant.",
+  );
+  assert.notEqual(
+    failAs(
+      admin,
+      `
+        select public.consume_batch8_makeup_credit(
+          '${membership}',
+          'Future consumption must fail closed',
+          'batch8:credit:consume-future:0001',
+          now() + interval '10 minutes'
+        );
+      `,
+    ).status,
+    0,
+    "Credit consumption must not be future-dated beyond the allowed skew.",
+  );
 
   const consumedEvent = queryAs(
     admin,

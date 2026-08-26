@@ -82,6 +82,15 @@ export default function AppShell() {
   const horseWelfareAccess = useHorseWelfareAccess();
   const academyOperationsAccess = useAcademyOperationsAccess();
   const batch8Enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
+  const activeOrganizationRoles = activeOrganization?.roles ?? [];
+  const isPlatformAdmin = hasRole("platform_admin");
+  const canAccessBatch8Family =
+    batch8Enabled && activeOrganizationRoles.includes("guardian");
+  const canAccessBatch8Revenue =
+    batch8Enabled &&
+    (activeOrganizationRoles.includes("academy_admin") ||
+      activeOrganizationRoles.includes("accountant") ||
+      isPlatformAdmin);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -178,13 +187,9 @@ export default function AppShell() {
                   Boolean(horseWelfareAccess.data?.canManage)) &&
                  (path !== "/academy-operations" ||
                    Boolean(academyOperationsAccess.data?.canManage)) &&
-                 (path !== "/family-operations" ||
-                    (batch8Enabled && hasRole("guardian"))) &&
+                 (path !== "/family-operations" || canAccessBatch8Family) &&
                   (path !== "/revenue-operations" ||
-                    (batch8Enabled &&
-                      (hasRole("academy_admin") ||
-                        hasRole("accountant") ||
-                        hasRole("platform_admin")))) &&
+                    canAccessBatch8Revenue) &&
                 isNavigationPathVisible(
                   portalPersona,
                   path,

@@ -281,6 +281,17 @@ export const formatDate = (value: string | null | undefined, locale: string, opt
   return new Intl.DateTimeFormat(locale, options ?? { day: "numeric", month: "short", year: "numeric" }).format(date);
 };
 
+export const formatCalendarDate = (
+  value: string | null | undefined,
+  locale: string,
+) =>
+  formatDate(value, locale, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
 export const fieldClass =
   "mt-1.5 min-h-11 w-full rounded-xl border border-cream-300 bg-white px-3.5 py-2.5 text-sm text-espresso outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100";
 

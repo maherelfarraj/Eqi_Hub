@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import {
-  EmptyState, ErrorState, formatCurrency, formatDate,
+  EmptyState, ErrorState, formatCalendarDate, formatCurrency,
   PageHeader, PageSkeleton, SurfaceCard, StatusBadge
 } from "@/components/EquiVistaUI";
 import { useBatch8Operations } from "@/hooks/use-batch8-operations";
@@ -80,7 +80,7 @@ export default function FamilyOperationsPage() {
                 {balance.nextPaymentDate && (
                   <p className="mt-2 text-xs text-text-secondary">
                     {t("familyOperations.nextPayment")}:{" "}
-                    {formatDate(balance.nextPaymentDate, locale)}
+                    {formatCalendarDate(balance.nextPaymentDate, locale)}
                   </p>
                 )}
               </SurfaceCard>
@@ -100,7 +100,7 @@ export default function FamilyOperationsPage() {
                 <div>
                   <h3 className="text-lg font-bold text-espresso">{rider.name}</h3>
                   <p className="text-xs font-medium text-text-secondary mt-0.5 capitalize">
-                    {rider.relationship} • {t(`familyOperations.statuses.${rider.relationshipStatus}`)}
+                    {t(`familyOperations.relationships.${rider.relationship}`)} • {t(`familyOperations.statuses.${rider.relationshipStatus}`)}
                   </p>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function FamilyOperationsPage() {
                   <span className="text-sm font-medium text-text-secondary">{t("familyOperations.renewal")}</span>
                   <div className="flex items-center gap-1.5">
                     <CalendarClock className="size-3.5 text-primary-500" />
-                    <span className="text-sm font-bold text-espresso">{formatDate(rider.renewalDate, locale)}</span>
+                    <span className="text-sm font-bold text-espresso">{formatCalendarDate(rider.renewalDate, locale)}</span>
                   </div>
                 </div>
               )}

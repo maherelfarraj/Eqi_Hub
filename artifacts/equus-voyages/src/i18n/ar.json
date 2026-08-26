@@ -578,8 +578,17 @@
       "paymentStatus": "تجهيز رابط الدفع",
       "nonProcessingNotice": "للعرض فقط. لا تجمع EquiVista المدفوعات أو تعالجها هنا.",
       "noRiders": "لم يتم العثور على فرسان مرتبطين.",
+      "relationships": {
+        "parent": "أحد الوالدين",
+        "legal_guardian": "ولي قانوني",
+        "court_guardian": "ولي معيّن من المحكمة",
+        "supporter": "داعم"
+      },
       "statuses": {
+        "pending": "بانتظار التوثيق",
         "verified": "مُوَثَّق",
+        "review_required": "يحتاج إلى مراجعة",
+        "revoked": "ملغى",
         "active": "نشط",
         "draft": "مسودة",
         "waitlisted": "على قائمة الانتظار",
@@ -613,7 +622,15 @@
         "title": "التحصيلات المتأخرة",
         "description": "حالات التحصيل المفتوحة وروابط الدفع المرسلة.",
         "invoice": "الفاتورة",
-        "daysOverdue": "أيام التأخير"
+        "daysOverdue": "أيام التأخير",
+        "statuses": {
+          "open": "مفتوحة",
+          "contact_ready": "جاهزة للتواصل",
+          "link_prepared": "تم تجهيز الرابط",
+          "paused": "متوقفة مؤقتاً",
+          "resolved": "تمت المعالجة",
+          "closed": "مغلقة"
+        }
       },
       "pipeline": {
         "title": "خط التجديدات والمخاطر",

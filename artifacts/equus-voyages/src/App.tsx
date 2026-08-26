@@ -96,10 +96,15 @@ function Batch8RouteGuard({
   fallback: string;
   children: ReactNode;
 }) {
-  const { hasRole } = useAuth();
+  const { activeOrganization, hasRole } = useAuth();
   const enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
+  const allowed = allowedRoles.some((role) =>
+    role === "platform_admin"
+      ? hasRole("platform_admin")
+      : Boolean(activeOrganization?.roles.includes(role)),
+  );
 
-  if (!enabled || !allowedRoles.some((role) => hasRole(role))) {
+  if (!enabled || !allowed) {
     return <Navigate to={fallback} replace />;
   }
   return children;

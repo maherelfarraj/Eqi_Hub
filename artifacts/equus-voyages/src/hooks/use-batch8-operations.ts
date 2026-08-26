@@ -82,6 +82,25 @@ export type Batch8Data<T extends "family" | "revenue"> = T extends "family"
   ? FamilyOperationsData
   : RevenueOperationsData;
 
+type Batch8QueryResult<T extends "family" | "revenue"> = {
+  organizationId: string | null;
+  enabled: boolean;
+  data: Batch8Data<T> | null;
+  loadError: string | null;
+};
+
+function errorMessage(error: unknown) {
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+  return "Something went wrong";
+}
+
 export const batch8ClientEnabled =
   import.meta.env.VITE_BATCH8_ENABLED === "true";
 
@@ -90,28 +109,82 @@ export function useBatch8Operations<T extends "family" | "revenue">(
 ) {
   const { activeOrganization } = useAuth();
   const organizationId = activeOrganization?.id ?? null;
-  const query = useQuery<Batch8Data<T> | null>(
+  const query = useQuery<Batch8QueryResult<T>>(
     async () => {
-      if (!batch8ClientEnabled || !organizationId) return null;
+      if (!batch8ClientEnabled || !organizationId) {
+        return {
+          organizationId,
+          enabled: false,
+          data: null,
+          loadError: null,
+        };
+      }
+      const scopedOrganizationId = requireOrganizationId(organizationId);
 
-      const rpcName =
-        surface === "family"
-          ? "get_batch8_family_operations"
-          : "get_batch8_revenue_operations";
-      const { data, error } = await supabase.rpc(rpcName, {
-        p_organization_id: requireOrganizationId(organizationId),
-      });
-      if (error) throw error;
+      try {
+        const { data: availability, error: availabilityError } =
+          await supabase.rpc("get_batch8_availability", {
+            p_organization_id: scopedOrganizationId,
+          });
+        if (availabilityError) throw availabilityError;
+        if (availability !== true) {
+          return {
+            organizationId: scopedOrganizationId,
+            enabled: false,
+            data: null,
+            loadError: null,
+          };
+        }
 
-      const parsed =
-        surface === "family"
-          ? familyOperationsSchema.parse(data)
-          : revenueOperationsSchema.parse(data);
-      return parsed as Batch8Data<T>;
+        const rpcName =
+          surface === "family"
+            ? "get_batch8_family_operations"
+            : "get_batch8_revenue_operations";
+        const { data, error } = await supabase.rpc(rpcName, {
+          p_organization_id: scopedOrganizationId,
+        });
+        if (error) throw error;
+
+        const parsed =
+          surface === "family"
+            ? familyOperationsSchema.parse(data)
+            : revenueOperationsSchema.parse(data);
+        return {
+          organizationId: scopedOrganizationId,
+          enabled: true,
+          data: parsed as Batch8Data<T>,
+          loadError: null,
+        };
+      } catch (error) {
+        return {
+          organizationId: scopedOrganizationId,
+          enabled: true,
+          data: null,
+          loadError: errorMessage(error),
+        };
+      }
     },
     [organizationId, surface],
     { resetOnChange: true },
   );
 
-  return { ...query, enabled: batch8ClientEnabled };
+  const resultMatchesOrganization =
+    query.data?.organizationId === organizationId;
+  const waitingForOrganization =
+    batch8ClientEnabled &&
+    Boolean(organizationId) &&
+    !resultMatchesOrganization;
+
+  return {
+    ...query,
+    data: resultMatchesOrganization ? (query.data?.data ?? null) : null,
+    loading: waitingForOrganization || query.loading,
+    error: resultMatchesOrganization
+      ? (query.data?.loadError ?? query.error)
+      : null,
+    enabled:
+      batch8ClientEnabled &&
+      Boolean(organizationId) &&
+      (!resultMatchesOrganization || query.data?.enabled === true),
+  };
 }

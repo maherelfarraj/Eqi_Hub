@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import {
-  ErrorState, formatCurrency, formatDate,
+  ErrorState, formatCalendarDate, formatCurrency,
   MetricCard, PageHeader, PageSkeleton, SurfaceCard, StatusBadge
 } from "@/components/EquiVistaUI";
 import { useBatch8Operations } from "@/hooks/use-batch8-operations";
@@ -120,7 +120,10 @@ export default function RevenueOperationsPage() {
                   </p>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-semibold text-error-500">{c.daysOverdue} {t("revenueOperations.collections.daysOverdue")}</span>
-                    <StatusBadge status={c.status} />
+                    <StatusBadge
+                      status={c.status}
+                      label={t(`revenueOperations.collections.statuses.${c.status}`)}
+                    />
                   </div>
                 </div>
               </div>
@@ -154,7 +157,7 @@ export default function RevenueOperationsPage() {
                   <p className="text-xs font-medium text-text-secondary mt-1">{r.packageName}</p>
                   <p className="text-xs text-text-secondary mt-1.5 flex items-center gap-1.5">
                     <CalendarClock className="size-3.5" />
-                    {t("revenueOperations.pipeline.date")}: {formatDate(r.renewalDate, locale)}
+                    {t("revenueOperations.pipeline.date")}: {formatCalendarDate(r.renewalDate, locale)}
                   </p>
                 </div>
                 <div className="mt-3 sm:mt-0 flex flex-col sm:items-end gap-2">

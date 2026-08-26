@@ -5,3 +5,4 @@
 - [PostgreSQL RPC grant validation](postgresql-rpc-grant-validation.md) — security-definer function grants must be checked by applying migrations to an isolated PostgreSQL instance.
 - [Compensation approval integrity](compensation-approval-integrity.md) — approved payroll and commissions require locked, dedicated state transitions and remain immutable.
 - [Portable PostgreSQL migration checks](portable-postgresql-migration-checks.md) — isolated migration tests must resolve standard PostgreSQL binary locations beyond PATH for CI.
+- [Organization-scoped query state](organization-scoped-query-state.md) — tag data and errors by organization; suppress mismatches without hiding current failures.
