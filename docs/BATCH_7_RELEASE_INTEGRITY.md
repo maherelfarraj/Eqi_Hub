@@ -97,3 +97,7 @@ workspace private-note redaction checks.
 Batch 7 does not deploy or publish. It does not apply migrations, enable
 feature flags, mutate production or hosted Supabase, create or alter personas,
 expand financial visibility or approval roles, or process payments.
+
+## CI trigger record
+
+This documentation-only commit triggers the Batch 7 pull-request workflows after their addition to the branch; it introduces no product, data, migration, or feature-state change.
