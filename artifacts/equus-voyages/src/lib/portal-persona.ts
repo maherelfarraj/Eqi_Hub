@@ -6,6 +6,7 @@ const guardianNavigationPaths = new Set([
   "/safety",
   "/video-review",
   "/stable-operations",
+  "/family-operations",
   "/settings",
 ]);
 const academyAdminNavigationPaths = new Set([
@@ -17,6 +18,7 @@ const academyAdminNavigationPaths = new Set([
   "/stable-operations",
   "/horse-welfare",
   "/academy-operations",
+  "/revenue-operations",
   "/safety",
   "/billing",
   "/organization",

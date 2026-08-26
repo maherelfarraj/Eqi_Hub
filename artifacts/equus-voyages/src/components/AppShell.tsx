@@ -27,8 +27,11 @@ import {
   Video,
   Warehouse,
   X,
+  UsersRound,
+  Wallet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { resolveBatch8Access } from "@/lib/batch8-access";
 import {
   isNavigationPathVisible,
   portalRedirect,
@@ -54,6 +57,8 @@ const navigation = [
   { path: "/stable-operations", labelKey: "nav.stableOperations", icon: Warehouse },
   { path: "/horse-welfare", labelKey: "nav.horseWelfare", icon: HeartPulse },
   { path: "/academy-operations", labelKey: "nav.academyOperations", icon: Building2 },
+  { path: "/family-operations", labelKey: "nav.familyOperations", icon: UsersRound },
+  { path: "/revenue-operations", labelKey: "nav.revenueOperations", icon: Wallet },
   { path: "/membership", labelKey: "nav.membership", icon: Sparkles },
   { path: "/payments", labelKey: "nav.payments", icon: CreditCard },
   { path: "/billing", labelKey: "nav.billing", icon: ReceiptText },
@@ -72,11 +77,18 @@ export default function AppShell() {
   const [signOutError, setSignOutError] = useState(false);
   const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
   const portalPersona = resolvePortalPersona(activeOrganization?.roles);
-  const redirectPath = portalRedirect(portalPersona, location.pathname);
   const videoRelease2Access = useVideoRelease2Access();
   const competitionDevelopmentAccess = useCompetitionDevelopmentAccess();
   const horseWelfareAccess = useHorseWelfareAccess();
   const academyOperationsAccess = useAcademyOperationsAccess();
+  const batch8Access = resolveBatch8Access(
+    activeOrganization?.roles,
+    hasRole("platform_admin"),
+  );
+  const redirectPath =
+    location.pathname === "/revenue-operations" && batch8Access.revenue
+      ? null
+      : portalRedirect(portalPersona, location.pathname);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -173,11 +185,15 @@ export default function AppShell() {
                   Boolean(horseWelfareAccess.data?.canManage)) &&
                  (path !== "/academy-operations" ||
                    Boolean(academyOperationsAccess.data?.canManage)) &&
-                isNavigationPathVisible(
-                  portalPersona,
-                  path,
-                  hasRole("guardian"),
-                ),
+                 (path !== "/family-operations" || batch8Access.family) &&
+                  (path !== "/revenue-operations" ||
+                    batch8Access.revenue) &&
+                ((path === "/revenue-operations" && batch8Access.revenue) ||
+                  isNavigationPathVisible(
+                    portalPersona,
+                    path,
+                    hasRole("guardian"),
+                  )),
             )
             .map(({ path, labelKey, icon: Icon }) => (
               <NavLink

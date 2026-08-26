@@ -11,6 +11,10 @@ import AppShell from "@/components/AppShell";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import "@/i18n";
+import {
+  resolveBatch8Access,
+  type Batch8Surface,
+} from "@/lib/batch8-access";
 
 const AnalysisPage = lazy(() => import("@/pages/AnalysisPage"));
 const AcademyOperationsPage = lazy(() => import("@/pages/AcademyOperationsPage"));
@@ -36,6 +40,8 @@ const ProgressPage = lazy(() => import("@/pages/ProgressPage"));
 const SafetyPage = lazy(() => import("@/pages/SafetyPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const StableOperationsPage = lazy(() => import("@/pages/StableOperationsPage"));
+const FamilyOperationsPage = lazy(() => import("@/pages/FamilyOperationsPage"));
+const RevenueOperationsPage = lazy(() => import("@/pages/RevenueOperationsPage"));
 const VideoReviewPage = lazy(() => import("@/pages/VideoReviewPage"));
 const VideoIntelligencePage = lazy(() => import("@/pages/VideoIntelligencePage"));
 
@@ -83,6 +89,27 @@ function SuspendedPage({
       {children}
     </Suspense>
   );
+}
+
+function Batch8RouteGuard({
+  surface,
+  fallback,
+  children,
+}: {
+  surface: Batch8Surface;
+  fallback: string;
+  children: ReactNode;
+}) {
+  const { activeOrganization, hasRole } = useAuth();
+  const access = resolveBatch8Access(
+    activeOrganization?.roles,
+    hasRole("platform_admin"),
+  );
+
+  if (!access[surface]) {
+    return <Navigate to={fallback} replace />;
+  }
+  return children;
 }
 
 function AppRoutes() {
@@ -268,6 +295,32 @@ function AppRoutes() {
             <SuspendedPage>
               <StableOperationsPage />
             </SuspendedPage>
+          }
+        />
+        <Route
+          path="/family-operations"
+          element={
+            <Batch8RouteGuard
+              surface="family"
+              fallback="/guardian"
+            >
+              <SuspendedPage>
+                <FamilyOperationsPage />
+              </SuspendedPage>
+            </Batch8RouteGuard>
+          }
+        />
+        <Route
+          path="/revenue-operations"
+          element={
+            <Batch8RouteGuard
+              surface="revenue"
+              fallback="/dashboard"
+            >
+              <SuspendedPage>
+                <RevenueOperationsPage />
+              </SuspendedPage>
+            </Batch8RouteGuard>
           }
         />
         <Route
