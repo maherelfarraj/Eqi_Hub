@@ -1,21 +1,27 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import Ajv2020 from "ajv/dist/2020.js";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
-const readOptional = async (path) => {
-  try {
-    return await read(path);
-  } catch (error) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
-  }
-};
-const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, schemaJson, releaseEvidenceJson, previewVerifier, welfare, academy, medical, guardian] = await Promise.all([
-  readOptional(".github/workflows/repository-verify.yml"),
-  readOptional(".github/workflows/worker-ci.yml"),
-  readOptional(".github/workflows/verify-supabase-replay.yml"),
+const [
+  repositoryVerify,
+  workerCi,
+  supabaseReplay,
+  packageJson,
+  releaseDoc,
+  schemaJson,
+  releaseEvidenceJson,
+  previewVerifier,
+  welfare,
+  academy,
+  medical,
+  guardian,
+] = await Promise.all([
+  read(".github/workflows/repository-verify.yml"),
+  read(".github/workflows/worker-ci.yml"),
+  read(".github/workflows/verify-supabase-replay.yml"),
   read("package.json"),
   read("docs/BATCH_7_RELEASE_INTEGRITY.md"),
   read("intelligence/batch7-release-integrity.schema.json"),
@@ -26,23 +32,37 @@ const [repositoryVerify, workerCi, supabaseReplay, packageJson, releaseDoc, sche
   read("scripts/test-medical-waiver-gate.mjs"),
   read("scripts/test-guardian-view.mjs"),
 ]);
-const workflowContractPresent = Boolean(repositoryVerify && workerCi && supabaseReplay);
+const releaseEvidence = JSON.parse(releaseEvidenceJson);
 
-test("staged publication declares pending workflow enforcement", { skip: workflowContractPresent }, () => {
-  assert.match(releaseDoc, /workflow-capable GitHub credential/i);
-  assert.match(releaseDoc, /CI enforcement and Supabase\s+Preview gating remain pending/i);
-});
-
-test("repository verify provides an always-present protected context", { skip: !workflowContractPresent }, () => {
+test("repository verify provides an always-present protected context", () => {
   assert.match(repositoryVerify, /^  pull_request:\s*$/m);
   assert.match(repositoryVerify, /^  push:\n    branches: \[main\]$/m);
   assert.match(repositoryVerify, /\n  verify:\n    name: verify/);
   assert.match(repositoryVerify, /supabase-preview-gate:/);
   assert.match(repositoryVerify, /needs: supabase-preview-gate/);
-  assert.match(repositoryVerify, /check-runs\?filter=all&per_page=100&page=\$page/);
-  assert.match(repositoryVerify, /verify-supabase-preview-check/);
+  assert.match(
+    repositoryVerify,
+    /check-runs\?filter=all&per_page=100&page=\$page/,
+  );
+  assert.match(repositoryVerify, /TRUSTED_PREVIEW_EVALUATOR_REF: [0-9a-f]{40}/);
+  assert.match(repositoryVerify, /trusted_evaluator_ref="\$BASE_SHA"/);
+  assert.match(
+    repositoryVerify,
+    /git show "\$trusted_evaluator_ref:scripts\/verify-supabase-preview-check\.mjs"/,
+  );
+  assert.match(
+    repositoryVerify,
+    /node "\$trusted_evaluator_dir\/verify-supabase-preview-check\.mjs"/,
+  );
+  assert.doesNotMatch(
+    repositoryVerify,
+    /node scripts\/verify-supabase-preview-check\.mjs/,
+  );
   assert.match(repositoryVerify, /preview_status=\$\{PIPESTATUS\[1\]\}/);
-  assert.match(repositoryVerify, /Supabase Preview check-run pagination exceeded the safe limit/);
+  assert.match(
+    repositoryVerify,
+    /Supabase Preview check-run pagination exceeded the safe limit/,
+  );
   assert.match(repositoryVerify, /PORT: "4173"/);
   assert.match(repositoryVerify, /run: pnpm verify/);
   assert.match(repositoryVerify, /run: pnpm typecheck/);
@@ -51,32 +71,113 @@ test("repository verify provides an always-present protected context", { skip: !
   assert.doesNotMatch(workerCi, /\n  verify:\n    name: verify/);
 });
 
-test("Supabase replay covers schema and validation-contract changes", { skip: !workflowContractPresent }, () => {
-  for (const path of ["supabase/**", "scripts/**", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"]) {
-    assert.match(supabaseReplay, new RegExp(`"${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+test("Supabase replay covers schema and validation-contract changes", () => {
+  for (const path of [
+    "supabase/**",
+    "scripts/**",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+  ]) {
+    assert.match(
+      supabaseReplay,
+      new RegExp(`"${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`),
+    );
   }
+  assert.equal(
+    [
+      ...supabaseReplay.matchAll(
+        /"\.github\/workflows\/verify-supabase-replay\.yml"/g,
+      ),
+    ].length,
+    2,
+  );
   assert.match(supabaseReplay, /npm run verify:supabase/);
 });
 
 test("release policy defines required and intentional-skip Supabase Preview outcomes", () => {
-  assert.match(releaseDoc, /supabase\/\*\*[\s\S]*Supabase[\s\S]*Preview[\s\S]*required/i);
-  assert.match(releaseDoc, /non-Supabase[\s\S]*Supabase Preview[\s\S]*skipped/i);
+  assert.match(
+    releaseDoc,
+    /supabase\/\*\*[\s\S]*Supabase[\s\S]*Preview[\s\S]*required/i,
+  );
+  assert.match(
+    releaseDoc,
+    /non-Supabase[\s\S]*Supabase Preview[\s\S]*skipped/i,
+  );
   assert.match(releaseDoc, /missing, pending, cancelled, or failed.*fail/is);
   assert.match(releaseDoc, /supabase-replay[\s\S]*must[\s\S]*pass/i);
 });
 
-test("release evidence schema is sealed and the runtime contract executes its approved suites", () => {
+test("release evidence schema is sealed and validates exact approved coverage", () => {
   const schema = JSON.parse(schemaJson);
-  const releaseEvidence = JSON.parse(releaseEvidenceJson);
+  const validate = new Ajv2020({ allErrors: true, strict: true }).compile(
+    schema,
+  );
+  assert.equal(
+    validate(releaseEvidence),
+    true,
+    JSON.stringify(validate.errors),
+  );
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.safety.additionalProperties, false);
   assert.equal(schema.properties.role_matrix.items.additionalProperties, false);
-  const command = JSON.parse(packageJson).scripts["verify:release-integrity"];
-  assert.match(command, /test-supabase-preview-check/);
+  assert.equal(schema.properties.batches.maxItems, 4);
+  assert.equal(schema.properties.batches.allOf.length, 4);
+  assert.equal(schema.properties.role_matrix.maxItems, 7);
+  assert.equal(schema.properties.role_matrix.allOf.length, 7);
+  assert.equal(
+    schema.properties.role_matrix.items.properties.stage_results.uniqueItems,
+    true,
+  );
+  assert.equal(
+    schema.properties.role_matrix.items.properties.stage_results.maxItems,
+    3,
+  );
   assert.match(previewVerifier, /SUPABASE_GITHUB_APP_ID = 330661/);
+});
+
+test("combined root verification executes approved evidence without duplicate suites", () => {
+  const scripts = JSON.parse(packageJson).scripts;
+  const releaseCommand = scripts["verify:release-integrity"];
+  const supabaseCommand = scripts["verify:supabase"];
+  const combinedCommand = `${scripts.verify} ${releaseCommand} ${supabaseCommand}`;
+  assert.equal(
+    scripts.verify,
+    "pnpm verify:supabase && pnpm verify:release-integrity",
+  );
+  assert.match(releaseCommand, /test-batch7-release-integrity/);
+  assert.match(releaseCommand, /test-release-integrity-ci/);
+  assert.match(releaseCommand, /test-supabase-preview-check/);
+  for (const duplicate of [
+    "verify-guardian-view",
+    "test-guardian-view",
+    "verify-medical-waiver-gate",
+    "test-medical-waiver-gate",
+    "test-horse-welfare-stable-operations",
+    "test-staff-arena-academy-operations",
+    "test-academy-operations-migration-apply",
+  ]) {
+    assert.doesNotMatch(releaseCommand, new RegExp(duplicate));
+    assert.match(supabaseCommand, new RegExp(duplicate));
+  }
+  const commandAliases = {
+    "pnpm test:academy-operations": [
+      "node scripts/test-staff-arena-academy-operations.mjs",
+      "node scripts/test-academy-operations-migration-apply.mjs",
+    ],
+  };
   for (const batch of releaseEvidence.batches) {
     for (const expected of batch.commands) {
-      assert.ok(command.includes(expected), `release verification must execute Batch ${batch.batch} command: ${expected}`);
+      const covered =
+        combinedCommand.includes(expected) ||
+        (commandAliases[expected]?.every((command) =>
+          combinedCommand.includes(command),
+        ) ??
+          false);
+      assert.ok(
+        covered,
+        `combined verification must execute Batch ${batch.batch} command: ${expected}`,
+      );
     }
   }
 });
@@ -85,7 +186,6 @@ test("root verify keeps focused payroll, welfare, medical, guardian, and private
   const scripts = JSON.parse(packageJson).scripts;
   assert.match(scripts.verify, /verify:supabase/);
   assert.match(scripts.verify, /verify:release-integrity/);
-  assert.match(scripts["verify:release-integrity"], /test-batch7-release-integrity/);
   assert.match(welfare, /default-off|default off/i);
   assert.match(welfare, /private staff page must fail closed/i);
   assert.match(academy, /Payroll approval must be explicitly gated/);

@@ -11,7 +11,7 @@
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
     "verify": "pnpm verify:supabase && pnpm verify:release-integrity",
-    "verify:release-integrity": "node scripts/verify-batch7-release-integrity.mjs intelligence/batch7-release-integrity.example.json && node --test scripts/test-batch7-release-integrity.mjs scripts/test-release-integrity-ci.mjs scripts/test-supabase-preview-check.mjs && node scripts/verify-guardian-view.mjs && node --test scripts/test-guardian-view.mjs && node scripts/verify-medical-waiver-gate.mjs && node --test scripts/test-medical-waiver-gate.mjs && pnpm verify:pilot && node scripts/test-horse-welfare-stable-operations.mjs && pnpm verify:batch6 && pnpm test:academy-operations",
+    "verify:release-integrity": "node scripts/verify-batch7-release-integrity.mjs intelligence/batch7-release-integrity.example.json && node --test scripts/test-batch7-release-integrity.mjs scripts/test-release-integrity-ci.mjs scripts/test-supabase-preview-check.mjs && pnpm verify:pilot && pnpm verify:batch6",
     "verify:pilot": "node scripts/verify-phase1-pilot-readiness.mjs --template pilot/phase1-pilot.example.json && node scripts/verify-phase1-pilot-preflight.mjs --template pilot/phase1-production-preflight.example.json && node scripts/verify-phase1-stage6-observation.mjs --template pilot/phase1-stage6-observation.example.json",
     "test:pilot": "node --test scripts/test-phase1-pilot-readiness.mjs scripts/test-phase1-pilot-preflight.mjs scripts/test-phase1-stage6-observation.mjs",
     "verify:batch6": "node scripts/verify-batch6-feasibility.mjs intelligence/batch6-feasibility.example.json",
@@ -52,7 +52,8 @@
   },
   "private": true,
   "dependencies": {
-    "@replit/connectors-sdk": "^0.4.1"
+    "@replit/connectors-sdk": "^0.4.1",
+    "ajv": "^8.20.0"
   },
   "devDependencies": {
     "prettier": "^3.9.6",

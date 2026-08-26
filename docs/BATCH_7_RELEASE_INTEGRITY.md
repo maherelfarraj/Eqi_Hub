@@ -8,15 +8,6 @@ synthetic role coverage, and makes the database-preview policy explicit. It
 does not authorize a release, enable a feature, mutate a hosted environment,
 create a persona, alter financial access, or process a payment.
 
-## Staged publication status
-
-The initial draft publishes the validated non-workflow package only. The
-workflow files remain preserved outside that draft because the active GitHub
-credential cannot write `.github/workflows/**`. CI enforcement and Supabase
-Preview gating remain pending a workflow-capable GitHub credential. The CI
-contract below is the preserved target contract and is not active until those
-workflow files are published in the dedicated follow-up.
-
 ## CI contract
 
 `verify` is the repository-level required context. It runs on every pull
@@ -30,6 +21,8 @@ verification commands begin, it waits for `supabase-preview-gate`, then executes
 `worker-verify` remains the worker-specific check. `frontend-verify` remains
 the frontend and browser-server contract. Keeping these names distinct prevents
 a worker-only path filter from satisfying the repository-level `verify` gate.
+The repository, worker, and Supabase replay workflow definitions are included
+in this change and are validated as a required set.
 
 ## Supabase Preview policy
 
@@ -45,6 +38,10 @@ a worker-only path filter from satisfying the repository-level `verify` gate.
 - A missing, pending, cancelled, or failed Supabase Preview result for a
   database change makes `supabase-preview-gate`, and therefore `verify`, fail.
   A skipped result must never be reclassified as a successful database preview.
+- The preview evaluator is extracted from the pull request's trusted base
+  revision. The first publication can use an immutable pinned bootstrap
+  revision only when the base predates the evaluator files; pull-request
+  check data remains input and cannot replace the evaluator code.
 
 This policy documents the external Supabase check; it does not create, apply,
 or publish a preview database.
@@ -68,12 +65,12 @@ payment information.
 
 ## Batch 3–6 evidence boundaries
 
-| Batch | Evidence source | Release boundary |
-| --- | --- | --- |
-| 3 | Guardian View acceptance | Verified linked-rider read-only access; no unrelated rider or private staff content |
-| 4 | Medical/Waiver Gate acceptance | Versioned consent and fail-closed readiness; safety data remains role-limited |
-| 5 | Pilot and Horse Welfare regressions | No cohort expansion; welfare stays default-off and staff-authorized |
-| 6 | Feasibility and Academy Operations regressions | Feasibility remains offline; academy operations stay default-off and compensation approval-only |
+| Batch | Evidence source                                | Release boundary                                                                                |
+| ----- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 3     | Guardian View acceptance                       | Verified linked-rider read-only access; no unrelated rider or private staff content             |
+| 4     | Medical/Waiver Gate acceptance                 | Versioned consent and fail-closed readiness; safety data remains role-limited                   |
+| 5     | Pilot and Horse Welfare regressions            | No cohort expansion; welfare stays default-off and staff-authorized                             |
+| 6     | Feasibility and Academy Operations regressions | Feasibility remains offline; academy operations stay default-off and compensation approval-only |
 
 The evidence hash is deterministic over the committed synthetic record. It is
 an integrity reference, not a deployment authorization or a production receipt.
@@ -97,7 +94,3 @@ workspace private-note redaction checks.
 Batch 7 does not deploy or publish. It does not apply migrations, enable
 feature flags, mutate production or hosted Supabase, create or alter personas,
 expand financial visibility or approval roles, or process payments.
-
-## CI trigger record
-
-This documentation-only commit triggers the Batch 7 pull-request workflows after their addition to the branch; it introduces no product, data, migration, or feature-state change.

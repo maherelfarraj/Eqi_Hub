@@ -44,6 +44,7 @@
     "stages": {
       "type": "array",
       "minItems": 3,
+      "maxItems": 3,
       "uniqueItems": true,
       "items": {
         "enum": ["static-contract", "isolated-policy", "route-boundary"]
@@ -52,10 +53,49 @@
     "batches": {
       "type": "array",
       "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "batch": { "const": 3 } },
+            "required": ["batch"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "batch": { "const": 4 } },
+            "required": ["batch"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "batch": { "const": 5 } },
+            "required": ["batch"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "batch": { "const": 6 } },
+            "required": ["batch"]
+          }
+        }
+      ],
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["batch", "scope", "status", "source_ref", "commands", "boundaries"],
+        "required": [
+          "batch",
+          "scope",
+          "status",
+          "source_ref",
+          "commands",
+          "boundaries"
+        ],
         "properties": {
           "batch": { "enum": [3, 4, 5, 6] },
           "scope": { "type": "string", "minLength": 1 },
@@ -78,6 +118,8 @@
     "default_off": {
       "type": "array",
       "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -91,6 +133,59 @@
     "role_matrix": {
       "type": "array",
       "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "rider" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "guardian" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "coach" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "academy_admin" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "stable_manager" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "accountant" } },
+            "required": ["role"]
+          }
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": { "role": { "const": "platform_admin" } },
+            "required": ["role"]
+          }
+        }
+      ],
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -128,13 +223,42 @@
           "stage_results": {
             "type": "array",
             "minItems": 3,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": { "stage": { "const": "static-contract" } },
+                  "required": ["stage"]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": { "stage": { "const": "isolated-policy" } },
+                  "required": ["stage"]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": { "stage": { "const": "route-boundary" } },
+                  "required": ["stage"]
+                }
+              }
+            ],
             "items": {
               "type": "object",
               "additionalProperties": false,
               "required": ["stage", "result", "evidence_kind"],
               "properties": {
                 "stage": {
-                  "enum": ["static-contract", "isolated-policy", "route-boundary"]
+                  "enum": [
+                    "static-contract",
+                    "isolated-policy",
+                    "route-boundary"
+                  ]
                 },
                 "result": { "const": "covered" },
                 "evidence_kind": { "const": "synthetic" }
