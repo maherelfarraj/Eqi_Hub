@@ -98,6 +98,10 @@ test("Supabase replay covers schema and validation-contract changes", () => {
     /"\.github\/workflows\/verify-supabase-replay\.yml"/,
   );
   assert.match(pushPaths, /"\.github\/workflows\/verify-supabase-replay\.yml"/);
+  assert.match(
+    supabaseReplay,
+    /Activate pinned pnpm[\s\S]*corepack enable[\s\S]*corepack prepare pnpm@11\.16\.0 --activate[\s\S]*npm run verify:supabase/,
+  );
   assert.match(supabaseReplay, /npm run verify:supabase/);
 });
 
