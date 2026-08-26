@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 const [
   migration,
+  access,
   hook,
   app,
   shell,
@@ -20,6 +21,7 @@ const [
     read(
       "supabase/migrations/20260826170000_batch8_parent_membership_revenue_operations.sql",
     ),
+    read("artifacts/equus-voyages/src/lib/batch8-access.ts"),
     read("artifacts/equus-voyages/src/hooks/use-batch8-operations.ts"),
     read("artifacts/equus-voyages/src/App.tsx"),
     read("artifacts/equus-voyages/src/components/AppShell.tsx"),
@@ -41,7 +43,7 @@ function keyPaths(value, prefix = "") {
 }
 
 test("Batch 8 is default-off in both client and database gates", () => {
-  assert.match(hook, /VITE_BATCH8_ENABLED === "true"/);
+  assert.match(access, /VITE_BATCH8_ENABLED === "true"/);
   assert.match(
     hook,
     /get_batch8_availability/,
@@ -58,8 +60,8 @@ test("Batch 8 is default-off in both client and database gates", () => {
     migration,
     /enabled boolean not null default false[\s\S]*readiness_status = 'ready'/,
   );
-  assert.match(app, /activeOrganization\?\.roles\.includes\(role\)/);
-  assert.match(shell, /activeOrganizationRoles\.includes\("guardian"\)/);
+  assert.match(app, /resolveBatch8Access/);
+  assert.match(access, /activeOrganizationRoles\.includes\("guardian"\)/);
 });
 
 test("membership, attendance, waitlist, and credit transitions are explicit and idempotent", () => {
@@ -165,19 +167,23 @@ test("route boundaries include guardian, admin, and accountant behavior", () => 
   assert.match(persona, /"\/revenue-operations"/);
   assert.match(
     app,
-    /allowedRoles=\{\["guardian"\]\}[\s\S]*fallback="\/guardian"/,
+    /surface="family"[\s\S]*fallback="\/guardian"/,
   );
   assert.match(
     app,
-    /allowedRoles=\{\["academy_admin", "accountant", "platform_admin"\]\}/,
+    /surface="revenue"[\s\S]*fallback="\/dashboard"/,
+  );
+  assert.match(
+    access,
+    /activeOrganizationRoles\.includes\("accountant"\)/,
   );
   assert.match(
     shell,
-    /activeOrganizationRoles\.includes\("accountant"\)/,
+    /location\.pathname === "\/revenue-operations" && batch8Access\.revenue[\s\S]*\? null[\s\S]*portalRedirect/,
   );
   assert.doesNotMatch(
     shell,
-    /batch8Enabled && hasRole\("(guardian|academy_admin|accountant)"\)/,
+    /activeOrganizationRoles\.includes\("(guardian|academy_admin|accountant)"\)/,
   );
 });
 
@@ -234,7 +240,23 @@ test("calendar dates and surfaced enums remain localized", () => {
   }
   assert.match(familyPage, /familyOperations\.relationships/);
   assert.match(revenuePage, /revenueOperations\.collections\.statuses/);
+  assert.match(familyPage, /defaultValue: rider\.relationship/);
+  assert.match(familyPage, /defaultValue: rider\.relationshipStatus/);
+  assert.match(familyPage, /defaultValue: rider\.membershipStatus/);
+  assert.match(revenuePage, /defaultValue: c\.status/);
   assert.match(ui, /formatCalendarDate[\s\S]*timeZone: "UTC"/);
+});
+
+test("revenue risks are ordered by explicit severity rank", () => {
+  assert.match(
+    migration,
+    /case signal\.risk_level[\s\S]*when 'high' then 0[\s\S]*when 'medium' then 1[\s\S]*signal\.renewal_on/,
+  );
+  assert.match(
+    migration,
+    /case collection\.risk_level[\s\S]*when 'high' then 0[\s\S]*when 'medium' then 1[\s\S]*invoice\.due_date/,
+  );
+  assert.doesNotMatch(migration, /order by (signal|collection)\.risk_level desc/);
 });
 
 test("English and Arabic Batch 8 keys are recursively equivalent", () => {

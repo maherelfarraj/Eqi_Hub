@@ -11,6 +11,10 @@ import AppShell from "@/components/AppShell";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import "@/i18n";
+import {
+  resolveBatch8Access,
+  type Batch8Surface,
+} from "@/lib/batch8-access";
 
 const AnalysisPage = lazy(() => import("@/pages/AnalysisPage"));
 const AcademyOperationsPage = lazy(() => import("@/pages/AcademyOperationsPage"));
@@ -88,23 +92,21 @@ function SuspendedPage({
 }
 
 function Batch8RouteGuard({
-  allowedRoles,
+  surface,
   fallback,
   children,
 }: {
-  allowedRoles: readonly string[];
+  surface: Batch8Surface;
   fallback: string;
   children: ReactNode;
 }) {
   const { activeOrganization, hasRole } = useAuth();
-  const enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
-  const allowed = allowedRoles.some((role) =>
-    role === "platform_admin"
-      ? hasRole("platform_admin")
-      : Boolean(activeOrganization?.roles.includes(role)),
+  const access = resolveBatch8Access(
+    activeOrganization?.roles,
+    hasRole("platform_admin"),
   );
 
-  if (!enabled || !allowed) {
+  if (!access[surface]) {
     return <Navigate to={fallback} replace />;
   }
   return children;
@@ -299,7 +301,7 @@ function AppRoutes() {
           path="/family-operations"
           element={
             <Batch8RouteGuard
-              allowedRoles={["guardian"]}
+              surface="family"
               fallback="/guardian"
             >
               <SuspendedPage>
@@ -312,7 +314,7 @@ function AppRoutes() {
           path="/revenue-operations"
           element={
             <Batch8RouteGuard
-              allowedRoles={["academy_admin", "accountant", "platform_admin"]}
+              surface="revenue"
               fallback="/dashboard"
             >
               <SuspendedPage>

@@ -2098,7 +2098,14 @@ begin
         'riskLevel', signal.risk_level,
         'reason', signal.reason_code
       )
-      order by signal.risk_level desc, signal.renewal_on, signal.id
+      order by
+        case signal.risk_level
+          when 'high' then 0
+          when 'medium' then 1
+          else 2
+        end,
+        signal.renewal_on,
+        signal.id
     ),
     '[]'::jsonb
   )
@@ -2125,7 +2132,14 @@ begin
         'status', collection.status,
         'paymentLinkStatus', coalesce(intent.status, 'none')
       )
-      order by collection.risk_level desc, invoice.due_date, collection.id
+      order by
+        case collection.risk_level
+          when 'high' then 0
+          when 'medium' then 1
+          else 2
+        end,
+        invoice.due_date,
+        collection.id
     ),
     '[]'::jsonb
   )

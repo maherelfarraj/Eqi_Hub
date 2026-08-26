@@ -31,6 +31,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { resolveBatch8Access } from "@/lib/batch8-access";
 import {
   isNavigationPathVisible,
   portalRedirect,
@@ -76,21 +77,18 @@ export default function AppShell() {
   const [signOutError, setSignOutError] = useState(false);
   const isRtl = (i18n.resolvedLanguage ?? i18n.language) === "ar";
   const portalPersona = resolvePortalPersona(activeOrganization?.roles);
-  const redirectPath = portalRedirect(portalPersona, location.pathname);
   const videoRelease2Access = useVideoRelease2Access();
   const competitionDevelopmentAccess = useCompetitionDevelopmentAccess();
   const horseWelfareAccess = useHorseWelfareAccess();
   const academyOperationsAccess = useAcademyOperationsAccess();
-  const batch8Enabled = import.meta.env.VITE_BATCH8_ENABLED === "true";
-  const activeOrganizationRoles = activeOrganization?.roles ?? [];
-  const isPlatformAdmin = hasRole("platform_admin");
-  const canAccessBatch8Family =
-    batch8Enabled && activeOrganizationRoles.includes("guardian");
-  const canAccessBatch8Revenue =
-    batch8Enabled &&
-    (activeOrganizationRoles.includes("academy_admin") ||
-      activeOrganizationRoles.includes("accountant") ||
-      isPlatformAdmin);
+  const batch8Access = resolveBatch8Access(
+    activeOrganization?.roles,
+    hasRole("platform_admin"),
+  );
+  const redirectPath =
+    location.pathname === "/revenue-operations" && batch8Access.revenue
+      ? null
+      : portalRedirect(portalPersona, location.pathname);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -187,14 +185,15 @@ export default function AppShell() {
                   Boolean(horseWelfareAccess.data?.canManage)) &&
                  (path !== "/academy-operations" ||
                    Boolean(academyOperationsAccess.data?.canManage)) &&
-                 (path !== "/family-operations" || canAccessBatch8Family) &&
+                 (path !== "/family-operations" || batch8Access.family) &&
                   (path !== "/revenue-operations" ||
-                    canAccessBatch8Revenue) &&
-                isNavigationPathVisible(
-                  portalPersona,
-                  path,
-                  hasRole("guardian"),
-                ),
+                    batch8Access.revenue) &&
+                ((path === "/revenue-operations" && batch8Access.revenue) ||
+                  isNavigationPathVisible(
+                    portalPersona,
+                    path,
+                    hasRole("guardian"),
+                  )),
             )
             .map(({ path, labelKey, icon: Icon }) => (
               <NavLink

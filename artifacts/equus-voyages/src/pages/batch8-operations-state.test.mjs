@@ -5,6 +5,7 @@ import test from "node:test";
 const [
   app,
   shell,
+  access,
   persona,
   hook,
   familyPage,
@@ -16,6 +17,7 @@ const [
   await Promise.all([
     readFile(new URL("../App.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/AppShell.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/batch8-access.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/portal-persona.ts", import.meta.url), "utf8"),
     readFile(new URL("../hooks/use-batch8-operations.ts", import.meta.url), "utf8"),
     readFile(new URL("./FamilyOperationsPage.tsx", import.meta.url), "utf8"),
@@ -60,17 +62,23 @@ test("Batch 8 client adapter is disabled before any RPC and contains no samples"
 
 test("Batch 8 routes and navigation are feature- and role-gated", () => {
   assert.match(app, /function Batch8RouteGuard/);
-  assert.match(app, /allowedRoles=\{\["guardian"\]\}/);
+  assert.match(app, /surface="family"/);
   assert.match(
     app,
-    /allowedRoles=\{\["academy_admin", "accountant", "platform_admin"\]\}/,
+    /surface="revenue"/,
   );
-  assert.match(app, /activeOrganization\?\.roles\.includes\(role\)/);
-  assert.match(shell, /activeOrganizationRoles\.includes\("guardian"\)/);
-  assert.match(shell, /activeOrganizationRoles\.includes\("accountant"\)/);
+  assert.match(app, /resolveBatch8Access/);
+  assert.match(shell, /resolveBatch8Access/);
+  assert.match(access, /activeOrganizationRoles\.includes\("guardian"\)/);
+  assert.match(access, /activeOrganizationRoles\.includes\("accountant"\)/);
+  assert.match(access, /isPlatformAdmin/);
+  assert.match(
+    shell,
+    /location\.pathname === "\/revenue-operations" && batch8Access\.revenue[\s\S]*\? null[\s\S]*portalRedirect/,
+  );
   assert.doesNotMatch(
     shell,
-    /batch8Enabled && hasRole\("(guardian|academy_admin|accountant)"\)/,
+    /activeOrganizationRoles\.includes\("(guardian|academy_admin|accountant)"\)/,
   );
   assert.match(persona, /"\/family-operations"/);
   assert.match(persona, /"\/revenue-operations"/);
@@ -99,5 +107,8 @@ test("Batch 8 English and Arabic copy has matching namespaces", () => {
   assert.ok(ar.familyOperations.nonProcessingNotice);
   assert.match(familyPage, /familyOperations\.relationships/);
   assert.match(revenuePage, /revenueOperations\.collections\.statuses/);
+  assert.match(familyPage, /defaultValue: rider\.relationship/);
+  assert.match(familyPage, /defaultValue: rider\.membershipStatus/);
+  assert.match(revenuePage, /defaultValue: c\.status/);
   assert.match(ui, /formatCalendarDate[\s\S]*timeZone: "UTC"/);
 });

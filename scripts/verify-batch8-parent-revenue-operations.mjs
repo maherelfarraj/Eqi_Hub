@@ -4,11 +4,12 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [migration, hook, app, shell, familyPage, revenuePage, english, arabic] =
+const [migration, access, hook, app, shell, familyPage, revenuePage, english, arabic] =
   await Promise.all([
     read(
       "supabase/migrations/20260826170000_batch8_parent_membership_revenue_operations.sql",
     ),
+    read("artifacts/equus-voyages/src/lib/batch8-access.ts"),
     read("artifacts/equus-voyages/src/hooks/use-batch8-operations.ts"),
     read("artifacts/equus-voyages/src/App.tsx"),
     read("artifacts/equus-voyages/src/components/AppShell.tsx"),
@@ -104,9 +105,10 @@ assert.doesNotMatch(
 );
 
 assert.match(
-  hook,
-  /VITE_BATCH8_ENABLED === "true"[\s\S]*get_batch8_availability/,
+  access,
+  /VITE_BATCH8_ENABLED === "true"/,
 );
+assert.match(hook, /get_batch8_availability/);
 assert.match(
   hook,
   /availability !== true[\s\S]*enabled: false,[\s\S]*loadError: null/,
@@ -129,20 +131,37 @@ assert.doesNotMatch(hook, /\b(mock|setTimeout|Math\.random)\b/i);
 
 assert.match(
   app,
-  /Batch8RouteGuard[\s\S]*allowedRoles=\{\["guardian"\]\}[\s\S]*fallback="\/guardian"/,
+  /Batch8RouteGuard[\s\S]*surface="family"[\s\S]*fallback="\/guardian"/,
 );
 assert.match(
   app,
-  /allowedRoles=\{\["academy_admin", "accountant", "platform_admin"\]\}/,
+  /surface="revenue"[\s\S]*fallback="\/dashboard"/,
 );
-assert.match(shell, /batch8Enabled[\s\S]*path !== "\/family-operations"/);
-assert.match(shell, /activeOrganizationRoles\.includes\("guardian"\)/);
-assert.match(shell, /activeOrganizationRoles\.includes\("accountant"\)/);
-assert.match(shell, /path !== "\/revenue-operations"[\s\S]*canAccessBatch8Revenue/);
+assert.match(access, /activeOrganizationRoles\.includes\("guardian"\)/);
+assert.match(access, /activeOrganizationRoles\.includes\("accountant"\)/);
+assert.match(access, /isPlatformAdmin/);
+assert.match(shell, /path !== "\/family-operations" \|\| batch8Access\.family/);
+assert.match(shell, /path !== "\/revenue-operations"[\s\S]*batch8Access\.revenue/);
+assert.match(
+  shell,
+  /location\.pathname === "\/revenue-operations" && batch8Access\.revenue[\s\S]*\? null[\s\S]*portalRedirect/,
+);
 assert.doesNotMatch(
   shell,
-  /batch8Enabled && hasRole\("(guardian|academy_admin|accountant)"\)/,
+  /activeOrganizationRoles\.includes\("(guardian|academy_admin|accountant)"\)/,
 );
+assert.match(
+  migration,
+  /case signal\.risk_level[\s\S]*when 'high' then 0[\s\S]*when 'medium' then 1/,
+);
+assert.match(
+  migration,
+  /case collection\.risk_level[\s\S]*when 'high' then 0[\s\S]*when 'medium' then 1/,
+);
+assert.match(familyPage, /defaultValue: rider\.relationship/);
+assert.match(familyPage, /defaultValue: rider\.relationshipStatus/);
+assert.match(familyPage, /defaultValue: rider\.membershipStatus/);
+assert.match(revenuePage, /defaultValue: c\.status/);
 assert.doesNotMatch(familyPage, /onClick=|Pay via link|OutlineButton|checkout/i);
 assert.match(familyPage, /nonProcessingNotice/);
 assert.doesNotMatch(revenuePage, /onClick=|checkout|capture|refund/i);

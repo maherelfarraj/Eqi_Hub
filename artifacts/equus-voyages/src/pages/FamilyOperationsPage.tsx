@@ -100,11 +100,25 @@ export default function FamilyOperationsPage() {
                 <div>
                   <h3 className="text-lg font-bold text-espresso">{rider.name}</h3>
                   <p className="text-xs font-medium text-text-secondary mt-0.5 capitalize">
-                    {t(`familyOperations.relationships.${rider.relationship}`)} • {t(`familyOperations.statuses.${rider.relationshipStatus}`)}
+                    {t(`familyOperations.relationships.${rider.relationship}`, {
+                      defaultValue: rider.relationship.replaceAll("_", " "),
+                    })}{" "}
+                    •{" "}
+                    {t(`familyOperations.statuses.${rider.relationshipStatus}`, {
+                      defaultValue: rider.relationshipStatus.replaceAll("_", " "),
+                    })}
                   </p>
                 </div>
               </div>
-              <StatusBadge status={rider.membershipStatus} label={t(`familyOperations.statuses.${rider.membershipStatus}`)} />
+              <StatusBadge
+                status={rider.membershipStatus}
+                label={t(
+                  `familyOperations.statuses.${rider.membershipStatus}`,
+                  {
+                    defaultValue: rider.membershipStatus.replaceAll("_", " "),
+                  },
+                )}
+              />
             </div>
 
             <div className="space-y-3">
