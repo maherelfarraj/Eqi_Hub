@@ -22,6 +22,10 @@ test("active organization persona gives academy admin precedence", () => {
 });
 
 test("guardian navigation allows the private video review list, safe stable availability, and its single-session detail route", () => {
+  const guardianPaths =
+    persona.match(
+      /const guardianNavigationPaths = new Set\(\[[\s\S]*?\]\);/,
+    )?.[0] ?? "";
   for (const path of [
     "/guardian",
     "/competition-development",
@@ -31,7 +35,7 @@ test("guardian navigation allows the private video review list, safe stable avai
     "/family-operations",
     "/settings",
   ]) {
-    assert.match(persona, new RegExp(`"${path}"`));
+    assert.match(guardianPaths, new RegExp(`"${path}"`));
   }
   assert.ok(
     persona.includes(
@@ -66,6 +70,17 @@ test("academy admin receives operations navigation and dashboard instead of ride
   assert.match(dashboard, /persona === "academy_admin"/);
   assert.match(dashboard, /<AcademyAdminDashboard \/>/);
   assert.match(dashboard, /useOrganizationMembers\(/);
+});
+
+test("platform admin revenue access overrides a guardian persona redirect", () => {
+  assert.match(
+    shell,
+    /location\.pathname === "\/revenue-operations" && batch8Access\.revenue[\s\S]*\? null[\s\S]*portalRedirect/,
+  );
+  assert.match(
+    shell,
+    /path === "\/revenue-operations" && batch8Access\.revenue[\s\S]*isNavigationPathVisible/,
+  );
 });
 
 test("role-aware dashboard copy is complete in English and Arabic", () => {

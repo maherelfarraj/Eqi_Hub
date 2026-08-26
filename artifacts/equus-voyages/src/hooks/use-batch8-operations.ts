@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { useAuth } from "@/contexts/AuthContext";
+import { batch8ClientEnabled } from "@/lib/batch8-access";
 import { supabase } from "@/lib/supabase";
 import { requireOrganizationId, useQuery } from "./_shared";
 
@@ -100,9 +101,6 @@ function errorMessage(error: unknown) {
   }
   return "Something went wrong";
 }
-
-export const batch8ClientEnabled =
-  import.meta.env.VITE_BATCH8_ENABLED === "true";
 
 export function useBatch8Operations<T extends "family" | "revenue">(
   surface: T,

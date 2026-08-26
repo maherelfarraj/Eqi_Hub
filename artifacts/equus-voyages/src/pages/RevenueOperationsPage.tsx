@@ -122,7 +122,10 @@ export default function RevenueOperationsPage() {
                     <span className="text-xs font-semibold text-error-500">{c.daysOverdue} {t("revenueOperations.collections.daysOverdue")}</span>
                     <StatusBadge
                       status={c.status}
-                      label={t(`revenueOperations.collections.statuses.${c.status}`)}
+                      label={t(
+                        `revenueOperations.collections.statuses.${c.status}`,
+                        { defaultValue: c.status.replaceAll("_", " ") },
+                      )}
                     />
                   </div>
                 </div>
