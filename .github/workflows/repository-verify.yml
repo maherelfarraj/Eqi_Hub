@@ -34,7 +34,6 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          TRUSTED_PREVIEW_EVALUATOR_REF: a035ad12a111677b4d2f4085af2e8020e453af95
         run: |
           set -euo pipefail
           if [[ "$EVENT_NAME" != "pull_request" ]]; then
@@ -46,11 +45,6 @@ jobs:
             exit 0
           fi
           trusted_evaluator_ref="$BASE_SHA"
-          if ! git cat-file -e "$trusted_evaluator_ref:scripts/supabase-preview-check.mjs" \
-            || ! git cat-file -e "$trusted_evaluator_ref:scripts/verify-supabase-preview-check.mjs"; then
-            trusted_evaluator_ref="$TRUSTED_PREVIEW_EVALUATOR_REF"
-            echo "Using the pinned bootstrap evaluator because the base revision predates it."
-          fi
           trusted_evaluator_dir="$(mktemp -d)"
           trap 'rm -rf "$trusted_evaluator_dir"' EXIT
           git show "$trusted_evaluator_ref:scripts/supabase-preview-check.mjs" \

@@ -38,10 +38,10 @@ in this change and are validated as a required set.
 - A missing, pending, cancelled, or failed Supabase Preview result for a
   database change makes `supabase-preview-gate`, and therefore `verify`, fail.
   A skipped result must never be reclassified as a successful database preview.
-- The preview evaluator is extracted from the pull request's trusted base
-  revision. The first publication can use an immutable pinned bootstrap
-  revision only when the base predates the evaluator files; pull-request
-  check data remains input and cannot replace the evaluator code.
+- The preview evaluator is always extracted from the pull request's trusted
+  base revision. If the base revision does not contain the evaluator files,
+  the gate fails closed; pull-request check data remains input and cannot
+  replace the evaluator code.
 
 This policy documents the external Supabase check; it does not create, apply,
 or publish a preview database.

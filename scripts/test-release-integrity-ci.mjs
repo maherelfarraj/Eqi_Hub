@@ -44,8 +44,13 @@ test("repository verify provides an always-present protected context", () => {
     repositoryVerify,
     /check-runs\?filter=all&per_page=100&page=\$page/,
   );
-  assert.match(repositoryVerify, /TRUSTED_PREVIEW_EVALUATOR_REF: [0-9a-f]{40}/);
   assert.match(repositoryVerify, /trusted_evaluator_ref="\$BASE_SHA"/);
+  assert.doesNotMatch(repositoryVerify, /TRUSTED_PREVIEW_EVALUATOR_REF/);
+  assert.doesNotMatch(
+    repositoryVerify,
+    /bootstrap evaluator|pinned bootstrap/i,
+  );
+  assert.doesNotMatch(repositoryVerify, /git cat-file -e/);
   assert.match(
     repositoryVerify,
     /git show "\$trusted_evaluator_ref:scripts\/verify-supabase-preview-check\.mjs"/,
@@ -84,14 +89,15 @@ test("Supabase replay covers schema and validation-contract changes", () => {
       new RegExp(`"${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`),
     );
   }
-  assert.equal(
-    [
-      ...supabaseReplay.matchAll(
-        /"\.github\/workflows\/verify-supabase-replay\.yml"/g,
-      ),
-    ].length,
-    2,
+  const pullRequestPaths =
+    supabaseReplay.match(/  pull_request:[\s\S]*?(?=\n  push:)/)?.[0] ?? "";
+  const pushPaths =
+    supabaseReplay.match(/  push:[\s\S]*?(?=\n\npermissions:)/)?.[0] ?? "";
+  assert.match(
+    pullRequestPaths,
+    /"\.github\/workflows\/verify-supabase-replay\.yml"/,
   );
+  assert.match(pushPaths, /"\.github\/workflows\/verify-supabase-replay\.yml"/);
   assert.match(supabaseReplay, /npm run verify:supabase/);
 });
 
