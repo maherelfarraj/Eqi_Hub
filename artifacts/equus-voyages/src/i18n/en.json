@@ -2,7 +2,8 @@
   "translation": {
     "app": {
       "name": "EquiVista",
-      "tagline": "Equestrian Performance"
+      "tagline": "Equestrian Performance",
+      "orientation": "Today at the Academy"
     },
     "auth": {
       "signIn": "Sign In",
@@ -79,7 +80,15 @@
       "organization": "Organization",
       "settings": "Settings",
       "videoIntelligence": "Coach-approved video",
-      "competitionDevelopment": "Competition development"
+      "competitionDevelopment": "Competition development",
+      "familyOperations": "Family Operations",
+      "revenueOperations": "Revenue Operations"
+    },
+    "navGroups": {
+      "today": "Today",
+      "training": "Training & development",
+      "operations": "Academy operations",
+      "account": "Account & administration"
     },
     "competitionDevelopment": {
       "eyebrow": "Coach-approved planning",
@@ -423,6 +432,36 @@
         "operationsDescription": "Use audited member controls for role changes and the training calendar for academy-wide lesson oversight.",
         "openAccessControl": "Open access control",
         "openBilling": "Open billing"
+      },
+      "coach": {
+        "defaultName": "Coach",
+        "eyebrow": "Coach workspace",
+        "title": "Good morning, {{name}}",
+        "description": "Your academy day at a glance — keep riders moving, lessons focused, and development evidence current.",
+        "openSchedule": "Open schedule",
+        "reviewVideo": "Review video",
+        "todayLessons": "Remaining today",
+        "todayLessonsDetail": "Confirmed sessions still ahead today",
+        "upcoming": "Upcoming",
+        "upcomingDetail": "Confirmed sessions in view",
+        "activeRiders": "Riders in view",
+        "activeRidersDetail": "Distinct riders in upcoming or requested lessons",
+        "requests": "Lesson requests",
+        "requestsDetail": "Awaiting your review",
+        "scheduleEyebrow": "Your next sessions",
+        "scheduleTitle": "Today's academy rhythm",
+        "scheduleDescription": "A focused view of the riders and horses you are working with next.",
+        "noLessonsTitle": "Your schedule is clear",
+        "noLessonsDescription": "Confirmed lessons will appear here as your week takes shape.",
+        "requestsEyebrow": "Needs your attention",
+        "requestsTitle": "New requests",
+        "requestsDescription": "Keep booking decisions close to the rest of your day.",
+        "noRequestsTitle": "All caught up",
+        "noRequestsDescription": "There are no lesson requests waiting for your review.",
+        "focusEyebrow": "Development focus",
+        "focusTitle": "Make every session part of the journey",
+        "focusDescription": "Close out completed lessons with clear evidence so each rider leaves with a confident next step.",
+        "openDevelopment": "Open development"
       }
     },
     "riderSync": {
@@ -544,6 +583,98 @@
         "active": "Active",
         "resting": "Resting",
         "retired": "Retired"
+      }
+    },
+    "familyOperations": {
+      "eyebrow": "Guardian Financials",
+      "title": "Family Operations",
+      "description": "Understand your family's riding commitments, active packages, and financial status in one clear view.",
+      "disabledTitle": "Operations portal not yet ready",
+      "disabledDescription": "The family operations portal is currently being provisioned. Financial controls and package management will be available here soon.",
+      "package": "Active package",
+      "credits": "Credits remaining",
+      "waitlist": "Waitlist count",
+      "renewal": "Renewal date",
+      "overdue": "Overdue amount",
+      "outstanding": "Outstanding balance",
+      "nextPayment": "Next payment date",
+      "familySummary": "Family balances by currency",
+      "financialRestricted": "Financial details are not included in your guardian permissions.",
+      "paymentStatus": "Payment-link preparation",
+      "nonProcessingNotice": "For status only. EquiVista does not collect or process payment here.",
+      "noRiders": "No linked riders found.",
+      "relationships": {
+        "parent": "Parent",
+        "legal_guardian": "Legal guardian",
+        "court_guardian": "Court-appointed guardian",
+        "supporter": "Supporter"
+      },
+      "statuses": {
+        "pending": "Pending verification",
+        "verified": "Verified",
+        "review_required": "Review required",
+        "revoked": "Revoked",
+        "active": "Active",
+        "draft": "Draft",
+        "waitlisted": "Waitlisted",
+        "frozen": "Frozen",
+        "past_due": "Past due",
+        "cancelled": "Cancelled",
+        "expired": "Expired",
+        "none": "Not prepared",
+        "prepared": "Prepared",
+        "presented": "Presented",
+        "restricted": "Financial access restricted"
+      }
+    },
+    "revenueOperations": {
+      "eyebrow": "Academy Financials",
+      "title": "Revenue Operations",
+      "description": "Scan revenue health, collection cases, and renewal risk across the academy.",
+      "snapshotTitle": "{{currency}} revenue snapshot",
+      "noSnapshots": "No revenue snapshots are available for this organization.",
+      "disabledTitle": "Revenue operations not yet ready",
+      "disabledDescription": "The Batch 8 revenue operations surface is currently disabled. Authorized staff will be notified when the financial integration is active.",
+      "metrics": {
+        "collected": "Collected this period",
+        "outstanding": "Total outstanding",
+        "overdue": "Total overdue",
+        "activeMemberships": "Active memberships",
+        "renewals": "Renewals",
+        "highRisk": "High risk"
+      },
+      "collections": {
+        "title": "Overdue collections",
+        "description": "Open collection cases and sent payment links.",
+        "invoice": "Invoice",
+        "daysOverdue": "Days overdue",
+        "statuses": {
+          "open": "Open",
+          "contact_ready": "Contact ready",
+          "link_prepared": "Link prepared",
+          "paused": "Paused",
+          "resolved": "Resolved",
+          "closed": "Closed"
+        }
+      },
+      "pipeline": {
+        "title": "Renewal pipeline & risk",
+        "description": "Upcoming renewals flagged with risk indicators.",
+        "date": "Renewal date"
+      },
+      "riskLevels": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "reasons": {
+        "healthy": "Healthy renewal outlook",
+        "low_attendance": "Low attendance",
+        "missed_lessons": "Recent missed lessons",
+        "past_due": "Past-due balance",
+        "credits_unused": "Unused make-up credits",
+        "freeze_active": "Membership freeze active",
+        "waitlist_unresolved": "Unresolved waitlist"
       }
     },
     "progress": {

@@ -2,7 +2,8 @@
   "translation": {
     "app": {
       "name": "EquiVista",
-      "tagline": "أداء الفروسية"
+      "tagline": "أداء الفروسية",
+      "orientation": "اليوم في الأكاديمية"
     },
     "auth": {
       "signIn": "تسجيل الدخول",
@@ -79,7 +80,15 @@
       "organization": "المنظمة",
       "settings": "الإعدادات",
       "videoIntelligence": "فيديو معتمد من المدرب",
-      "competitionDevelopment": "تطوير المنافسات"
+      "competitionDevelopment": "تطوير المنافسات",
+      "familyOperations": "عمليات العائلة",
+      "revenueOperations": "عمليات الإيرادات"
+    },
+    "navGroups": {
+      "today": "اليوم",
+      "training": "التدريب والتطور",
+      "operations": "عمليات الأكاديمية",
+      "account": "الحساب والإدارة"
     },
     "competitionDevelopment": {
       "eyebrow": "تخطيط معتمد من المدرب",
@@ -435,6 +444,36 @@
         "operationsDescription": "استخدم عناصر التحكم المدققة لتغيير الأدوار وتقويم التدريب للإشراف على دروس الأكاديمية.",
         "openAccessControl": "فتح التحكم بالصلاحيات",
         "openBilling": "فتح الفوترة"
+      },
+      "coach": {
+        "defaultName": "المدرب",
+        "eyebrow": "مساحة المدرب",
+        "title": "صباح الخير، {{name}}",
+        "description": "يومك في الأكاديمية بلمحة — حافظ على تقدم الفرسان وتركيز الدروس وتحديث أدلة التطور.",
+        "openSchedule": "فتح الجدول",
+        "reviewVideo": "مراجعة الفيديو",
+        "todayLessons": "المتبقي اليوم",
+        "todayLessonsDetail": "الجلسات المؤكدة المتبقية اليوم",
+        "upcoming": "القادمة",
+        "upcomingDetail": "الجلسات المؤكدة الظاهرة",
+        "activeRiders": "الفرسان الظاهرون",
+        "activeRidersDetail": "فرسان مختلفون في الدروس القادمة أو المطلوبة",
+        "requests": "طلبات الدروس",
+        "requestsDetail": "بانتظار مراجعتك",
+        "scheduleEyebrow": "جلساتك التالية",
+        "scheduleTitle": "إيقاع الأكاديمية اليوم",
+        "scheduleDescription": "عرض مركز للفرسان والخيول الذين ستعمل معهم تالياً.",
+        "noLessonsTitle": "جدولك خالٍ",
+        "noLessonsDescription": "ستظهر الدروس المؤكدة هنا مع تشكل أسبوعك.",
+        "requestsEyebrow": "يتطلب انتباهك",
+        "requestsTitle": "الطلبات الجديدة",
+        "requestsDescription": "أبقِ قرارات الحجز قريبة من بقية يومك.",
+        "noRequestsTitle": "لا توجد طلبات معلقة",
+        "noRequestsDescription": "لا توجد طلبات دروس بانتظار مراجعتك.",
+        "focusEyebrow": "تركيز التطور",
+        "focusTitle": "اجعل كل جلسة جزءاً من الرحلة",
+        "focusDescription": "أغلق الدروس المكتملة بأدلة واضحة حتى يغادر كل فارس بخطوة تالية واثقة.",
+        "openDevelopment": "فتح التطور"
       }
     },
     "riderSync": {
@@ -556,6 +595,98 @@
         "active": "نشط",
         "resting": "في راحة",
         "retired": "متقاعد"
+      }
+    },
+    "familyOperations": {
+      "eyebrow": "المالية لولي الأمر",
+      "title": "عمليات العائلة",
+      "description": "افهم التزامات عائلتك في الفروسية والباقات النشطة والوضع المالي في عرض واحد واضح.",
+      "disabledTitle": "بوابة العمليات غير جاهزة بعد",
+      "disabledDescription": "يتم حالياً تجهيز بوابة عمليات العائلة. ستتوفر هنا قريباً الضوابط المالية وإدارة الباقات.",
+      "package": "الباقة النشطة",
+      "credits": "الأرصدة المتبقية",
+      "waitlist": "عدد قائمة الانتظار",
+      "renewal": "تاريخ التجديد",
+      "overdue": "المبلغ المتأخر",
+      "outstanding": "الرصيد المستحق",
+      "nextPayment": "تاريخ الدفعة التالية",
+      "familySummary": "أرصدة العائلة حسب العملة",
+      "financialRestricted": "التفاصيل المالية غير مشمولة في صلاحيات ولي الأمر الخاصة بك.",
+      "paymentStatus": "تجهيز رابط الدفع",
+      "nonProcessingNotice": "للعرض فقط. لا تجمع EquiVista المدفوعات أو تعالجها هنا.",
+      "noRiders": "لم يتم العثور على فرسان مرتبطين.",
+      "relationships": {
+        "parent": "أحد الوالدين",
+        "legal_guardian": "ولي قانوني",
+        "court_guardian": "ولي معيّن من المحكمة",
+        "supporter": "داعم"
+      },
+      "statuses": {
+        "pending": "بانتظار التوثيق",
+        "verified": "مُوَثَّق",
+        "review_required": "يحتاج إلى مراجعة",
+        "revoked": "ملغى",
+        "active": "نشط",
+        "draft": "مسودة",
+        "waitlisted": "على قائمة الانتظار",
+        "frozen": "مجمّد",
+        "past_due": "متأخر السداد",
+        "cancelled": "ملغي",
+        "expired": "منتهي",
+        "none": "غير مجهز",
+        "prepared": "مجهز",
+        "presented": "معروض",
+        "restricted": "الوصول المالي مقيّد"
+      }
+    },
+    "revenueOperations": {
+      "eyebrow": "مالية الأكاديمية",
+      "title": "عمليات الإيرادات",
+      "description": "استعرض صحة الإيرادات وحالات التحصيل ومخاطر التجديد عبر الأكاديمية.",
+      "snapshotTitle": "ملخص إيرادات {{currency}}",
+      "noSnapshots": "لا تتوفر ملخصات إيرادات لهذه المؤسسة.",
+      "disabledTitle": "عمليات الإيرادات غير جاهزة بعد",
+      "disabledDescription": "واجهة عمليات الإيرادات معطلة حالياً. سيتم إخطار الموظفين المصرح لهم عند تفعيل التكامل المالي.",
+      "metrics": {
+        "collected": "المُحصّل هذه الفترة",
+        "outstanding": "إجمالي المستحقات",
+        "overdue": "إجمالي المتأخرات",
+        "activeMemberships": "العضويات النشطة",
+        "renewals": "التجديدات",
+        "highRisk": "مخاطر عالية"
+      },
+      "collections": {
+        "title": "التحصيلات المتأخرة",
+        "description": "حالات التحصيل المفتوحة وروابط الدفع المرسلة.",
+        "invoice": "الفاتورة",
+        "daysOverdue": "أيام التأخير",
+        "statuses": {
+          "open": "مفتوحة",
+          "contact_ready": "جاهزة للتواصل",
+          "link_prepared": "تم تجهيز الرابط",
+          "paused": "متوقفة مؤقتاً",
+          "resolved": "تمت المعالجة",
+          "closed": "مغلقة"
+        }
+      },
+      "pipeline": {
+        "title": "خط التجديدات والمخاطر",
+        "description": "التجديدات القادمة مميزة بمؤشرات المخاطر.",
+        "date": "تاريخ التجديد"
+      },
+      "riskLevels": {
+        "low": "منخفض",
+        "medium": "متوسط",
+        "high": "مرتفع"
+      },
+      "reasons": {
+        "healthy": "مؤشرات التجديد جيدة",
+        "low_attendance": "الحضور منخفض",
+        "missed_lessons": "حصص فائتة مؤخراً",
+        "past_due": "رصيد متأخر",
+        "credits_unused": "أرصدة تعويضية غير مستخدمة",
+        "freeze_active": "تجميد العضوية نشط",
+        "waitlist_unresolved": "قائمة انتظار غير محسومة"
       }
     },
     "progress": {

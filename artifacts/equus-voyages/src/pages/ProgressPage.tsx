@@ -59,7 +59,7 @@ export default function ProgressPage() {
         title={t("progress.title")}
         description={t("progress.description")}
         actions={
-          <div className="inline-flex rounded-xl border border-cream-200 bg-white p-1 shadow-sm" role="tablist" aria-label={t("progress.period") }>
+          <div className="inline-flex rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner" role="tablist" aria-label={t("progress.period") }>
             {([30, 90, 365] as const).map((value) => (
               <button
                 key={value}
@@ -67,7 +67,7 @@ export default function ProgressPage() {
                 role="tab"
                 aria-selected={period === value}
                 onClick={() => setPeriod(value)}
-                className={`rounded-lg px-3 py-2 text-sm font-bold transition-colors ${period === value ? "bg-primary-500 text-white" : "text-text-secondary hover:bg-primary-50 hover:text-espresso"}`}
+                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 ${period === value ? "bg-primary-600 text-white shadow-sm" : "text-text-secondary hover:bg-white hover:text-espresso"}`}
               >
                 {t(`progress.period${value}`)}
               </button>
@@ -97,8 +97,8 @@ export default function ProgressPage() {
           </div>
 
           <div className="mt-6 grid gap-6 xl:grid-cols-2">
-            <SurfaceCard className="p-5 sm:p-6">
-              <h2 className="text-2xl text-espresso">{t("progress.scoreTrend")}</h2>
+            <SurfaceCard className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
+              <h2 className="font-serif text-2xl text-espresso">{t("progress.scoreTrend")}</h2>
               <p className="mt-1 text-sm text-text-secondary">{t("progress.scoreTrendDescription")}</p>
               {metrics.scoreOverTime.length ? (
                 <div className="mt-5 h-72" aria-label={t("progress.scoreTrend")}>
@@ -107,8 +107,8 @@ export default function ProgressPage() {
                       <CartesianGrid stroke="#EAE1D3" strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="date" tickFormatter={(value) => formatDate(String(value), locale, { month: "short", day: "numeric" })} tick={{ fill: "#8A7A68", fontSize: 11 }} axisLine={false} tickLine={false} />
                       <YAxis domain={[0, 100]} tick={{ fill: "#8A7A68", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip labelFormatter={(value) => formatDate(String(value), locale)} contentStyle={{ border: "1px solid #EAE1D3", borderRadius: 12, color: "#3B2C20" }} />
-                      <Line type="monotone" dataKey="score" stroke="#B08A2E" strokeWidth={3} dot={{ fill: "#B08A2E", strokeWidth: 0, r: 4 }} activeDot={{ r: 6 }} />
+                      <Tooltip labelFormatter={(value) => formatDate(String(value), locale)} contentStyle={{ border: "1px solid #EAE1D3", borderRadius: 12, color: "#3B2C20", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }} />
+                      <Line type="monotone" dataKey="score" stroke="#2b6045" strokeWidth={3} dot={{ fill: "#2b6045", strokeWidth: 0, r: 4 }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -117,8 +117,8 @@ export default function ProgressPage() {
               )}
             </SurfaceCard>
 
-            <SurfaceCard className="p-5 sm:p-6">
-              <h2 className="text-2xl text-espresso">{t("progress.categoryScores")}</h2>
+            <SurfaceCard className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
+              <h2 className="font-serif text-2xl text-espresso">{t("progress.categoryScores")}</h2>
               <p className="mt-1 text-sm text-text-secondary">{t("progress.categoryDescription")}</p>
               {metrics.categoryScores.length ? (
                 <div className="mt-5 h-72" aria-label={t("progress.categoryScores")}>
@@ -127,8 +127,8 @@ export default function ProgressPage() {
                       <CartesianGrid stroke="#EAE1D3" strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="category" tick={{ fill: "#8A7A68", fontSize: 10 }} axisLine={false} tickLine={false} />
                       <YAxis domain={[0, 100]} tick={{ fill: "#8A7A68", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ border: "1px solid #EAE1D3", borderRadius: 12, color: "#3B2C20" }} />
-                      <Bar dataKey="score" fill="#3B2C20" radius={[8, 8, 0, 0]} />
+                      <Tooltip contentStyle={{ border: "1px solid #EAE1D3", borderRadius: 12, color: "#3B2C20", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }} cursor={{ fill: '#f6f3eb' }} />
+                      <Bar dataKey="score" fill="#2b6045" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -143,9 +143,9 @@ export default function ProgressPage() {
         <EmptyState icon={ChartNoAxesCombined} title={t("progress.emptyTitle")} description={t("progress.emptyDescription")} />
       )}
 
-      <SurfaceCard className="mt-6 overflow-hidden">
+      <SurfaceCard className="mt-6 overflow-hidden transition-all duration-300 hover:border-primary-200 hover:shadow-md">
         <div className="border-b border-cream-200 px-5 py-4 sm:px-6">
-          <h2 className="text-2xl text-espresso">{t("progress.sessionHistory")}</h2>
+          <h2 className="font-serif text-2xl text-espresso">{t("progress.sessionHistory")}</h2>
           <p className="mt-1 text-sm text-text-secondary">{t("progress.sessionDescription")}</p>
         </div>
         {historyError ? <div className="p-5"><ErrorState message={historyError} /></div> : historyQuery.loading ? (
@@ -164,7 +164,7 @@ export default function ProgressPage() {
               </thead>
               <tbody className="divide-y divide-cream-200">
                 {sessions.map((session) => (
-                  <tr key={session.id} onClick={() => navigate(`/analysis/${session.id}`)} className="cursor-pointer hover:bg-primary-50/60">
+                  <tr key={session.id} onClick={() => navigate(`/analysis/${session.id}`)} className="cursor-pointer transition-colors hover:bg-cream-50">
                     <td className="px-5 py-4 font-semibold text-espresso">{formatDate(session.date, locale)}</td>
                     <td className="px-5 py-4 text-text-secondary">{session.horseName ?? t("common.notAvailable")}</td>
                     <td className="px-5 py-4 text-text-secondary">{session.discipline}</td>

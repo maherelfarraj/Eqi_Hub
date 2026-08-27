@@ -666,7 +666,7 @@ export default function StableOperationsPage() {
           eyebrow={t("stableOperations.eyebrow")}
           title={t("stableOperations.title")}
         />
-        <SurfaceCard className="p-8">
+        <SurfaceCard className="p-8 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
           <div className="flex flex-col items-center text-center">
             <span className="mb-6 flex size-16 items-center justify-center rounded-full bg-primary-50 text-primary-600">
               <Warehouse className="size-8" />
@@ -705,10 +705,10 @@ export default function StableOperationsPage() {
   }
 
   const tabClass = (isActive: boolean) =>
-    `px-4 py-3 text-sm font-bold tracking-wide transition-colors uppercase ${
+    `border-b-2 px-4 py-3 text-sm font-bold transition-all duration-200 ${
       isActive
-        ? "border-b-2 border-primary-500 text-primary-700"
-        : "text-text-secondary hover:text-espresso"
+        ? "border-primary-600 text-primary-700"
+        : "border-transparent text-text-secondary hover:border-cream-300 hover:text-espresso"
     }`;
 
   return (
@@ -785,7 +785,7 @@ export default function StableOperationsPage() {
             <EmptyState icon={Warehouse} title={t("stableOperations.empty.horses")} description="" compact />
           ) : (
             filteredHorses.map((horse) => (
-              <SurfaceCard key={horse.id} className="p-5">
+              <SurfaceCard key={horse.id} className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
                 <div className="sm:flex sm:items-start sm:justify-between">
                   <div className="flex items-center gap-4 mb-4 sm:mb-0">
                     {horse.photoUrl ? (
@@ -796,7 +796,7 @@ export default function StableOperationsPage() {
                       </div>
                     )}
                     <div>
-                      <h3 className="text-lg font-serif text-espresso">{horse.name}</h3>
+                      <h3 className="font-serif text-xl text-espresso">{horse.name}</h3>
                       <p className="text-sm text-text-secondary">
                         {horse.breed || t("stableOperations.labels.unknownBreed")} · {t(`stableOperations.options.${horse.ownershipType}`)}
                       </p>
@@ -867,7 +867,7 @@ export default function StableOperationsPage() {
           ) : (
             <div className="space-y-3">
               {tasks.map((task) => (
-                <SurfaceCard key={task.id} className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <SurfaceCard key={task.id} className="flex flex-col gap-4 p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="font-semibold text-espresso">{task.title}</h3>
@@ -902,7 +902,7 @@ export default function StableOperationsPage() {
           ) : (
             <div className="space-y-3">
               {careSchedules.map((care) => (
-                <SurfaceCard key={care.id} className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <SurfaceCard key={care.id} className="flex flex-col gap-4 p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="font-semibold text-espresso">{care.horseName} · {t(`stableOperations.options.${care.careType}`, care.careType)}</h3>
@@ -936,7 +936,7 @@ export default function StableOperationsPage() {
           ) : (
             <div className="space-y-3">
               {auditEvents.map((event) => (
-                <SurfaceCard key={event.id} className="p-5">
+                <SurfaceCard key={event.id} className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
                   <div className="flex justify-between items-start gap-4">
                     <div>
                       <p className="font-semibold text-espresso">

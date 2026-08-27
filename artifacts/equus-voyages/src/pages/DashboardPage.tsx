@@ -8,10 +8,14 @@ import {
   YAxis,
 } from "recharts";
 import {
+  ArrowUpRight,
   Building2,
   CalendarDays,
+  CheckCircle2,
   Circle,
+  ClipboardCheck,
   CreditCard,
+  Clock3,
   GraduationCap,
   Heart,
   ReceiptText,
@@ -19,6 +23,7 @@ import {
   Sparkles,
   Upload,
   Users,
+  UsersRound,
   Video,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -38,8 +43,12 @@ import {
 } from "@/components/EquiVistaUI";
 import { RiderSyncDashboard } from "@/components/RiderSyncDashboard";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompetitionDevelopmentAccess } from "@/hooks/use-competition-development";
 import { useDashboardSummary } from "@/hooks/use-dashboard";
+import { useLessons } from "@/hooks/use-lessons";
 import { useOrganizationMembers } from "@/hooks/use-organization";
+import { useProfile } from "@/hooks/use-profile";
+import type { Lesson } from "@/hooks/types";
 import { resolvePortalPersona } from "@/lib/portal-persona";
 
 export default function DashboardPage() {
@@ -48,6 +57,12 @@ export default function DashboardPage() {
 
   if (persona === "guardian") return <Navigate to="/guardian" replace />;
   if (persona === "academy_admin") return <AcademyAdminDashboard />;
+  if (
+    activeOrganization?.roles.includes("coach") ||
+    activeOrganization?.roles.includes("trainer")
+  ) {
+    return <CoachDashboard />;
+  }
   return <RiderDashboard />;
 }
 
@@ -139,6 +154,263 @@ function AcademyAdminDashboard() {
           </OutlineButton>
         </div>
       </SurfaceCard>
+    </div>
+  );
+}
+
+function CoachDashboard() {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const upcoming = useLessons("upcoming");
+  const requests = useLessons("requests");
+  const profile = useProfile();
+  const competitionAccess = useCompetitionDevelopmentAccess();
+  const locale =
+    (i18n.resolvedLanguage ?? i18n.language) === "ar" ? "ar-JO" : "en-US";
+
+  if (upcoming.loading || requests.loading || profile.loading) {
+    return <PageSkeleton cards={4} />;
+  }
+
+  const error = upcoming.error ?? requests.error ?? profile.error;
+  if (error) {
+    return (
+      <ErrorState
+        message={error}
+        retryLabel={t("common.tryAgain")}
+        onRetry={() => {
+          upcoming.refetch();
+          requests.refetch();
+          profile.refetch();
+        }}
+      />
+    );
+  }
+
+  const lessonItems = upcoming.data ?? [];
+  const requestItems = requests.data ?? [];
+  const activeRiders = new Set(
+    [...lessonItems, ...requestItems].map((lesson) => lesson.riderId),
+  ).size;
+  const todayKey = new Date().toLocaleDateString("en-CA");
+  const todayLessons = lessonItems.filter(
+    (lesson) =>
+      new Date(lesson.dateTime).toLocaleDateString("en-CA") === todayKey,
+  );
+  const firstName =
+    profile.data?.fullName.trim().split(/\s+/)[0] ||
+    t("dashboard.coach.defaultName");
+  const canOpenDevelopment = Boolean(
+    competitionAccess.data?.canManage || competitionAccess.data?.canView,
+  );
+
+  return (
+    <div>
+      <PageHeader
+        eyebrow={t("dashboard.coach.eyebrow")}
+        title={t("dashboard.coach.title", { name: firstName })}
+        description={t("dashboard.coach.description")}
+        actions={
+          <>
+            <PrimaryButton onClick={() => navigate("/lessons")}>
+              <CalendarDays className="size-4" aria-hidden="true" />
+              {t("dashboard.coach.openSchedule")}
+            </PrimaryButton>
+            <OutlineButton onClick={() => navigate("/video-review")}>
+              <Video className="size-4" aria-hidden="true" />
+              {t("dashboard.coach.reviewVideo")}
+            </OutlineButton>
+          </>
+        }
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          icon={CalendarDays}
+          label={t("dashboard.coach.todayLessons")}
+          value={todayLessons.length}
+          detail={t("dashboard.coach.todayLessonsDetail")}
+        />
+        <MetricCard
+          icon={Clock3}
+          label={t("dashboard.coach.upcoming")}
+          value={lessonItems.length}
+          detail={t("dashboard.coach.upcomingDetail")}
+        />
+        <MetricCard
+          icon={UsersRound}
+          label={t("dashboard.coach.activeRiders")}
+          value={activeRiders}
+          detail={t("dashboard.coach.activeRidersDetail")}
+        />
+        <MetricCard
+          icon={ClipboardCheck}
+          label={t("dashboard.coach.requests")}
+          value={requestItems.length}
+          detail={t("dashboard.coach.requestsDetail")}
+        />
+      </div>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+        <SurfaceCard className="overflow-hidden">
+          <div className="flex items-start justify-between gap-4 border-b border-cream-200 px-5 py-5 sm:px-6">
+            <div>
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-600">
+                {t("dashboard.coach.scheduleEyebrow")}
+              </p>
+              <h2 className="mt-1 font-serif text-2xl text-espresso">
+                {t("dashboard.coach.scheduleTitle")}
+              </h2>
+              <p className="mt-1 text-sm text-text-secondary">
+                {t("dashboard.coach.scheduleDescription")}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/lessons")}
+              className="hidden items-center gap-1 text-sm font-bold text-primary-700 hover:text-primary-900 sm:inline-flex"
+            >
+              {t("common.viewAll")}
+              <ArrowUpRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="divide-y divide-cream-200">
+            {lessonItems.length ? (
+              lessonItems.slice(0, 5).map((lesson) => (
+                <CoachLessonRow key={lesson.id} lesson={lesson} locale={locale} />
+              ))
+            ) : (
+              <EmptyState
+                compact
+                icon={CalendarDays}
+                title={t("dashboard.coach.noLessonsTitle")}
+                description={t("dashboard.coach.noLessonsDescription")}
+                action={
+                  <OutlineButton onClick={() => navigate("/lessons")}>
+                    {t("dashboard.coach.openSchedule")}
+                  </OutlineButton>
+                }
+              />
+            )}
+          </div>
+        </SurfaceCard>
+
+        <SurfaceCard className="overflow-hidden">
+          <div className="border-b border-cream-200 px-5 py-5">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-600">
+              {t("dashboard.coach.requestsEyebrow")}
+            </p>
+            <h2 className="mt-1 font-serif text-2xl text-espresso">
+              {t("dashboard.coach.requestsTitle")}
+            </h2>
+            <p className="mt-1 text-sm text-text-secondary">
+              {t("dashboard.coach.requestsDescription")}
+            </p>
+          </div>
+          <div className="space-y-3 p-5">
+            {requestItems.length ? (
+              requestItems.slice(0, 4).map((lesson) => (
+                <button
+                  key={lesson.id}
+                  type="button"
+                  onClick={() => navigate("/lessons")}
+                  className="flex w-full items-center gap-3 rounded-xl border border-cream-200 p-3 text-start transition-colors hover:border-primary-300 hover:bg-primary-50"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning-50 text-warning-700">
+                    <Clock3 className="size-4" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-bold text-espresso">
+                      {lesson.riderName}
+                    </span>
+                    <span className="block truncate text-xs text-text-secondary">
+                      {t(`lessons.types.${lesson.type}`)} ·{" "}
+                      {formatDate(lesson.dateTime, locale, {
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </span>
+                  </span>
+                  <ArrowUpRight className="size-4 shrink-0 text-primary-500 rtl:-scale-x-100" aria-hidden="true" />
+                </button>
+              ))
+            ) : (
+              <div className="rounded-xl border border-dashed border-cream-300 bg-cream-50 px-4 py-8 text-center">
+                <CheckCircle2 className="mx-auto size-7 text-primary-500" aria-hidden="true" />
+                <p className="mt-3 font-serif text-lg text-espresso">
+                  {t("dashboard.coach.noRequestsTitle")}
+                </p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  {t("dashboard.coach.noRequestsDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </SurfaceCard>
+      </div>
+
+      {canOpenDevelopment ? (
+        <SurfaceCard className="mt-6 flex flex-col gap-4 bg-primary-900 p-5 text-cream-50 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-300">
+              {t("dashboard.coach.focusEyebrow")}
+            </p>
+            <h2 className="mt-1 font-serif text-2xl text-white">
+              {t("dashboard.coach.focusTitle")}
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-primary-100">
+              {t("dashboard.coach.focusDescription")}
+            </p>
+          </div>
+          <OutlineButton
+            className="border-primary-600 bg-primary-800 text-cream-50 hover:border-primary-400 hover:bg-primary-700 hover:text-white"
+            onClick={() => navigate("/competition-development")}
+          >
+            {t("dashboard.coach.openDevelopment")}
+            <ArrowUpRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
+          </OutlineButton>
+        </SurfaceCard>
+      ) : null}
+    </div>
+  );
+}
+
+function CoachLessonRow({
+  lesson,
+  locale,
+}: {
+  lesson: Lesson;
+  locale: string;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center gap-4 px-5 py-4 sm:px-6">
+      <div className="flex w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-primary-50 px-2 py-2 text-center">
+        <span className="text-xs font-bold uppercase tracking-wide text-primary-700">
+          {formatDate(lesson.dateTime, locale, { weekday: "short" })}
+        </span>
+        <span className="font-serif text-xl text-primary-900">
+          {formatDate(lesson.dateTime, locale, { day: "numeric" })}
+        </span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-bold text-espresso">
+          {lesson.riderName}
+        </p>
+        <p className="mt-1 truncate text-sm text-text-secondary">
+          {t(`lessons.types.${lesson.type}`)}
+          {lesson.horseName ? ` · ${lesson.horseName}` : ""}
+        </p>
+      </div>
+      <div className="hidden shrink-0 text-end sm:block">
+        <p className="font-semibold text-espresso">
+          {formatDate(lesson.dateTime, locale, {
+            hour: "numeric",
+            minute: "2-digit",
+          })}
+        </p>
+        <StatusBadge status={lesson.status} label={t(`status.${lesson.status}`)} />
+      </div>
     </div>
   );
 }
