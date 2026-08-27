@@ -629,14 +629,14 @@ function OverviewTab({ workspace, mutations, onOpenModal, isAr }: any) {
     <div className="grid gap-6 lg:grid-cols-3 p-6 animate-in fade-in zoom-in-95 duration-300">
       <div className="lg:col-span-2 space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-serif text-espresso">{isAr ? "التنبيهات النشطة" : "Active Alerts"}</h2>
+          <h2 className="font-serif text-2xl text-espresso">{isAr ? "التنبيهات النشطة" : "Active Alerts"}</h2>
           <OutlineButton onClick={() => onOpenModal('alert', null)}>
             <Plus className="size-4 mr-2" /> {isAr ? "تنبيه جديد" : "New Alert"}
           </OutlineButton>
         </div>
         
         {openAlerts.length === 0 ? (
-          <SurfaceCard className="p-8">
+          <SurfaceCard className="p-8 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
             <EmptyState icon={CheckCircle} title={isAr ? "لا توجد تنبيهات" : "No active alerts"} description={isAr ? "جميع الأمور مستقرة حالياً." : "All systems normal. No active welfare or safety alerts."} compact />
           </SurfaceCard>
         ) : (
@@ -677,8 +677,8 @@ function OverviewTab({ workspace, mutations, onOpenModal, isAr }: any) {
       </div>
       
       <div className="space-y-6">
-        <h2 className="text-xl font-serif text-espresso">{isAr ? "سجل التدقيق" : "Recent Activity"}</h2>
-        <SurfaceCard className="p-5">
+        <h2 className="font-serif text-2xl text-espresso">{isAr ? "سجل التدقيق" : "Recent Activity"}</h2>
+        <SurfaceCard className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
            {recentAudits.length === 0 ? (
              <p className="text-sm text-text-secondary text-center py-4">{isAr ? "لا توجد نشاطات." : "No recent activity."}</p>
            ) : (
@@ -803,30 +803,30 @@ function HorseProfileTab({ profile, isAr }: any) {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50">
+        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
           <p className="text-[0.65rem] font-bold text-text-secondary uppercase tracking-widest mb-2">{isAr ? "الحالة" : "Status"}</p>
           <StatusBadge status={profile.welfareStatus} />
         </SurfaceCard>
-        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50">
+        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
           <p className="text-[0.65rem] font-bold text-text-secondary uppercase tracking-widest mb-2">{isAr ? "الملاءمة" : "Suitability"}</p>
           <StatusBadge status={profile.riderSuitability} />
         </SurfaceCard>
-        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50">
+        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
           <p className="text-[0.65rem] font-bold text-text-secondary uppercase tracking-widest mb-1">{isAr ? "العمل" : "Workload"}</p>
           <p className="font-serif text-2xl text-espresso">{profile.dailyWorkloadLimitMinutes} <span className="text-sm font-sans text-text-secondary">min</span></p>
         </SurfaceCard>
-        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50">
+        <SurfaceCard className="p-4 flex flex-col justify-center items-center text-center bg-cream-50/50 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
           <p className="text-[0.65rem] font-bold text-text-secondary uppercase tracking-widest mb-1">{isAr ? "BCS" : "BCS"}</p>
           <p className="font-serif text-2xl text-espresso">{profile.bodyConditionScore ?? "—"}</p>
         </SurfaceCard>
       </div>
       
       <div className="grid md:grid-cols-2 gap-4">
-        <SurfaceCard className="p-5 border-t-4 border-t-primary-400">
+        <SurfaceCard className="p-5 border-t-4 border-t-primary-400 transition-all duration-300 hover:shadow-md">
            <h4 className={`font-bold text-espresso mb-3 ${isAr ? 'text-right' : ''}`}>{isAr ? "ملاحظة الملاءمة" : "Suitability Note"}</h4>
            <p className={`text-sm text-text-secondary leading-relaxed ${isAr ? 'text-right' : ''}`}>{getLangField(profile, 'suitabilityNoteEn', 'suitabilityNoteAr', isAr) || "—"}</p>
         </SurfaceCard>
-        <SurfaceCard className="p-5 border-t-4 border-t-espresso">
+        <SurfaceCard className="p-5 border-t-4 border-t-espresso transition-all duration-300 hover:shadow-md">
            <h4 className={`font-bold text-espresso mb-3 ${isAr ? 'text-right' : ''}`}>{isAr ? "ملاحظة خاصة" : "Private Note"}</h4>
            <p className={`text-sm text-text-secondary leading-relaxed ${isAr ? 'text-right' : ''}`}>{profile.privateWelfareNote || "—"}</p>
         </SurfaceCard>
@@ -1225,9 +1225,9 @@ export default function HorseWelfarePage() {
            <button
              key={tab.id}
              onClick={() => setActiveTab(tab.id as any)}
-             className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all whitespace-nowrap -mb-0.5 rounded-t-xl ${
+             className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all duration-200 whitespace-nowrap -mb-0.5 rounded-t-xl ${
                activeTab === tab.id 
-                 ? "border-b-4 border-primary-500 text-espresso bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.02)]" 
+                 ? "border-b-4 border-primary-600 text-primary-700 bg-white shadow-sm"
                  : "border-b-4 border-transparent text-text-secondary hover:text-espresso hover:bg-white/50"
              }`}
            >

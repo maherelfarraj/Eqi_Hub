@@ -108,11 +108,11 @@ function LessonCard({
   }).format(new Date(lesson.dateTime));
 
   return (
-    <article className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm">
+    <article className="group rounded-2xl border border-cream-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-primary-200 hover:shadow-md">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-xl text-espresso">
+            <h3 className="font-serif text-2xl text-espresso group-hover:text-primary-700 transition-colors">
               {t(`lessons.types.${lesson.type}`)}
             </h3>
             <StatusBadge
@@ -151,8 +151,8 @@ function LessonCard({
       ) : null}
 
       {lesson.status === "completed" && lesson.feedback ? (
-        <details className="group mt-4 rounded-xl border border-cream-200 bg-cream-50">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-espresso">
+        <details className="group/details mt-5 overflow-hidden rounded-xl border border-cream-200 bg-cream-50/50 transition-colors hover:border-primary-200 hover:bg-cream-50">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-bold text-espresso">
             <span className="flex items-center gap-2">
               <MessageSquareText
                 className="size-4 text-primary-600"
@@ -161,11 +161,11 @@ function LessonCard({
               {t("lessons.feedbackTitle")}
             </span>
             <ChevronDown
-              className="size-4 transition-transform group-open:rotate-180"
+              className="size-4 transition-transform group-open/details:rotate-180"
               aria-hidden="true"
             />
           </summary>
-          <div className="space-y-4 border-t border-cream-200 px-4 py-4 text-sm leading-6">
+          <div className="space-y-4 border-t border-cream-200 px-5 py-4 text-sm leading-6">
             <div>
               <p className="font-bold text-espresso">
                 {t("lessons.trainerFeedback")}
@@ -322,7 +322,7 @@ export default function LessonsPage() {
 
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div
-          className="inline-flex w-full rounded-xl border border-cream-200 bg-white p-1 sm:w-auto"
+          className="inline-flex w-full rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner sm:w-auto"
           role="tablist"
           aria-label={t("lessons.filterLabel")}
         >
@@ -337,10 +337,10 @@ export default function LessonsPage() {
                 setSuccess("");
                 setWeekOffset(0);
               }}
-              className={`min-h-10 flex-1 rounded-lg px-3 py-2 text-sm font-bold transition-colors sm:flex-none ${
+              className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 sm:flex-none ${
                 filter === item
-                  ? "bg-primary-500 text-white"
-                  : "text-text-secondary hover:bg-cream-50 hover:text-espresso"
+                  ? "bg-primary-600 text-white shadow-sm"
+                  : "text-text-secondary hover:bg-white hover:text-espresso"
               }`}
             >
               {t(`lessons.tabs.${item}`)}
@@ -349,13 +349,13 @@ export default function LessonsPage() {
         </div>
 
         <div
-          className="inline-flex self-end rounded-xl border border-cream-200 bg-white p-1"
+          className="inline-flex self-end rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner"
           aria-label={t("lessons.viewLabel")}
         >
           <button
             type="button"
             onClick={() => setView("list")}
-            className={`flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-bold ${view === "list" ? "bg-cream-100 text-espresso" : "text-text-secondary"}`}
+            className={`flex min-h-10 items-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 ${view === "list" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
             aria-pressed={view === "list"}
           >
             <List className="size-4" aria-hidden="true" />
@@ -364,7 +364,7 @@ export default function LessonsPage() {
           <button
             type="button"
             onClick={() => setView("week")}
-            className={`flex min-h-10 items-center gap-2 rounded-lg px-3 text-sm font-bold ${view === "week" ? "bg-cream-100 text-espresso" : "text-text-secondary"}`}
+            className={`flex min-h-10 items-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 ${view === "week" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
             aria-pressed={view === "week"}
           >
             <CalendarRange className="size-4" aria-hidden="true" />
@@ -380,7 +380,7 @@ export default function LessonsPage() {
           onRetry={lessons.refetch}
         />
       ) : lessonItems.length === 0 ? (
-        <SurfaceCard>
+        <SurfaceCard className="transition-all duration-300 hover:shadow-md">
           <EmptyState
             icon={CalendarDays}
             title={t(`lessons.empty.${filter}Title`)}
@@ -394,10 +394,10 @@ export default function LessonsPage() {
           />
         </SurfaceCard>
       ) : view === "list" ? (
-        <div className="space-y-7">
+        <div className="space-y-8">
           {groupedLessons.map(([date, items]) => (
             <section key={date}>
-              <h2 className="mb-3 text-lg text-espresso">
+              <h2 className="mb-4 font-serif text-2xl text-espresso">
                 {formatDate(date, locale, {
                   weekday: "long",
                   day: "numeric",
@@ -423,7 +423,7 @@ export default function LessonsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          <SurfaceCard className="flex items-center justify-between gap-3 p-3">
+          <SurfaceCard className="flex items-center justify-between gap-3 p-3 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
             <OutlineButton
               type="button"
               className="min-h-9 px-3"
@@ -479,15 +479,15 @@ export default function LessonsPage() {
               return (
                 <section
                   key={localDayKey(day)}
-                  className="min-w-0 rounded-2xl border border-cream-200 bg-white p-3 shadow-sm"
+                  className="min-w-0 rounded-2xl border border-cream-200 bg-white p-4 shadow-sm transition-all duration-300 hover:border-primary-200 hover:shadow-md"
                 >
-                  <h2 className="border-b border-cream-200 pb-2 text-center text-sm text-espresso">
+                  <h2 className="border-b border-cream-200 pb-3 text-center text-sm font-bold text-espresso">
                     {formatDate(day.toISOString(), locale, {
                       weekday: "short",
                       day: "numeric",
                     })}
                   </h2>
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-4 space-y-3">
                     {items.length ? (
                       items.map((lesson) => (
                         <button
@@ -498,7 +498,7 @@ export default function LessonsPage() {
                               ? navigate(`/analysis/${lesson.analysisId}`)
                               : undefined
                           }
-                          className="w-full rounded-xl border border-cream-200 bg-cream-50 p-3 text-start"
+                          className="w-full rounded-xl border border-cream-200 bg-cream-50/50 p-3 text-start transition-all duration-200 hover:border-primary-300 hover:bg-white hover:shadow-sm"
                         >
                           <span className="block text-xs font-bold text-primary-700">
                             {new Intl.DateTimeFormat(locale, {

@@ -72,6 +72,21 @@ test("academy admin receives operations navigation and dashboard instead of ride
   assert.match(dashboard, /useOrganizationMembers\(/);
 });
 
+test("coach dashboard uses only coach-authorized data and respects development access", () => {
+  assert.match(dashboard, /activeOrganization\?\.roles\.includes\("coach"\)/);
+  assert.match(dashboard, /<CoachDashboard \/>/);
+  const coachDashboard =
+    dashboard.match(
+      /function CoachDashboard\(\) \{[\s\S]*?function CoachLessonRow/,
+    )?.[0] ?? "";
+  assert.match(coachDashboard, /useLessons\("upcoming"\)/);
+  assert.match(coachDashboard, /useLessons\("requests"\)/);
+  assert.match(coachDashboard, /useProfile\(\)/);
+  assert.match(coachDashboard, /useCompetitionDevelopmentAccess\(\)/);
+  assert.match(coachDashboard, /competitionAccess\.data\?\.canManage/);
+  assert.doesNotMatch(coachDashboard, /useOrganizationMembers\(/);
+});
+
 test("platform admin revenue access overrides a guardian persona redirect", () => {
   assert.match(
     shell,
@@ -84,13 +99,18 @@ test("platform admin revenue access overrides a guardian persona redirect", () =
 });
 
 test("role-aware dashboard copy is complete in English and Arabic", () => {
-  const en = JSON.parse(english).translation.dashboard.academyAdmin;
-  const ar = JSON.parse(arabic).translation.dashboard.academyAdmin;
-  for (const copy of [en, ar]) {
+  const en = JSON.parse(english).translation;
+  const ar = JSON.parse(arabic).translation;
+  for (const dictionary of [en, ar]) {
+    const copy = dictionary.dashboard.academyAdmin;
     assert.ok(copy.title);
     assert.ok(copy.description);
     assert.ok(copy.manageMembers);
     assert.ok(copy.reviewLessons);
     assert.ok(copy.openAccessControl);
+    assert.ok(dictionary.dashboard.coach.title);
+    assert.ok(dictionary.dashboard.coach.openSchedule);
+    assert.ok(dictionary.dashboard.coach.openDevelopment);
+    assert.ok(dictionary.app.orientation);
   }
 });

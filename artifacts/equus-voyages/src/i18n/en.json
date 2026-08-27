@@ -2,7 +2,8 @@
   "translation": {
     "app": {
       "name": "EquiVista",
-      "tagline": "Equestrian Performance"
+      "tagline": "Equestrian Performance",
+      "orientation": "Today at the Academy"
     },
     "auth": {
       "signIn": "Sign In",
@@ -82,6 +83,12 @@
       "competitionDevelopment": "Competition development",
       "familyOperations": "Family Operations",
       "revenueOperations": "Revenue Operations"
+    },
+    "navGroups": {
+      "today": "Today",
+      "training": "Training & development",
+      "operations": "Academy operations",
+      "account": "Account & administration"
     },
     "competitionDevelopment": {
       "eyebrow": "Coach-approved planning",
@@ -425,6 +432,36 @@
         "operationsDescription": "Use audited member controls for role changes and the training calendar for academy-wide lesson oversight.",
         "openAccessControl": "Open access control",
         "openBilling": "Open billing"
+      },
+      "coach": {
+        "defaultName": "Coach",
+        "eyebrow": "Coach workspace",
+        "title": "Good morning, {{name}}",
+        "description": "Your academy day at a glance — keep riders moving, lessons focused, and development evidence current.",
+        "openSchedule": "Open schedule",
+        "reviewVideo": "Review video",
+        "todayLessons": "Remaining today",
+        "todayLessonsDetail": "Confirmed sessions still ahead today",
+        "upcoming": "Upcoming",
+        "upcomingDetail": "Confirmed sessions in view",
+        "activeRiders": "Riders in view",
+        "activeRidersDetail": "Distinct riders in upcoming or requested lessons",
+        "requests": "Lesson requests",
+        "requestsDetail": "Awaiting your review",
+        "scheduleEyebrow": "Your next sessions",
+        "scheduleTitle": "Today's academy rhythm",
+        "scheduleDescription": "A focused view of the riders and horses you are working with next.",
+        "noLessonsTitle": "Your schedule is clear",
+        "noLessonsDescription": "Confirmed lessons will appear here as your week takes shape.",
+        "requestsEyebrow": "Needs your attention",
+        "requestsTitle": "New requests",
+        "requestsDescription": "Keep booking decisions close to the rest of your day.",
+        "noRequestsTitle": "All caught up",
+        "noRequestsDescription": "There are no lesson requests waiting for your review.",
+        "focusEyebrow": "Development focus",
+        "focusTitle": "Make every session part of the journey",
+        "focusDescription": "Close out completed lessons with clear evidence so each rider leaves with a confident next step.",
+        "openDevelopment": "Open development"
       }
     },
     "riderSync": {

@@ -51,27 +51,20 @@ function RouteSkeleton({ fullScreen = false }: { fullScreen?: boolean }) {
   return (
     <div
       className={`flex w-full items-center justify-center bg-cream-50 px-4 ${
-        fullScreen ? "min-h-screen" : "min-h-[28rem]"
+        fullScreen ? "min-h-screen" : "min-h-[28rem] h-full"
       }`}
       role="status"
       aria-live="polite"
     >
-      <div className="w-full max-w-3xl animate-pulse rounded-2xl border border-cream-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="flex items-center gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-full border border-primary-300 bg-primary-50 font-serif text-xl text-primary-600">
-            E
-          </div>
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-28 rounded-full bg-primary-100" />
-            <div className="h-6 w-2/3 rounded-full bg-cream-200" />
-          </div>
+      <div className="w-full max-w-sm animate-pulse space-y-8 flex flex-col items-center">
+        <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-cream-200 bg-white font-serif text-2xl text-primary-300 shadow-sm">
+          E
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <div className="h-28 rounded-2xl bg-cream-100" />
-          <div className="h-28 rounded-2xl bg-cream-100" />
-          <div className="h-28 rounded-2xl bg-cream-100" />
+        <div className="w-full space-y-3">
+          <div className="h-3 w-2/3 mx-auto rounded-full bg-cream-200" />
+          <div className="h-3 w-1/3 mx-auto rounded-full bg-cream-200" />
         </div>
-        <span className="sr-only">{t("common.loading")}</span>
+        <span className="sr-only">{t("common.loading", { defaultValue: "Loading..." })}</span>
       </div>
     </div>
   );

@@ -1,77 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-background: #faf6ef;
-  --color-foreground: #3b2c20;
+  --color-background: #fdfbf7;
+  --color-foreground: #1c2738;
   --color-card: #ffffff;
-  --color-card-foreground: #3b2c20;
+  --color-card-foreground: #1c2738;
   --color-popover: #ffffff;
-  --color-popover-foreground: #3b2c20;
-  --color-primary: #b08a2e;
+  --color-popover-foreground: #1c2738;
+  --color-primary: #2b6045;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #f4ede1;
-  --color-secondary-foreground: #3b2c20;
-  --color-muted: #f4ede1;
-  --color-muted-foreground: #8a7a68;
-  --color-accent: #f4ede1;
-  --color-accent-foreground: #3b2c20;
-  --color-destructive: #b4453a;
+  --color-secondary: #e6dfd1;
+  --color-secondary-foreground: #1c2738;
+  --color-muted: #f6f3eb;
+  --color-muted-foreground: #6b7280;
+  --color-accent: #e6dfd1;
+  --color-accent-foreground: #1c2738;
+  --color-destructive: #9b382f;
   --color-destructive-foreground: #ffffff;
-  --color-border: #eae1d3;
-  --color-input: #eae1d3;
-  --color-ring: #b08a2e;
+  --color-border: #e6dfd1;
+  --color-input: #e6dfd1;
+  --color-ring: #2b6045;
   --color-surface: #ffffff;
-  --color-espresso: #3b2c20;
-  --color-text-secondary: #8a7a68;
+  --color-espresso: #1c2738;
+  --color-text-secondary: #6b7280;
 
-  --color-primary-50: #fbf6ea;
-  --color-primary-100: #f5e9c9;
-  --color-primary-200: #ead6a1;
-  --color-primary-300: #d9bb70;
-  --color-primary-400: #c59f47;
-  --color-primary-500: #b08a2e;
-  --color-primary-600: #96751f;
-  --color-primary-700: #765b18;
-  --color-primary-800: #5b4718;
-  --color-primary-900: #493a17;
+  --color-primary-50: #edf3f0;
+  --color-primary-100: #d2e3d9;
+  --color-primary-200: #abcdb9;
+  --color-primary-300: #7eb396;
+  --color-primary-400: #559374;
+  --color-primary-500: #3a7859;
+  --color-primary-600: #2b6045;
+  --color-primary-700: #234d38;
+  --color-primary-800: #1d3e2d;
+  --color-primary-900: #193326;
 
-  --color-secondary-50: #faf6ef;
-  --color-secondary-100: #f4ede1;
-  --color-secondary-200: #eae1d3;
-  --color-secondary-300: #d8c9b6;
-  --color-secondary-400: #b9a58e;
-  --color-secondary-500: #8a7a68;
-  --color-secondary-600: #6f6051;
-  --color-secondary-700: #584b3f;
-  --color-secondary-800: #493e35;
-  --color-secondary-900: #3b2c20;
+  --color-secondary-50: #fdfbf7;
+  --color-secondary-100: #f6f3eb;
+  --color-secondary-200: #ede7da;
+  --color-secondary-300: #dfd5c2;
+  --color-secondary-400: #cec0a6;
+  --color-secondary-500: #c0af8e;
+  --color-secondary-600: #a99672;
+  --color-secondary-700: #8c7959;
+  --color-secondary-800: #71624a;
+  --color-secondary-900: #5d503d;
 
-  --color-cream-50: #faf6ef;
-  --color-cream-100: #f4ede1;
-  --color-cream-200: #eae1d3;
-  --color-cream-300: #dfd2c0;
-  --color-cream-400: #cebca4;
-  --color-cream-500: #b8a187;
-  --color-cream-600: #9d846a;
-  --color-cream-700: #7f6955;
-  --color-cream-800: #695748;
-  --color-cream-900: #57493d;
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #f6f3eb;
+  --color-cream-200: #ede7da;
+  --color-cream-300: #dfd5c2;
+  --color-cream-400: #cec0a6;
+  --color-cream-500: #c0af8e;
+  --color-cream-600: #a99672;
+  --color-cream-700: #8c7959;
+  --color-cream-800: #71624a;
+  --color-cream-900: #5d503d;
 
-  --color-success-50: #eff5ef;
-  --color-success-500: #4e7a4e;
-  --color-success-700: #365c36;
+  --color-success-50: #edf3f0;
+  --color-success-500: #3a7859;
+  --color-success-700: #234d38;
 
-  --color-warning-50: #fff5e9;
-  --color-warning-500: #c77b2b;
-  --color-warning-700: #945719;
+  --color-warning-50: #fdf8e9;
+  --color-warning-500: #c0af8e;
+  --color-warning-700: #8c7959;
 
   --color-error-50: #fdf0ee;
   --color-error-500: #b4453a;
   --color-error-600: #9b382f;
   --color-error-700: #7e2d27;
 
-  --font-sans:
-    "Inter", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
   --font-serif: "Playfair Display", Georgia, serif;
 }
 
@@ -93,25 +93,30 @@
     line-height: 1.5;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-cream-200);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cream-300);
+  }
+
+  h1, h2, h3, h4 {
     font-family: var(--font-serif);
   }
 
-  button,
-  input,
-  select,
-  textarea {
+  button, input, select, textarea {
     font: inherit;
   }
 
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
   }
@@ -120,10 +125,7 @@
     font-family: "Noto Sans Arabic", "Inter", system-ui, sans-serif;
   }
 
-  [dir="rtl"] h1,
-  [dir="rtl"] h2,
-  [dir="rtl"] h3,
-  [dir="rtl"] h4 {
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 {
     font-family: "Noto Sans Arabic", "Playfair Display", Georgia, serif;
   }
 }

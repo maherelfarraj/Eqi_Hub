@@ -2,7 +2,8 @@
   "translation": {
     "app": {
       "name": "EquiVista",
-      "tagline": "أداء الفروسية"
+      "tagline": "أداء الفروسية",
+      "orientation": "اليوم في الأكاديمية"
     },
     "auth": {
       "signIn": "تسجيل الدخول",
@@ -82,6 +83,12 @@
       "competitionDevelopment": "تطوير المنافسات",
       "familyOperations": "عمليات العائلة",
       "revenueOperations": "عمليات الإيرادات"
+    },
+    "navGroups": {
+      "today": "اليوم",
+      "training": "التدريب والتطور",
+      "operations": "عمليات الأكاديمية",
+      "account": "الحساب والإدارة"
     },
     "competitionDevelopment": {
       "eyebrow": "تخطيط معتمد من المدرب",
@@ -437,6 +444,36 @@
         "operationsDescription": "استخدم عناصر التحكم المدققة لتغيير الأدوار وتقويم التدريب للإشراف على دروس الأكاديمية.",
         "openAccessControl": "فتح التحكم بالصلاحيات",
         "openBilling": "فتح الفوترة"
+      },
+      "coach": {
+        "defaultName": "المدرب",
+        "eyebrow": "مساحة المدرب",
+        "title": "صباح الخير، {{name}}",
+        "description": "يومك في الأكاديمية بلمحة — حافظ على تقدم الفرسان وتركيز الدروس وتحديث أدلة التطور.",
+        "openSchedule": "فتح الجدول",
+        "reviewVideo": "مراجعة الفيديو",
+        "todayLessons": "المتبقي اليوم",
+        "todayLessonsDetail": "الجلسات المؤكدة المتبقية اليوم",
+        "upcoming": "القادمة",
+        "upcomingDetail": "الجلسات المؤكدة الظاهرة",
+        "activeRiders": "الفرسان الظاهرون",
+        "activeRidersDetail": "فرسان مختلفون في الدروس القادمة أو المطلوبة",
+        "requests": "طلبات الدروس",
+        "requestsDetail": "بانتظار مراجعتك",
+        "scheduleEyebrow": "جلساتك التالية",
+        "scheduleTitle": "إيقاع الأكاديمية اليوم",
+        "scheduleDescription": "عرض مركز للفرسان والخيول الذين ستعمل معهم تالياً.",
+        "noLessonsTitle": "جدولك خالٍ",
+        "noLessonsDescription": "ستظهر الدروس المؤكدة هنا مع تشكل أسبوعك.",
+        "requestsEyebrow": "يتطلب انتباهك",
+        "requestsTitle": "الطلبات الجديدة",
+        "requestsDescription": "أبقِ قرارات الحجز قريبة من بقية يومك.",
+        "noRequestsTitle": "لا توجد طلبات معلقة",
+        "noRequestsDescription": "لا توجد طلبات دروس بانتظار مراجعتك.",
+        "focusEyebrow": "تركيز التطور",
+        "focusTitle": "اجعل كل جلسة جزءاً من الرحلة",
+        "focusDescription": "أغلق الدروس المكتملة بأدلة واضحة حتى يغادر كل فارس بخطوة تالية واثقة.",
+        "openDevelopment": "فتح التطور"
       }
     },
     "riderSync": {

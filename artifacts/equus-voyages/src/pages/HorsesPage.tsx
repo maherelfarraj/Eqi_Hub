@@ -43,20 +43,20 @@ function HorseCard({ horse, onOpen }: { horse: Horse; onOpen: () => void }) {
   const age = horse.birthYear ? Math.max(0, new Date().getFullYear() - horse.birthYear) : null;
 
   return (
-    <SurfaceCard className="overflow-hidden">
+    <SurfaceCard className="group cursor-pointer overflow-hidden transition-all duration-300 hover:border-primary-200 hover:shadow-md">
       <button type="button" onClick={onOpen} className="block w-full text-start">
-        <div className="aspect-[4/3] bg-cream-100">
+        <div className="aspect-[4/3] overflow-hidden bg-cream-100">
           {horse.photoUrl ? (
-            <img src={horse.photoUrl} alt={horse.name} className="size-full object-cover" />
+            <img src={horse.photoUrl} alt={horse.name} className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
-            <div className="flex size-full items-center justify-center text-primary-500">
+            <div className="flex size-full items-center justify-center text-primary-500 transition-transform duration-700 group-hover:scale-105">
               <Heart className="size-14" aria-hidden="true" />
             </div>
           )}
         </div>
         <div className="p-5">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="text-2xl text-espresso">{horse.name}</h2>
+            <h2 className="font-serif text-2xl text-espresso transition-colors group-hover:text-primary-700">{horse.name}</h2>
             <StatusBadge status={horse.status} label={t(`horses.status.${horse.status}`)} />
           </div>
           <p className="mt-2 text-sm text-text-secondary">
@@ -232,7 +232,7 @@ function HorseDetailPage({ id }: { id: string }) {
   if (error) return <ErrorState message={error} />;
   if (!data) {
     return (
-      <SurfaceCard>
+      <SurfaceCard className="transition-all duration-300 hover:shadow-md">
         <EmptyState
           icon={Heart}
           title={t("horses.notFoundTitle")}
@@ -265,7 +265,7 @@ function HorseDetailPage({ id }: { id: string }) {
         }
       />
 
-      <SurfaceCard className="mb-6 overflow-hidden">
+      <SurfaceCard className="mb-6 overflow-hidden transition-all duration-300 hover:shadow-md">
         <div className="grid md:grid-cols-[18rem_1fr]">
           <div className="aspect-[4/3] bg-cream-100 md:aspect-auto md:min-h-64">
             {data.photoUrl ? (
@@ -292,7 +292,7 @@ function HorseDetailPage({ id }: { id: string }) {
               role="tab"
               aria-selected={tab === item.id}
               onClick={() => setTab(item.id)}
-              className={`border-b-2 px-4 py-3 text-sm font-bold transition-colors ${tab === item.id ? "border-primary-500 text-primary-700" : "border-transparent text-text-secondary hover:text-espresso"}`}
+              className={`border-b-2 px-4 py-3 text-sm font-bold transition-all duration-200 ${tab === item.id ? "border-primary-600 text-primary-700" : "border-transparent text-text-secondary hover:border-cream-300 hover:text-espresso"}`}
             >
               {item.label}
             </button>
@@ -302,14 +302,14 @@ function HorseDetailPage({ id }: { id: string }) {
 
       {tab === "overview" ? (
         <div className="grid gap-5 md:grid-cols-3">
-          <SurfaceCard className="p-6"><ShieldCheck className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.breed")}</p><p className="mt-2 text-lg font-semibold text-espresso">{data.breed ?? "—"}</p></SurfaceCard>
-          <SurfaceCard className="p-6"><Activity className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.color")}</p><p className="mt-2 text-lg font-semibold text-espresso">{data.color ?? "—"}</p></SurfaceCard>
-          <SurfaceCard className="p-6"><HeartPulse className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.statusLabel")}</p><p className="mt-2 text-lg font-semibold text-espresso">{t(`horses.status.${data.status}`)}</p></SurfaceCard>
+          <SurfaceCard className="p-6 transition-all duration-300 hover:border-primary-200 hover:shadow-md"><ShieldCheck className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.breed")}</p><p className="mt-2 text-lg font-semibold text-espresso">{data.breed ?? "—"}</p></SurfaceCard>
+          <SurfaceCard className="p-6 transition-all duration-300 hover:border-primary-200 hover:shadow-md"><Activity className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.color")}</p><p className="mt-2 text-lg font-semibold text-espresso">{data.color ?? "—"}</p></SurfaceCard>
+          <SurfaceCard className="p-6 transition-all duration-300 hover:border-primary-200 hover:shadow-md"><HeartPulse className="size-6 text-primary-600" aria-hidden="true" /><p className={`${labelClass} mt-4`}>{t("horses.statusLabel")}</p><p className="mt-2 text-lg font-semibold text-espresso">{t(`horses.status.${data.status}`)}</p></SurfaceCard>
         </div>
       ) : null}
 
       {tab === "training" ? (
-        <SurfaceCard>
+        <SurfaceCard className="transition-all duration-300 hover:shadow-md">
           {data.trainingLog.length === 0 ? (
             <EmptyState compact icon={NotebookText} title={t("horses.trainingEmptyTitle")} description={t("horses.trainingEmptyDescription")} />
           ) : (
@@ -327,7 +327,7 @@ function HorseDetailPage({ id }: { id: string }) {
       ) : null}
 
       {tab === "health" ? (
-        <SurfaceCard className="overflow-hidden">
+        <SurfaceCard className="overflow-hidden transition-all duration-300 hover:shadow-md">
           {data.healthRecords.length === 0 ? (
             <EmptyState compact icon={Stethoscope} title={t("horses.healthEmptyTitle")} description={t("horses.healthEmptyDescription")} />
           ) : (
@@ -343,12 +343,12 @@ function HorseDetailPage({ id }: { id: string }) {
 
       {tab === "analyses" ? (
         data.analyses.length === 0 ? (
-          <SurfaceCard><EmptyState compact icon={Video} title={t("horses.analysesEmptyTitle")} description={t("horses.analysesEmptyDescription")} /></SurfaceCard>
+          <SurfaceCard className="transition-all duration-300 hover:shadow-md"><EmptyState compact icon={Video} title={t("horses.analysesEmptyTitle")} description={t("horses.analysesEmptyDescription")} /></SurfaceCard>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {data.analyses.map((analysis) => (
-              <SurfaceCard key={analysis.id} className="p-5">
-                <div className="flex items-start justify-between gap-3"><h3 className="text-lg text-espresso">{analysis.title}</h3><StatusBadge status={analysis.status} label={t(`analysis.status.${analysis.status}`)} /></div>
+              <SurfaceCard key={analysis.id} className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
+                <div className="flex items-start justify-between gap-3"><h3 className="font-serif text-xl text-espresso">{analysis.title}</h3><StatusBadge status={analysis.status} label={t(`analysis.status.${analysis.status}`)} /></div>
                 <p className="mt-2 text-sm text-text-secondary">{analysis.discipline} · {formatDate(analysis.createdAt, locale)}</p>
                 <OutlineButton type="button" className="mt-4 w-full" onClick={() => navigate(`/analysis/${analysis.id}`)}>{t("horses.viewAnalysis")}</OutlineButton>
               </SurfaceCard>
@@ -358,7 +358,7 @@ function HorseDetailPage({ id }: { id: string }) {
       ) : null}
 
       {tab === "documents" ? (
-        <SurfaceCard>
+        <SurfaceCard className="transition-all duration-300 hover:shadow-md">
           {data.documents.length === 0 ? (
             <EmptyState compact icon={FileText} title={t("horses.documentsEmptyTitle")} description={t("horses.documentsEmptyDescription")} />
           ) : (
@@ -392,7 +392,7 @@ export default function HorsesPage() {
       {error ? (
         <ErrorState message={error} retryLabel={t("horses.tryAgain")} onRetry={refetch} />
       ) : (data ?? []).length === 0 ? (
-        <SurfaceCard>
+        <SurfaceCard className="transition-all duration-300 hover:shadow-md">
           <EmptyState icon={Heart} title={t("horses.emptyTitle")} description={t("horses.emptyDescription")} action={<PrimaryButton type="button" onClick={() => setAddOpen(true)}><Plus className="size-4" aria-hidden="true" />{t("horses.addFirstHorse")}</PrimaryButton>} />
         </SurfaceCard>
       ) : (

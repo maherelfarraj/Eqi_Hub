@@ -51,19 +51,19 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <SurfaceCard className="overflow-hidden">
-      <div className="border-b border-cream-200 bg-cream-50 px-5 py-4">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700">
-            <Icon className="size-4" />
+    <SurfaceCard className="overflow-hidden transition-all duration-300 hover:border-primary-200 hover:shadow-md">
+      <div className="border-b border-cream-200 bg-cream-50/50 px-5 py-4">
+        <div className="flex items-start gap-4">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700 shadow-inner">
+            <Icon className="size-5" />
           </span>
           <div>
-            <h2 className="font-serif text-xl text-espresso">{title}</h2>
+            <h2 className="font-serif text-2xl text-espresso">{title}</h2>
             <p className="mt-1 text-sm text-text-secondary">{description}</p>
           </div>
         </div>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-6">{children}</div>
     </SurfaceCard>
   );
 }
@@ -301,7 +301,7 @@ function WorkspaceSections({
               <div key={competition.id} className="rounded-xl border border-cream-200 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-bold text-espresso">{competition.name}</h3>
+                    <h3 className="font-serif text-xl text-espresso">{competition.name}</h3>
                     <p className="mt-1 text-sm text-text-secondary">
                       {competition.venue} · {formatDate(competition.starts_on, locale)} — {formatDate(competition.ends_on, locale)}
                     </p>
@@ -494,9 +494,9 @@ function WorkspaceSections({
         ) : null}
         <div className="space-y-3">
           {workspace.reports.map((report) => (
-            <div key={report.id} className="rounded-xl border border-cream-200 p-4">
+            <div key={report.id} className="rounded-xl border border-cream-200 p-4 transition-colors hover:bg-cream-50/50">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="font-bold text-espresso">{locale.startsWith("ar") ? report.title_ar : report.title_en}</h3>
+                <h3 className="font-serif text-xl text-espresso">{locale.startsWith("ar") ? report.title_ar : report.title_en}</h3>
                 <div className="flex items-center gap-2">
                   <StatusBadge status={report.status} />
                   {isStaff && report.status === "draft" ? <PrimaryButton onClick={() => void save(() => actions.approveReport(report.id), t("competitionDevelopment.messages.reportApproved"))}>{t("competitionDevelopment.reports.approve")}</PrimaryButton> : null}
@@ -726,7 +726,7 @@ export default function CompetitionDevelopmentPage() {
         title={t("competitionDevelopment.title")}
         description={t("competitionDevelopment.description")}
       />
-      <SurfaceCard className="mb-6 p-4">
+      <SurfaceCard className="mb-6 p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md">
         <label className={labelClass}>{t("competitionDevelopment.rider")}</label>
         <select className={`${fieldClass} max-w-md`} value={riderId} onChange={(event) => setRiderId(event.target.value)}>
           {(riders.data ?? []).map((rider) => <option key={rider.riderId} value={rider.riderId}>{rider.riderName}</option>)}
