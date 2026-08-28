@@ -677,6 +677,262 @@
         "waitlist_unresolved": "Unresolved waitlist"
       }
     },
+    "academyOperations": {
+      "eyebrow": "Academy workspace",
+      "title": "Staff, arena & academy operations",
+      "description": "Private organization controls for staffing, facilities, lesson capacity, alerts, and approval-only payroll and commission calculations.",
+      "disabledTitle": "Academy operations are not enabled",
+      "disabledDescription": "This private workspace is default-off per organization and is available only to authorized academy staff.",
+      "metrics": {
+        "activeStaff": "Active staff",
+        "upcomingShifts": "Upcoming shifts",
+        "resourceBookings": "Resource bookings",
+        "openAlerts": "Open alerts"
+      },
+      "panels": {
+        "staff": "Staff roster & availability",
+        "resources": "Arenas & equipment",
+        "capacity": "Lesson capacity & bookings",
+        "inspections": "Inspections, work orders & alerts",
+        "compensation": "Approval-only payroll & commission calculations"
+      },
+      "success": {
+        "staff": "Staff profile saved.",
+        "availability": "Availability saved.",
+        "shift": "Shift saved.",
+        "leave": "Leave record saved.",
+        "allocation": "Coach allocation saved.",
+        "resource": "Resource saved.",
+        "booking": "Resource booking saved.",
+        "capacity": "Lesson capacity saved.",
+        "inspection": "Inspection saved.",
+        "workOrder": "Work order saved.",
+        "alert": "Alert created.",
+        "payroll": "Payroll calculation saved.",
+        "commission": "Commission calculation saved.",
+        "payrollApproved": "Payroll calculation approved.",
+        "commissionApproved": "Commission calculation approved."
+      },
+      "staff": {
+        "roster": "Staff roster & availability",
+        "userId": "User ID",
+        "userIdPlaceholder": "Authenticated profile UUID",
+        "role": "Role",
+        "roles": {
+          "coach": "Coach",
+          "instructor": "Instructor",
+          "yardStaff": "Yard staff",
+          "facilityStaff": "Facility staff"
+        },
+        "statuses": {
+          "active": "Active",
+          "archived": "Archived"
+        },
+        "englishName": "English name",
+        "arabicName": "Arabic name",
+        "add": "Add staff profile",
+        "none": "No staff profiles have been added yet.",
+        "details": "Availability, shifts, leave & coach allocation"
+      },
+      "availability": {
+        "title": "Availability",
+        "staffId": "Staff profile UUID",
+        "state": "Availability state",
+        "states": {
+          "available": "Available",
+          "limited": "Limited",
+          "unavailable": "Unavailable"
+        },
+        "starts": "Availability starts at",
+        "ends": "Availability ends at",
+        "noteEnglish": "English note",
+        "noteArabic": "Arabic note",
+        "save": "Save availability"
+      },
+      "shift": {
+        "title": "Shift",
+        "starts": "Shift starts at",
+        "ends": "Shift ends at",
+        "dutiesEnglish": "Duties in English",
+        "dutiesArabic": "Duties in Arabic",
+        "save": "Schedule shift"
+      },
+      "leave": {
+        "title": "Leave",
+        "status": "Leave status",
+        "statuses": {
+          "requested": "Requested",
+          "approved": "Approved"
+        },
+        "starts": "Leave starts at",
+        "ends": "Leave ends at",
+        "reasonEnglish": "Reason in English",
+        "reasonArabic": "Reason in Arabic",
+        "save": "Save leave"
+      },
+      "allocation": {
+        "title": "Coach allocation",
+        "coachId": "Coach staff profile UUID",
+        "riderId": "Rider profile UUID",
+        "starts": "Allocation starts at",
+        "ends": "Allocation ends at",
+        "noteEnglish": "English allocation note",
+        "noteArabic": "Arabic allocation note",
+        "save": "Allocate coach"
+      },
+      "resources": {
+        "title": "Arenas & equipment",
+        "type": "Type",
+        "types": {
+          "arena": "Arena",
+          "equipment": "Equipment"
+        },
+        "capacity": "Capacity",
+        "englishName": "English name",
+        "arabicName": "Arabic name",
+        "add": "Add resource",
+        "none": "No arenas or equipment have been added yet.",
+        "bookingDetails": "Book an arena or equipment item"
+      },
+      "booking": {
+        "resourceId": "Resource UUID",
+        "staffId": "Staff profile UUID (optional)",
+        "lessonId": "Lesson UUID (optional)",
+        "starts": "Booking starts at",
+        "ends": "Booking ends at",
+        "purposeEnglish": "Purpose in English",
+        "purposeArabic": "Purpose in Arabic",
+        "save": "Book resource"
+      },
+      "capacity": {
+        "title": "Lesson capacity & bookings",
+        "notice": "Capacity controls are validated before they are saved; confirmed riders can never exceed the configured limit.",
+        "lesson": "Lesson {{id}}",
+        "summary": "{{confirmed}}/{{capacity}} confirmed · {{waitlist}} waitlisted",
+        "none": "No lesson capacity controls have been configured.",
+        "bookings": "Bookings: {{count}} · Conflicts are rejected server-side by resource and time range.",
+        "configure": "Configure lesson capacity",
+        "status": "Lesson capacity status",
+        "capacity": "Lesson capacity",
+        "statuses": {
+          "open": "Open",
+          "waitlist": "Waitlist",
+          "closed": "Closed"
+        },
+        "confirmed": "Confirmed rider count",
+        "waitlist": "Waitlist rider count",
+        "noteEnglish": "English note",
+        "noteArabic": "Arabic note",
+        "save": "Save capacity"
+      },
+      "inspections": {
+        "title": "Inspections, work orders & alerts",
+        "counts": {
+          "inspections": "Inspections",
+          "openWork": "Open work",
+          "alerts": "Alerts"
+        },
+        "none": "No operational alerts have been recorded yet.",
+        "actions": "Inspection, work order & alert actions"
+      },
+      "inspection": {
+        "title": "Inspection",
+        "resourceId": "Resource UUID (optional)",
+        "type": "Inspection type",
+        "types": {
+          "arena": "Arena",
+          "equipment": "Equipment",
+          "facility": "Facility"
+        },
+        "result": "Inspection result",
+        "results": {
+          "safe": "Safe",
+          "attention": "Attention",
+          "unsafe": "Unsafe"
+        },
+        "findingsEnglish": "Findings (English)",
+        "findingsArabic": "Findings (Arabic)",
+        "actionEnglish": "Corrective action (English)",
+        "actionArabic": "Corrective action (Arabic)",
+        "save": "Save inspection"
+      },
+      "workOrder": {
+        "title": "Work order",
+        "inspectionId": "Inspection UUID (optional)",
+        "resourceId": "Resource UUID (optional)",
+        "priority": "Work order priority",
+        "priorities": {
+          "normal": "Normal",
+          "high": "High",
+          "urgent": "Urgent"
+        },
+        "titleEnglish": "Title (English)",
+        "titleArabic": "Title (Arabic)",
+        "detailsEnglish": "Details (English)",
+        "detailsArabic": "Details (Arabic)",
+        "due": "Work order due date and time",
+        "save": "Create work order"
+      },
+      "alert": {
+        "title": "Alert",
+        "type": "Alert type",
+        "types": {
+          "staffing": "Staffing",
+          "booking": "Booking",
+          "capacity": "Capacity",
+          "inspection": "Inspection",
+          "maintenance": "Maintenance"
+        },
+        "severity": "Severity",
+        "severities": {
+          "attention": "Attention",
+          "urgent": "Urgent",
+          "critical": "Critical"
+        },
+        "titleEnglish": "Title (English)",
+        "titleArabic": "Title (Arabic)",
+        "bodyEnglish": "Message (English)",
+        "bodyArabic": "Message (Arabic)",
+        "save": "Create alert"
+      },
+      "compensation": {
+        "title": "Approval-only payroll & commission calculations",
+        "reviewNotice": "Calculation and review only. This workspace never initiates a payment, payout, invoice, or disbursement.",
+        "commissionReview": "Commission review",
+        "restricted": "Compensation calculations are restricted to authorized financial roles.",
+        "safeguards": "Compensation safeguards",
+        "visibleTo": "Visible only to academy administrators, accountants, and platform administrators.",
+        "approveOnly": "Only academy administrators can approve a calculation.",
+        "audited": "All creates, updates, and approvals are audited.",
+        "inReview": "Commission calculations in review: {{count}}.",
+        "lastBooking": "Last booking update: {{date}}.",
+        "create": "Create or submit a calculation",
+        "payroll": "Payroll calculation",
+        "commission": "Commission calculation",
+        "staffId": "Staff profile UUID",
+        "periodStart": "Period start date",
+        "periodEnd": "Period end date",
+        "currency": "Currency",
+        "gross": "Gross amount",
+        "adjustment": "Adjustment amount",
+        "calculated": "Calculated amount",
+        "basis": "Basis amount",
+        "rate": "Commission rate percentage",
+        "status": "Calculation status",
+        "statuses": {
+          "draft": "Draft",
+          "submitted": "Submitted",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "noteEnglish": "English calculation note",
+        "noteArabic": "Arabic calculation note",
+        "savePayroll": "Save payroll calculation",
+        "saveCommission": "Save commission calculation",
+        "approvePayroll": "Approve",
+        "approveCommission": "Approve"
+      }
+    },
     "progress": {
       "eyebrow": "Riding development",
       "title": "Progress",
