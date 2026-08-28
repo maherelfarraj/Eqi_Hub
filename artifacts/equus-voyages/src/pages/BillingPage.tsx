@@ -30,6 +30,20 @@ type InvoiceFilter = "all" | InvoiceStatus;
 
 const filters: InvoiceFilter[] = ["all", "paid", "open", "overdue", "void"];
 
+function sumByCurrency(invoices: Invoice[]) {
+  const totals = new Map<string, { amount: number; count: number }>();
+  for (const invoice of invoices) {
+    const current = totals.get(invoice.currency) ?? { amount: 0, count: 0 };
+    totals.set(invoice.currency, {
+      amount: current.amount + invoice.amount,
+      count: current.count + 1,
+    });
+  }
+  return [...totals.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([currency, total]) => ({ currency, ...total }));
+}
+
 export default function BillingPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -43,14 +57,6 @@ export default function BillingPage() {
     const outstandingInvoices = invoices.filter(
       (invoice) => invoice.status === "open" || invoice.status === "overdue",
     );
-    const outstandingCurrency = outstandingInvoices[0]?.currency ?? "USD";
-    const outstanding = {
-      amount: outstandingInvoices
-        .filter((invoice) => invoice.currency === outstandingCurrency)
-        .reduce((total, invoice) => total + invoice.amount, 0),
-      currency: outstandingCurrency,
-    };
-
     const now = new Date();
     const paidThisMonthInvoices = invoices.filter((invoice) => {
       if (invoice.status !== "paid") return false;
@@ -61,14 +67,6 @@ export default function BillingPage() {
         issueDate.getMonth() === now.getMonth()
       );
     });
-    const paidCurrency = paidThisMonthInvoices[0]?.currency ?? "USD";
-    const paidThisMonth = {
-      amount: paidThisMonthInvoices
-        .filter((invoice) => invoice.currency === paidCurrency)
-        .reduce((total, invoice) => total + invoice.amount, 0),
-      currency: paidCurrency,
-    };
-
     const nextPayment = [...invoices]
       .filter(
         (invoice) =>
@@ -79,7 +77,11 @@ export default function BillingPage() {
         String(left.dueDate).localeCompare(String(right.dueDate)),
       )[0];
 
-    return { outstanding, paidThisMonth, nextPayment };
+    return {
+      outstanding: sumByCurrency(outstandingInvoices),
+      paidThisMonth: sumByCurrency(paidThisMonthInvoices),
+      nextPayment,
+    };
   }, [invoices]);
 
   const visibleInvoices = useMemo(
@@ -122,30 +124,36 @@ export default function BillingPage() {
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <MetricCard
-          icon={CircleDollarSign}
-          label={t("billing.outstanding")}
-          value={formatCurrency(
-            summary.outstanding.amount,
-            summary.outstanding.currency,
-            locale,
-          )}
-          detail={t("billing.openInvoiceCount", {
-            count: invoices.filter(
-              (invoice) =>
-                invoice.status === "open" || invoice.status === "overdue",
-            ).length,
-          })}
-        />
-        <MetricCard
-          icon={WalletCards}
-          label={t("billing.paidThisMonth")}
-          value={formatCurrency(
-            summary.paidThisMonth.amount,
-            summary.paidThisMonth.currency,
-            locale,
-          )}
-        />
+        {summary.outstanding.length > 0 ? summary.outstanding.map(({ currency, amount, count }) => (
+          <MetricCard
+            key={`outstanding-${currency}`}
+            icon={CircleDollarSign}
+            label={`${t("billing.outstanding")} · ${currency}`}
+            value={formatCurrency(amount, currency, locale)}
+            detail={t("billing.openInvoiceCount", { count })}
+          />
+        )) : (
+          <MetricCard
+            icon={CircleDollarSign}
+            label={`${t("billing.outstanding")} · USD`}
+            value={formatCurrency(0, "USD", locale)}
+            detail={t("billing.openInvoiceCount", { count: 0 })}
+          />
+        )}
+        {summary.paidThisMonth.length > 0 ? summary.paidThisMonth.map(({ currency, amount }) => (
+          <MetricCard
+            key={`paid-${currency}`}
+            icon={WalletCards}
+            label={`${t("billing.paidThisMonth")} · ${currency}`}
+            value={formatCurrency(amount, currency, locale)}
+          />
+        )) : (
+          <MetricCard
+            icon={WalletCards}
+            label={`${t("billing.paidThisMonth")} · USD`}
+            value={formatCurrency(0, "USD", locale)}
+          />
+        )}
         <MetricCard
           icon={CalendarClock}
           label={t("billing.nextPayment")}

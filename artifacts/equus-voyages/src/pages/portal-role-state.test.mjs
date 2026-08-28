@@ -2,10 +2,20 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const [persona, shell, dashboard, english, arabic] = await Promise.all([
+const [
+  persona,
+  shell,
+  dashboard,
+  academyOperations,
+  billing,
+  english,
+  arabic,
+] = await Promise.all([
   readFile(new URL("../lib/portal-persona.ts", import.meta.url), "utf8"),
   readFile(new URL("../components/AppShell.tsx", import.meta.url), "utf8"),
   readFile(new URL("./DashboardPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("./AcademyOperationsPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("./BillingPage.tsx", import.meta.url), "utf8"),
   readFile(new URL("../i18n/en.json", import.meta.url), "utf8"),
   readFile(new URL("../i18n/ar.json", import.meta.url), "utf8"),
 ]);
@@ -113,4 +123,33 @@ test("role-aware dashboard copy is complete in English and Arabic", () => {
     assert.ok(dictionary.dashboard.coach.openDevelopment);
     assert.ok(dictionary.app.orientation);
   }
+});
+
+test("academy operations copy is complete in English and Arabic", () => {
+  const en = JSON.parse(english).translation.academyOperations;
+  const ar = JSON.parse(arabic).translation.academyOperations;
+  const leafPaths = (value, prefix = "") =>
+    Object.entries(value).flatMap(([key, child]) => {
+      const path = prefix ? `${prefix}.${key}` : key;
+      return child && typeof child === "object"
+        ? leafPaths(child, path)
+        : [path];
+    });
+
+  assert.deepEqual(leafPaths(en).sort(), leafPaths(ar).sort());
+  assert.match(academyOperations, /t\("academyOperations\.disabledTitle"\)/);
+  assert.match(academyOperations, /t\("academyOperations\.compensation\.reviewNotice"\)/);
+  assert.match(academyOperations, /StatusBadge status=\{alert\.severity\} label=/);
+  assert.match(academyOperations, /resources\.types\.\$\{resource\.resource_type\}/);
+  assert.doesNotMatch(academyOperations, />Academy workspace</);
+  assert.doesNotMatch(academyOperations, />Calculation and review only\./);
+});
+
+test("billing keeps financial totals separated by currency", () => {
+  assert.match(billing, /function sumByCurrency\(invoices: Invoice\[\]\)/);
+  assert.match(billing, /count: current\.count \+ 1/);
+  assert.match(billing, /openInvoiceCount", \{ count \}/);
+  assert.match(billing, /summary\.outstanding\.map/);
+  assert.match(billing, /summary\.paidThisMonth\.map/);
+  assert.doesNotMatch(billing, /outstandingCurrency|paidCurrency/);
 });
