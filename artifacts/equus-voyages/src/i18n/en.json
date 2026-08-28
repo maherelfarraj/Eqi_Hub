@@ -964,6 +964,7 @@
       "nextTier": "Progress to next tier",
       "sessionHistory": "Session history",
       "sessionDescription": "Open any session to review its complete video analysis.",
+      "openSession": "Open session from {{date}}",
       "horse": "Horse",
       "discipline": "Discipline",
       "score": "Score",

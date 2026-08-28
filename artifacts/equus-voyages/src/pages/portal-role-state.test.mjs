@@ -6,6 +6,9 @@ const [
   persona,
   shell,
   dashboard,
+  lessons,
+  progress,
+  sharedUi,
   academyOperations,
   billing,
   english,
@@ -14,6 +17,9 @@ const [
   readFile(new URL("../lib/portal-persona.ts", import.meta.url), "utf8"),
   readFile(new URL("../components/AppShell.tsx", import.meta.url), "utf8"),
   readFile(new URL("./DashboardPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("./LessonsPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("./ProgressPage.tsx", import.meta.url), "utf8"),
+  readFile(new URL("../components/EquiVistaUI.tsx", import.meta.url), "utf8"),
   readFile(new URL("./AcademyOperationsPage.tsx", import.meta.url), "utf8"),
   readFile(new URL("./BillingPage.tsx", import.meta.url), "utf8"),
   readFile(new URL("../i18n/en.json", import.meta.url), "utf8"),
@@ -123,6 +129,20 @@ test("role-aware dashboard copy is complete in English and Arabic", () => {
     assert.ok(dictionary.dashboard.coach.openDevelopment);
     assert.ok(dictionary.app.orientation);
   }
+});
+
+test("authenticated academy surfaces preserve localized and accessible state controls", () => {
+  const en = JSON.parse(english).translation;
+  const ar = JSON.parse(arabic).translation;
+
+  assert.ok(en.progress.openSession);
+  assert.ok(ar.progress.openSession);
+  assert.match(dashboard, /label=\{t\(`status\.\$\{analysis\.status\}`\)\}/);
+  assert.match(progress, /label=\{t\(`status\.\$\{session\.status\}`\)\}/);
+  assert.match(progress, /role="link"/);
+  assert.match(progress, /event\.key === "Enter" \|\| event\.key === " "/);
+  assert.match(lessons, /overflow-x-auto rounded-xl/);
+  assert.match(sharedUi, /whitespace-nowrap rounded-md border/);
 });
 
 test("academy operations copy is complete in English and Arabic", () => {

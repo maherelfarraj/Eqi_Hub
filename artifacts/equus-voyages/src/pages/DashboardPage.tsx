@@ -99,11 +99,11 @@ function AcademyAdminDashboard() {
         description={t("dashboard.academyAdmin.description")}
         actions={
           <>
-            <PrimaryButton onClick={() => navigate("/organization")}>
+            <PrimaryButton className="w-full sm:w-auto" onClick={() => navigate("/organization")}>
               <Users className="size-4" aria-hidden="true" />
               {t("dashboard.academyAdmin.manageMembers")}
             </PrimaryButton>
-            <OutlineButton onClick={() => navigate("/lessons")}>
+            <OutlineButton className="w-full sm:w-auto" onClick={() => navigate("/lessons")}>
               <CalendarDays className="size-4" aria-hidden="true" />
               {t("dashboard.academyAdmin.reviewLessons")}
             </OutlineButton>
@@ -576,7 +576,7 @@ function RiderDashboard() {
       </div>
 
       <SurfaceCard className="mt-6 p-5 sm:p-6">
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-2xl text-espresso">
               {t("dashboard.progressTitle")}
@@ -585,10 +585,10 @@ function RiderDashboard() {
               {t("dashboard.progressDescription")}
             </p>
           </div>
-          <OutlineButton
-            onClick={() => navigate("/progress")}
-            className="min-h-9 px-3 py-2"
-          >
+            <OutlineButton
+              className="min-h-9 w-full px-3 py-2 sm:w-auto"
+              onClick={() => navigate("/progress")}
+            >
             {t("common.viewAll")}
           </OutlineButton>
         </div>
@@ -681,7 +681,7 @@ function RiderDashboard() {
                   key={lesson.id}
                   type="button"
                   onClick={() => navigate("/lessons")}
-                  className="flex w-full items-center gap-4 px-5 py-4 text-start hover:bg-cream-50"
+                  className="flex w-full items-center gap-3 px-5 py-4 text-start transition-colors hover:bg-cream-50 sm:gap-4"
                 >
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
                     <CalendarDays className="size-5" aria-hidden="true" />
@@ -695,7 +695,7 @@ function RiderDashboard() {
                       {lesson.horseName ? ` · ${lesson.horseName}` : ""}
                     </span>
                   </span>
-                  <span className="text-end text-xs font-semibold text-text-secondary">
+                  <span className="shrink-0 text-end text-xs font-semibold text-text-secondary">
                     {formatDate(lesson.dateTime, locale, {
                       day: "numeric",
                       month: "short",
@@ -751,7 +751,7 @@ function RiderDashboard() {
                     </span>
                   </span>
                   <span className="flex flex-col items-end gap-1.5">
-                    <StatusBadge status={analysis.status} />
+                    <StatusBadge status={analysis.status} label={t(`status.${analysis.status}`)} />
                     {analysis.score !== null ? (
                       <span className="font-serif text-lg text-primary-700">
                         {analysis.score}

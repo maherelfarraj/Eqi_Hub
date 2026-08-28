@@ -976,6 +976,7 @@
       "nextTier": "التقدم نحو المستوى التالي",
       "sessionHistory": "سجل الجلسات",
       "sessionDescription": "افتح أي جلسة لمراجعة تحليل الفيديو الكامل.",
+      "openSession": "فتح جلسة {{date}}",
       "horse": "الحصان",
       "discipline": "التخصص",
       "score": "الدرجة",
