@@ -108,7 +108,7 @@ function LessonCard({
   }).format(new Date(lesson.dateTime));
 
   return (
-    <article className="group rounded-2xl border border-cream-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-primary-200 hover:shadow-md">
+    <article className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -136,7 +136,7 @@ function LessonCard({
             </p>
           ) : null}
         </div>
-        <div className="shrink-0 rounded-xl bg-cream-50 px-3.5 py-2.5 text-sm font-semibold text-espresso">
+        <div className="w-full shrink-0 rounded-xl bg-cream-50 px-3.5 py-2.5 text-sm font-semibold text-espresso sm:w-auto">
           <span className="flex items-center gap-2">
             <Clock3 className="size-4 text-primary-500" aria-hidden="true" />
             {time} · {t("lessons.minutes", { count: lesson.durationMin })}
@@ -304,7 +304,7 @@ export default function LessonsPage() {
         title={t("lessons.title")}
         description={t("lessons.description")}
         actions={
-          <PrimaryButton type="button" onClick={openBooking}>
+          <PrimaryButton className="w-full sm:w-auto" type="button" onClick={openBooking}>
             <Plus className="size-4" aria-hidden="true" />
             {t("lessons.bookLesson")}
           </PrimaryButton>
@@ -322,7 +322,7 @@ export default function LessonsPage() {
 
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div
-          className="inline-flex w-full rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner sm:w-auto"
+          className="inline-flex w-full overflow-x-auto rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner sm:w-auto"
           role="tablist"
           aria-label={t("lessons.filterLabel")}
         >
@@ -337,7 +337,7 @@ export default function LessonsPage() {
                 setSuccess("");
                 setWeekOffset(0);
               }}
-              className={`min-h-10 flex-1 rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 sm:flex-none ${
+              className={`min-h-10 flex-1 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 sm:flex-none ${
                 filter === item
                   ? "bg-primary-600 text-white shadow-sm"
                   : "text-text-secondary hover:bg-white hover:text-espresso"
@@ -349,13 +349,13 @@ export default function LessonsPage() {
         </div>
 
         <div
-          className="inline-flex self-end rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner"
+          className="inline-flex w-full self-end rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner sm:w-auto"
           aria-label={t("lessons.viewLabel")}
         >
           <button
             type="button"
             onClick={() => setView("list")}
-            className={`flex min-h-10 items-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 ${view === "list" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
+            className={`flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 sm:flex-none ${view === "list" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
             aria-pressed={view === "list"}
           >
             <List className="size-4" aria-hidden="true" />
@@ -364,7 +364,7 @@ export default function LessonsPage() {
           <button
             type="button"
             onClick={() => setView("week")}
-            className={`flex min-h-10 items-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 ${view === "week" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
+            className={`flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition-all duration-200 sm:flex-none ${view === "week" ? "bg-white text-espresso shadow-sm" : "text-text-secondary hover:text-espresso"}`}
             aria-pressed={view === "week"}
           >
             <CalendarRange className="size-4" aria-hidden="true" />

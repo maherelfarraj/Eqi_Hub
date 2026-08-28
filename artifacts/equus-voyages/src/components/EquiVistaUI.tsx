@@ -29,7 +29,7 @@ export function PageHeader({
           </p>
         ) : null}
       </div>
-      {actions ? <div className="flex shrink-0 flex-wrap gap-3">{actions}</div> : null}
+      {actions ? <div className="flex w-full shrink-0 flex-wrap gap-3 sm:w-auto">{actions}</div> : null}
     </div>
   );
 }
@@ -90,7 +90,7 @@ export function MetricCard({
   detail?: ReactNode;
 }) {
   return (
-    <SurfaceCard className="p-6 relative overflow-hidden group">
+    <SurfaceCard className="relative overflow-hidden p-5 group sm:p-6">
       {/* Subtle background decoration */}
       <div className="absolute -right-6 -top-6 text-primary-50 opacity-50 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12 pointer-events-none">
         <Icon className="size-32" aria-hidden="true" />
@@ -105,8 +105,8 @@ export function MetricCard({
           </span>
         </div>
         <div>
-          <div className="font-serif text-3xl text-espresso tracking-tight">{value}</div>
-          {detail ? <div className="mt-1.5 text-sm font-medium text-text-secondary">{detail}</div> : null}
+          <div className="min-w-0 break-words font-serif text-3xl tracking-tight text-espresso">{value}</div>
+          {detail ? <div className="mt-1.5 break-words text-sm font-medium text-text-secondary">{detail}</div> : null}
         </div>
       </div>
     </SurfaceCard>
@@ -145,7 +145,7 @@ export function EmptyState({
   compact?: boolean;
 }) {
   return (
-    <div className={`flex flex-col items-center justify-center text-center rounded-xl border border-dashed border-cream-300 bg-cream-50/50 ${compact ? "px-5 py-8" : "min-h-[20rem] px-6 py-14"}`}>
+    <div className={`flex flex-col items-center justify-center rounded-xl border border-dashed border-cream-300 bg-cream-50/50 text-center ${compact ? "px-5 py-8" : "min-h-[20rem] px-6 py-14"}`}>
       <span className="mb-5 flex size-14 items-center justify-center rounded-xl bg-white shadow-sm border border-cream-200 text-primary-600">
         <Icon className="size-6" strokeWidth={1.5} aria-hidden="true" />
       </span>
@@ -204,7 +204,7 @@ const statusTone: Record<string, string> = {
 
 export function StatusBadge({ status, label }: { status: string; label?: string }) {
   return (
-    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.1em] shadow-sm ${statusTone[status] ?? "bg-cream-100 text-text-secondary border-cream-200"}`}>
+    <span className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-md border px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.1em] shadow-sm ${statusTone[status] ?? "bg-cream-100 text-text-secondary border-cream-200"}`}>
       {label ?? status.replaceAll("_", " ")}
     </span>
   );
@@ -214,9 +214,9 @@ export function ProgressMeter({ value, label }: { value: number; label: string }
   const safe = Math.max(0, Math.min(100, value));
   return (
     <div>
-      <div className="mb-2 flex justify-between text-xs font-semibold text-espresso">
-        <span>{label}</span>
-        <span className="text-text-secondary">{Math.round(safe)}%</span>
+      <div className="mb-2 flex items-start justify-between gap-3 text-xs font-semibold text-espresso">
+        <span className="min-w-0">{label}</span>
+        <span className="shrink-0 text-text-secondary">{Math.round(safe)}%</span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-cream-200">
         <div className="h-full rounded-full bg-primary-600 transition-all duration-500 ease-out" style={{ width: `${safe}%` }} />

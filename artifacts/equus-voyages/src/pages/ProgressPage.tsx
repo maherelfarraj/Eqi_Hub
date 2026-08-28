@@ -59,7 +59,7 @@ export default function ProgressPage() {
         title={t("progress.title")}
         description={t("progress.description")}
         actions={
-          <div className="inline-flex rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner" role="tablist" aria-label={t("progress.period") }>
+          <div className="inline-flex w-full rounded-xl border border-cream-200 bg-cream-50/50 p-1 shadow-inner sm:w-auto" role="tablist" aria-label={t("progress.period") }>
             {([30, 90, 365] as const).map((value) => (
               <button
                 key={value}
@@ -67,7 +67,7 @@ export default function ProgressPage() {
                 role="tab"
                 aria-selected={period === value}
                 onClick={() => setPeriod(value)}
-                className={`rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 ${period === value ? "bg-primary-600 text-white shadow-sm" : "text-text-secondary hover:bg-white hover:text-espresso"}`}
+                className={`flex-1 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 sm:flex-none ${period === value ? "bg-primary-600 text-white shadow-sm" : "text-text-secondary hover:bg-white hover:text-espresso"}`}
               >
                 {t(`progress.period${value}`)}
               </button>
@@ -84,7 +84,7 @@ export default function ProgressPage() {
         <PageSkeleton cards={4} />
       ) : metrics ? (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard icon={Target} label={t("progress.averageScore")} value={metrics.averageScore.toFixed(1)} detail={t("progress.outOf100")} />
             <MetricCard
               icon={improvementPositive ? TrendingUp : TrendingDown}
@@ -96,8 +96,8 @@ export default function ProgressPage() {
             <MetricCard icon={Award} label={t("progress.topDiscipline")} value={metrics.topDiscipline ?? t("common.notAvailable")} detail={t("progress.mostPracticed")} />
           </div>
 
-          <div className="mt-6 grid gap-6 xl:grid-cols-2">
-            <SurfaceCard className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
+          <div className="mt-6 grid min-w-0 gap-6 xl:grid-cols-2">
+            <SurfaceCard className="min-w-0 p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
               <h2 className="font-serif text-2xl text-espresso">{t("progress.scoreTrend")}</h2>
               <p className="mt-1 text-sm text-text-secondary">{t("progress.scoreTrendDescription")}</p>
               {metrics.scoreOverTime.length ? (
@@ -117,7 +117,7 @@ export default function ProgressPage() {
               )}
             </SurfaceCard>
 
-            <SurfaceCard className="p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
+            <SurfaceCard className="min-w-0 p-5 transition-all duration-300 hover:border-primary-200 hover:shadow-md sm:p-6">
               <h2 className="font-serif text-2xl text-espresso">{t("progress.categoryScores")}</h2>
               <p className="mt-1 text-sm text-text-secondary">{t("progress.categoryDescription")}</p>
               {metrics.categoryScores.length ? (
@@ -164,12 +164,27 @@ export default function ProgressPage() {
               </thead>
               <tbody className="divide-y divide-cream-200">
                 {sessions.map((session) => (
-                  <tr key={session.id} onClick={() => navigate(`/analysis/${session.id}`)} className="cursor-pointer transition-colors hover:bg-cream-50">
+                    <tr
+                      key={session.id}
+                      onClick={() => navigate(`/analysis/${session.id}`)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          navigate(`/analysis/${session.id}`);
+                        }
+                      }}
+                      tabIndex={0}
+                      role="link"
+                      aria-label={t("progress.openSession", {
+                        date: formatDate(session.date, locale),
+                      })}
+                      className="cursor-pointer transition-colors hover:bg-cream-50 focus:bg-cream-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500"
+                    >
                     <td className="px-5 py-4 font-semibold text-espresso">{formatDate(session.date, locale)}</td>
                     <td className="px-5 py-4 text-text-secondary">{session.horseName ?? t("common.notAvailable")}</td>
                     <td className="px-5 py-4 text-text-secondary">{session.discipline}</td>
                     <td className="px-5 py-4 font-serif text-lg text-primary-700">{session.score ?? "—"}</td>
-                    <td className="px-5 py-4"><StatusBadge status={session.status} /></td>
+                    <td className="px-5 py-4"><StatusBadge status={session.status} label={t(`status.${session.status}`)} /></td>
                   </tr>
                 ))}
               </tbody>
