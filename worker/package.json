@@ -14,11 +14,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.112.2"
+    "@supabase/supabase-js": "2.115.0"
   },
   "devDependencies": {
     "@types/node": "25.3.3",
-    "tsx": "4.23.12",
+    "tsx": "4.23.13",
     "typescript": "5.9.3"
   }
 }
